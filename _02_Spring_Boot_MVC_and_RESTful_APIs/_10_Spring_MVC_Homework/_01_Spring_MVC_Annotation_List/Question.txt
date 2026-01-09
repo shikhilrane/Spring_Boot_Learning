@@ -1,0 +1,105 @@
+Q. Make a list of all the annotations we have seen so far in the Spring Web Framework.
+
+1. Main File -> 
+
+@SpringBootApplication - A single annotation that starts a Spring Boot app by enabling auto-configuration, component scanning, and basic setup automatically.
+
+
+2. Controller Package ->
+
+@RestController - Marks a class as a REST API controller that directly returns data (like JSON) instead of web pages.
+
+@RequestMapping - Maps an HTTP request URL and method (GET, POST, etc.) to a specific controller method that should handle it.
+
+@GetMapping - Maps an HTTP GET request to a controller method to fetch data from the server.
+
+@PostMapping - Maps an HTTP POST request to a controller method to send data to the server and create something new.
+
+@PutMapping - Maps an HTTP PUT request to a controller method to update existing data on the server.
+
+@DeleteMapping - Maps an HTTP DELETE request to a controller method to remove data from the server.
+
+@PatchMapping - Maps an HTTP PATCH request to a controller method to partially update existing data on the server.
+
+
+3. Advices Packages -> 
+
+* GlobalExceptionHandler -
+	@RestControllerAdvice - Handles exceptions and common responses for all REST controllers globally in one central place.
+
+	@ExceptionHandler - Catches and handles specific exceptions in a controller (or globally) so you can return a clean, custom error response instead of a crash.
+
+* ApiError - 
+	@Data - Automatically generates getters, setters, toString(), equals(), and hashCode() methods for a class, reducing boilerplate code.
+
+	@Builder - Provides an easy, readable way to create objects step by step without writing complex constructors.
+
+* GlobalResponseHandler -
+	@RestControllerAdvice - Handles exceptions and common responses for all REST controllers globally in one central place.
+
+* APIResponse
+	@Data - Automatically generates getters, setters, toString(), equals(), and hashCode() methods for a class, reducing boilerplate code.
+	@JsonFormat - Controls how a field (like date or time) is formatted when converting between Java objects and JSON.
+
+
+4. DTO Package ->
+Lombok
+
+	@Getter:
+	Automatically creates getter methods for all variables in the class.
+
+	@Setter:
+	Automatically creates setter methods for all variables in the class.
+
+	@AllArgsConstructor:
+	Automatically creates a constructor with parameters for all class variables.
+
+	@NoArgsConstructor:
+	Automatically creates a constructor with no parameters.
+
+Validation annotations for applying custom validation annotation
+
+
+5. Services Package -> 
+
+@Service - Marks a class as a service layer where business logic is written and managed by Spring automatically.
+
+
+6. config Package ->
+
+@Configuration - Marks a class as a configuration file that defines and sets up Spring beans for the application.
+
+@Bean - Tells Spring to create, manage, and reuse an object returned by a method as a shared application component.
+
+
+7. entities Package -> 
+
+Lombok
+	@Entity:
+	Tells Spring/JPA that this class represents a database table.
+
+	@Getter:
+	Automatically creates getter methods for all variables in the class.
+
+	@Setter:
+	Automatically creates setter methods for all variables in the class.
+
+	@AllArgsConstructor:
+	Automatically creates a constructor with parameters for all class variables.
+
+	@NoArgsConstructor:
+	Automatically creates a constructor with no parameters.
+
+	@Table:
+	Specifies the exact database table name and settings for this entity.
+
+@Id - Marks a field as the unique identifier (primary key) for a database record.
+
+@GeneratedValue - Tells the database to automatically generate the value for the primary key.
+
+@JsonProperty - Controls the name or behavior of a field when converting Java objects to/from JSON.
+
+
+8. Repositories -> 
+
+@Repository - Marks a class as a data access layer that talks to the database and handles data storage and retrieval.

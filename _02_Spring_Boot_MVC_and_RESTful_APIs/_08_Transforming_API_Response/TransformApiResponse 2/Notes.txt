@@ -1,0 +1,17 @@
+Dependencies
+    1. Web
+    2. JPA
+    3. H2
+    4. Lombok
+    5. ModelMapper (used it rom maven library)
+    6. starter validation
+
+Transforming API Response ->
+    Use to transform API response so that frontend can handle it gracefully
+    In production ready code, each and evey API has some certain format that it returns object in. That way they can maintain certain format so that frontend can handle it properly
+    We will transform each and every response globally so that we don't need to handle it again and again and we are going to use @RestControllerAdvice to do that
+
+    1. Implement your class with @RestControllerAdvice<Object> to define the custom return type
+    2. Use @RestControllerAdvice for global API Response transformation
+    3. Return appropriate HTTP Status codes and error messages
+    4. You can also return the timestamp of API response

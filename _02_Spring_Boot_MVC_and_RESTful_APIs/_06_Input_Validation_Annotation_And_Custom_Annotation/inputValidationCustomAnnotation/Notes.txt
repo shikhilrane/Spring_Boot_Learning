@@ -1,0 +1,71 @@
+Input Validation ->
+    It is use to validate data of user (Valid data should be accepted to store in DB and if Invalid data occurs then it will be intercepted before going to Service layer)
+    Basically use when if user want to add email address and if it exist in DB then it should not be allowed
+
+Dependencies
+    1. Web
+    2. JPA
+    3. H2
+    4. Lombok
+    5. ModelMapper (used it rom maven library)
+    6. starter validation
+
+Annotation for Validation
+    1. @NotNull(message = "Name is required") -> Ensures that annotated field is not null (in respected controller's parameter, we have to use @Valid annotation to execute this annotation)
+    2. @NotEmpty(message = "Name can't be empty") -> Ensures that the annotated field is not null and its size/length is greater than zero (for collection, array and Strings)
+    3. @NotBlank(message = "Please don't use spaces in name") -> Ensures that the annotated string is not null and its trimmed length is greater than zero ( Mostly used for String)
+    4. @Size -> Validates that the annotated element's size falls within the specific range
+    5. @Email(message = "Email should be valid email") -> Validates that te annotated String is a valid email address
+    6. @Max(value = 80, message = "Age can't be more than 80") -> Ensures that annotated element is a number with a value no greater than the specified maximum
+    7. @Min(value = 18, message = "Age can't be lesser than 18") -> Ensures that annotated element is a number with a value no lesser than the specified minimum
+    8. @Pattern(regexp = "^(ADMIN|USER)$", message = "Role of Employee can either be ADMIN or USER") -> Validates that the annotated string matches the specified regular expressions (regexp = starts with ^ and ends with $, take help of GPT)
+    9. @Positive(message = "Salary of employee should be positive") -> Ensures that the annotated element is a positive number (Greater than zero)
+    10. @PositiveOrZero -> Ensures that the annotated element is a positive number of zero and can't be negative
+    11. @Negative -> Ensures that the annotated element is a negative number (Less than zero)
+    12. @NegativeOrZero -> Ensures that annotated element is a negative number or zero
+    13. @Past -> Ensures that the annotated date or calender value is in the Past
+    14. @PastOrPresent(message = "Date of joining should be in Past or in Present only") -> Ensures that the annotated date or calender value is in the Past or in Present
+    15. @Future -> Ensures that the annotated date or calender value is in the Future
+    16. @FutureOrPresent -> Ensures that the annotated date or calender value is in the Future or Present
+    17. @Digits -> Ensures that the annotated number has up to a specified number of integer and fraction digits.
+    18. @DecimalMin(value = "01.00") -> Ensures that the annotated elements is a number with a value no less than the specified minimum, allowing for decimal points
+    18. @DecimalMax(value = "100.00") -> Ensures that the annotated elements is a number with a value no greater than the specified maximum, allowing for decimal points
+    19. @AssertTrue -> Ensures that the annotated boolean field is true
+    20. @AssertFalse -> Ensures that the annotated boolean field is false
+    21. @Valid -> Validates the associated object recursively (applies bean validation to nested objects)
+
+    There are still more annotations to validate like to validate phone number, etc. We can use GPT to ask for such annotation
+
+Custom Annotations ->
+    To create any Annotation we need to have,
+
+    1. Create Annotation package, in which class name with @interface
+
+    2. Add following Annotations :
+    @Constraint(
+        validatedBy = {// name of the validator class}
+    )      ->  Declares a custom validation constraint, with validatedBy specifying the validator classes that implement the logic (empty here, so needs to be filled).
+    @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE}) -> where a custom annotation can be applied
+    @Retention(RetentionPolicy.RUNTIME) -> how long it is retained
+    these annotations in it.
+
+    3. Add following code ->
+    String message() default "{jakarta.validation.constraints.Min.message}";    ->  Default error message shown when validation fails.
+    Class<?>[] groups() default {};                                             ->  Allows grouping of constraints for conditional validation.
+    Class<? extends Payload>[] payload() default {};                            ->  Lets you attach custom metadata info to the constraint, typically used by frameworks.
+
+    4. Create a class in same package that validates this Annotations
+        implements ConstraintValidator<//Name of Annotation, Type of data that custom validator will validate> this interface with that class
+        implement isValid method of ConstraintValidator and write logic
+
+    5. In Custom Annotation, in @Constraint, provide name of validator class
+
+    6. Use the annotation
+
+
+User ---> InputValidationCustomAnnotationApplication ---> EmployeeController ---> EmployeeService ---> EmployeeRepository
+                                                                               ^                    ^
+                                                                               |                    |
+                                                                            EmployeeDTO             EmployeeEntity
+                                                                       AgeValidationAnnotation      MapperConfig
+                                                                  EmployeeRoleValidationAnnotation

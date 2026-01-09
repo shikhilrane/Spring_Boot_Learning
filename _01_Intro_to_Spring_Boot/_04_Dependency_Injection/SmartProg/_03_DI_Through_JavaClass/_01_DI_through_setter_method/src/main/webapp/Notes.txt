@@ -1,0 +1,27 @@
+Step 1 -> Creation of beans
+    1. Created beans package in java package
+    2. Created a POJO class Student and defined properties name, rollNo and address
+        where, name is String and rollNo is int
+                but address is the class Address, whose properties will be injected in the Student's object
+        and used setters for all the properties (using getters are optional but setters are compulsory because they will be responsible for setting values in properties)
+        Then created a display method, which will display the data on the screen.
+    3. Created a POJO class Address and defined properties houseNo, city and pincode
+        and used setters for all the properties (using getters are optional but setters are compulsory because they will be responsible for setting values in properties)
+        and called toString method in it, it will provide values of properties to the next bean object
+
+Step 2 -> Configuration
+    1. Created a package config and created SpringConfigFile in it and used @Configuration annotation to it
+    2. created a bean method for Student class and passed name for the bean from @Bean Annotation
+        then pushed properties in it
+        for name and rollNo we set value
+        but for address, we passed method (i.e. createAddr()) of the bean whose properties are being injected into this bean object.
+    3. Created a bean method for Address class and passed name for the bean from @Bean Annotation
+        then pushed properties in it
+    Now, we have provided configurations and now Spring container will handle the injection
+
+Step 3 -> Spring Container
+    1. Created a main package in java package and created MainClass in it
+    2. in the MainClass, called ApplicationContext interface for AnnotationConfigApplicationContext class and passed SpringConfigFile.class file
+    3. Created an object of student class and used getBeans() method for it and passed name of the Student bean class also typecasted it to Student bcoz it give output in Object.
+    4. Called display method
+

@@ -1,0 +1,20 @@
+package main._02_Spring_Boot_Web_App.Controllers;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+public class MyControllers {
+    @GetMapping("/")    // It will get us to / url
+    @ResponseBody       // It return the method's return value directly as the HTTP response body, instead of resolving it as a view name.
+    public String printHello(){
+        return "Hello Shikhil";
+    }
+
+    @GetMapping("/surname")     // It will get us to /surname url
+    @ResponseBody               // It return the method's return value directly as the HTTP response body, instead of resolving it as a view name.
+    public String printSurname(){
+        return "Hello Rane";
+    }
+}

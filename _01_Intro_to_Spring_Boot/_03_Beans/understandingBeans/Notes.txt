@@ -1,0 +1,144 @@
+Bean :
+    A "Bean" is managed object that is instantiated, assembled, and managed by the Spring IoC container.
+    Beans form the backbone of the Spring Application and are the core building blocks that are wired together to create the application.
+
+Java Bean Class :
+    A serializable class with no-arguments constructor, often used to encapsulate data and adhere to JavaBeans conventions for easy integration with frameworks.
+    (A JavaBean is a type of POJO that follows specific conventions: it must be serializable, have a no-arg constructor, and use getters/setters for properties.)
+    Rules JavaBean Class :
+        1. Variables should be private,
+        2. it should have public getter/setter to get and set value in properties,
+        3. It should have default constructor (no explicitly defined constructor) or no-argument constructor (if defined, then should not insert parameters)
+
+Java Bean Object :
+    Object created by Spring Framework using Java BeanClass or POJO class is called Java Bean Object / Spring Bean
+    Java Bean Object is instance of Java Bean Class
+    It is reusable, encapsulated Java component with properties, getters and setters, designed for easy integration and manipulation
+
+Life-Cycle of Java Bean Object:
+    1. Loading Bean Definitions : (Searching for POJO or Bean Class)
+        Spring loads definitions from various sources like XML Based configuration, Java Based configuration or by Component Scanning
+        These beans definitions contains information about the bean class, dependencies and other configuration details
+        e.g. ->
+            1.1 Java Config
+                    @Configuration
+                    @ComponentScan("beans")  // beans package scan karega
+                    public class SpringConfig {
+                    }
+                                OR
+            1.2 XML
+                    <beans xmlns="http://www.springframework.org/schema/beans"
+                           xmlns:context="http://www.springframework.org/schema/context"
+                           xsi:schemaLocation="...">
+
+                        <context:component-scan base-package="beans"/>
+                    </beans>
+
+    2. Bean Instantiation : (Creating a Bean Object)
+        After bean definitions are loaded, the spring container creates instances of beans based on these definitions
+        This involves invoking the bean class's constructors, either the default constructors or specified constructor, to create an actual instance of the bean
+        The newly created bean instance is now read for configuration and initialization.
+        Values will be first as null for string properties and 0 for numeric property
+        e.g. ->
+            ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+
+            Here Constructor is called
+
+            @Component
+            public class Student {
+                public Student() {
+                    System.out.println("Student constructor called");
+                }
+            }
+
+    3. Bean Initialization : (Values will be injected from POJO class using setters or injections)
+        Once the bean is instantiated, Spring proceeds to configure and initialize it
+        Property values are set using setter, constructor arguments, or field injection, populating the bean state
+        e.g. ->
+            @Component
+            public class Student {
+                private String name;
+
+                public void setName(String name) {
+                    this.name = name;
+                }
+
+                public void display() {
+                    System.out.println("Name is " + name);
+                }
+            }
+
+            In Spring Config file,
+
+            @Configuration
+            public class SpringConfig {
+                @Bean
+                public Student std() {
+                    Student s = new Student();
+                    s.setName("Shikhil");  // setter injection
+                    return s;
+                }
+            }
+
+            OR in XML file
+
+            <!-- applicationContext.xml -->
+            <bean id="student" class="beans.Student">
+                <property name="name" value="Shikhil" />
+            </bean>
+
+    4. Use Bean Object :
+        using a bean object using context.getBean();
+        e.g.
+            Student std = (Student) context.getBean("std");
+            std.display();  // Output: Name is Shikhil
+
+    5. Bean Object Destruction :
+        it will be deleted
+        This process will be happen under the hood, but we should know this as well
+            @Component
+            public class Student implements DisposableBean {
+                @Override
+                public void destroy() {
+                    System.out.println("Bean is being destroyed");
+                }
+            }
+
+            in MainClass,
+
+            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+            context.close();  // destroy method call hoga
+
+Spring Annotations :
+    1. We mostly use java based configuration to configure our project with the help of some Annotations and not XML file
+    2. Annotations carry some metadata inside them so that we don't need to write that metadata everywhere.
+
+Defining Beans :
+    1. Using Stereotype Annotations (with CommandLineRunner and .run method of it)
+        Annotate your class with one of the stereotype annotations (@Component, @Service, @Repository, @Controller). There annotations inform Spring that the class should be managed as a bean.
+
+    2. Using @Bean Annotation in a Configuration Class (with config file)
+        Define beans manually in a Java class marked with @Configuration.
+            You create a method that returns the object you want as a bean.
+            Annotate that method with @Bean.
+            Spring will call that method and register the returned object as a bean.
+
+Scope of the Beans :
+    1. Singleton -> (Default) Scopes a single bean definition to a single instance for each Spring IoC container
+            "One shared instance for everyone."
+                Spring creates just one object of the bean and shares it everywhere in the application.
+                Example: Like a printer in an office – everyone uses the same one.
+    2. Prototype -> Scopes a single bean definition to any number of object instances
+            "New object every time you ask."
+                Spring creates a new object every time the bean is requested.
+                Example: Like ordering custom coffee – you get a fresh cup every time.
+    3. request -> Scopes a single bean definition to lifecycle of single HTTP request. That is each HTTP request has its own instace of bean created off the back of a single bean definition. Only valid in the context of a web-aware Spring ApplicationContext
+            "One bean per web request."
+                For each HTTP request, Spring gives you a new instance of the bean.
+                Valid only in web applications.
+                Example: Like a ticket for each person at a cinema – each request gets its own ticket.
+    4. websocket -> Scopes a single single bean definition to lifecycle of a websocket. Only valid in the context of a web-aware Spring ApplicationContext.
+            "One bean per WebSocket connection."
+                For each WebSocket connection, Spring creates a new bean instance.
+                Again, valid only in web apps that use WebSockets.
+                Example: Like having a private chat room – each user connection has its own room.

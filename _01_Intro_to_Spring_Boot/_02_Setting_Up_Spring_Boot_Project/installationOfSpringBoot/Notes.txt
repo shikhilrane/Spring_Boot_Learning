@@ -1,0 +1,50 @@
+Creating a Spring Boot Project
+    1. Sts (Spring Tool Suite) :
+        1. Go to "https://spring.io/tools" and download Spring tool for eclipse for according to system. (STS - Spring Tool Suite)
+        2. Extract the zip file and Install the spring tool for eclipse.
+        3. For first project, go to
+            File > New > Spring Starter Project
+                Keep Service URL as it is.
+                Name your Project
+                select type maven
+                select version 1.0
+                select package
+            > Next
+                Add dependency if want
+            > Finish
+        4. In src/main/java,
+            in.sp.main that we created package while creating a project
+                In that package, we have our main java file. That file will be the entry point of Spring Boot Application
+
+    2. Spring Initializr with IntelliJ Idea -
+        1. Go to https://start.spring.io/
+        2. Project - Select build tool - Select Maven or Gradle (A build tool is used to bundle everything related to a project—like code, dependencies, and resources—into a single package for building, testing, and deployment.) (Use Maven mostly)
+        3. Language - Java
+        4. Spring Boot - latest stable (Without snapshot and M version)
+        5. Project Metadata -
+            5.1 Group - project structure and base package
+            5.2 Artifact - Artifact is the project's unique name
+            5.3 Name - Name is the display title
+            5.4 Description - Description explains the project
+            5.5 Package Name - Package Name sets the base Java namespace
+            5.6 Packaging - JAR (JAR is used to package backend applications as standalone units) and WAR (WAR packages web applications and includes backend code along with web resources like HTML, CSS, JavaScript, and JSP files for deployment on a web server)
+            5.7 Java - Specifies the Java version used in the project (21 for modern language features and improvements)
+        6. Dependencies - Dependencies are pre-built modules (like Spring Web, Spring Data JPA, MySQL Driver, etc.) that you add to your project to enable specific features or integrations.
+        7. Generate the project
+        8. After downloading the zip file, extract it then open it in IntelliJ Idea
+
+Understanding the file Structure -
+    1. .mvn - Maven's files
+    2. src -
+        2.1 - main - Actual Business logic
+            2.1.1 - java (it contains the package name and main class)
+        2.2 - test - testing codes of unit testing, integration testing, API testing
+    3. pom.xml - it manages dependencies and versions
+        As we have checked java version 21, we can see that there
+        But we must have JDK with 21 or more than 21, so just go to project structure(cmd+;) and check JDK accordingly and download
+    4. application.properties - It is use to configure our Spring Boot project like web, DB, SB project
+
+Run the Project from CreateSbProjectApplication file,
+    1. It will show error because we haven't gave any code that will run by this file.
+    2. We created HelloWorld class that has method message and it will return a String and returned a String in method
+    3. Gave annotation to @RestController so that HelloWorld class will act as main controller, and @GetMapping("/") so that this method will run on root (i.e. /)

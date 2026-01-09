@@ -1,0 +1,6 @@
+1. @SpringBootApplication -> Marks the main class of a Spring Boot application and enables auto-configuration, component scanning, and configuration properties.
+2. @Service -> Marks a class as a Spring service component, used to define business logic in the service layer.
+3. @Autowired -> Automatically injects dependencies (beans) by type from the Spring container.
+4. @Component -> Marks a class as a Spring-managed component for automatic detection and dependency injection.
+5. @ConditionalOnProperty(name = "...", havingValue = "...") –> Loads the bean only if the specified property has the given value in the application properties.
+6. @Qualifier("method_name") - This annotation in Spring helps pick the right bean among multiple beans of same type. Use to resolve Ambiguity.

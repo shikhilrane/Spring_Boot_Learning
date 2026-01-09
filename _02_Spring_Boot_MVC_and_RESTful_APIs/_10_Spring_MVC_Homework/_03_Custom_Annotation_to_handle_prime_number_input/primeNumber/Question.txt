@@ -1,0 +1,1 @@
+Q. Create custom Annotation to handle a Prime number input

@@ -1,0 +1,7 @@
+package com.exceptionHandling.ExceptionHandling.exceptions;
+
+public class ResourceNotFoundExeption extends RuntimeException{
+    public ResourceNotFoundExeption(String message) {
+        super(message);
+    }
+}

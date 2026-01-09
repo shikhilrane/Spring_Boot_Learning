@@ -1,0 +1,20 @@
+Service layer ->
+    It is used to communicate between controller(Presentation to handle user interaction) and repository (Persistence which is responsible for data access) layer
+    It contains business logic of application
+
+1. Copied the project from repository/persistence project
+2. Created services package, and created EmployeeService class and instead of giving reference of repository directly in controller we give reference in service layer and wrote login directly in it
+3. In Controller, created reference of EmployeeService and made constructor of it.
+4. From every method, returned EmployeeDto
+5. In EmployeeService, created reference of EmployeeRepository and made constructor of it.
+6. Also created MapperConfig class in config folder, created getModelMapper method that return object of ModelMapper class
+7. In EmployeeService, created reference of ModelMapper and made constructor of it.
+    (ModelMapper -> ModelMapper is a tool that helps automatically copy data from one object to another — like copying info from a form to a database object — so you don’t have to write the copying code yourself.)
+    We put ModelMapper in a separate class inside the config folder so it’s set up once and can be used easily anywhere in the app.
+
+Dependencies
+    1. Web
+    2. JPA
+    3. H2
+    4. Lombok
+    5. ModelMapper (used it rom maven library)

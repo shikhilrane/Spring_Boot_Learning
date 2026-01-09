@@ -1,0 +1,8 @@
+PUT PATCH DELETE ->
+
+Dependencies
+    1. Web
+    2. JPA
+    3. H2
+    4. Lombok
+    5. ModelMapper (used it rom maven library)

@@ -1,0 +1,122 @@
+Spring Data JPA -
+            1. Spring Data JPA is a part of larger spring data family
+            2. Builds on top of JPA
+            3. Spring Data JPA makes it easier to implement JPA-based repositories by providing boilerplate code, derived query methods, and utilities, so we don’t need to write common methods like findById() and findAll() manually.
+            4. We can write methods manually in JPQL (Java Persistence Query Language)
+            5. Repositories provided by Spring Data JPA :
+                a. Repository – Marker interface used to enable Spring Data repository features.
+                b. CrudRepository – Provides basic CRUD operations like save, find, delete, and count.
+                c. PagingAndSortingRepository – Extends CRUD and adds pagination and sorting support.
+                d. JpaRepository – Extends CRUD and Paging, adds JPA-specific methods like flush and batch operations.
+                e. JpaSpecificationExecutor – Provides support for dynamic and complex queries using Specifications.
+                                        Repository
+                                           ↓
+                                        CrudRepository
+                                           ↓
+                                        PagingAndSortingRepository
+                                           ↓
+                                        JpaRepository
+
+                    | Repository                 | CRUD  | Paging  | Sorting |     JPA Features      |
+                    | -------------------------- | ----- | ------- | -------- | -------------------- |
+                    | Repository                 | ❌    | ❌      | ❌       | ❌                   |
+                    | CrudRepository             | ✅    | ❌      | ❌       | ❌                   |
+                    | PagingAndSortingRepository | ✅    | ✅      | ✅       | ❌                   |
+                    | JpaRepository              | ✅    | ✅      | ✅       | ✅                   |
+                    | JpaSpecificationExecutor   | ❌    | ❌      | ❌       | ✅ (Dynamic Queries) |
+            6. There operations are defined in SimpleJpaRepository, from which JpaRepository is implemented by.
+            7. We can test our cases in test folder. there,
+                We need to Autowired the repository
+                we write methods to add data, get all data, get data by id, and etc.
+
+    Key Features of Spring Data JPA :
+        1. Repository Abstraction : Provides a Repository interface with methods for common data access operations
+        2. Custom Queries Methods : Allows defining custom query methods by simply declaring method names (like if we want to look for products between some range)
+        3. Pagination and Sorting : Offers built-in support for Pagination and Sorting
+        4. Query Derivation : Automatically generates queries with method names (automatic means it follows rules to generate)
+            e.g. In test file, we created a method queryDerivation() that returns List of ProductEntity by method findByTitle() and passed title of sku. It wont generate if we provide titles because in our entity class there is not anything like titles.
+                 Then we need to create a method with same name in ProductRepository as well
+                 So now, when we run that method from test, then all the entries of same title will be returned
+
+            Rules for creating Query Methods :
+                List<ProductEntity> findByDateCreatedBetween(LocalDateTime startDate, LocalDateTime endDate);
+                        ^              ^            ^                       ^
+                   Return Type    Query Subject    Query Predicate      Input Parameters
+
+                   1. Return type - It can be like List<>, Optional<>, or ProductEntity itself
+                   2. Query Subject - countBy, findBy, updateBy. Indicates the type of operation to perform
+                   3. Query Predicate - inside DateCreatedBetween we have one more operator i.e. Between. Specifies the field (dateCreated) and condition (Between)
+                   4. Input Parameters - Parameters that we provide. Values used by the predicate to filter data
+            Spring reads your method name → converts it into SQL → binds parameters → returns mapped Java objects
+
+                   Rules of Method Names :
+                      1. The name of query method must start with one of the following prefix : findBy, readBy, queryBy, and getBy
+                          Example : findByName, readByName, queryByName, getByName
+                      2. If we want to limit the number of returned query results we can add First or Top keyword before first by word.
+                          Example : findFirstByName, readFirst2ByName, findTop10ByName
+                      3. If we want to select unique results, We have to add distinct keyword before the First by word
+                          Example : findDistinctByName or findNameByDistinct
+                      4. Combine property expression with AND or OR
+                          Example : findByNameOrDescription, findByNameAndDescription
+                      More rules on : https://docs.spring.io/spring-data/jpa/reference/repositories/query-keywords-reference.html
+
+                   Created a sample method in ProductRepository :
+                   1.
+                        List<ProductEntity> findByCreatedAtAfter(LocalDateTime after);
+                     Implemented it in Test,
+                        @Test
+                        void findByCreatedAtAfter(){
+                            List<ProductEntity> entities = productRepository.findByCreatedAtAfter(LocalDateTime.of(2025, 12, 30, 0,0,0));
+                            System.out.println(entities);
+                        }
+                   2.
+                        List<ProductEntity> findByQuantityAndPrice (Integer qty, BigDecimal price);
+                     Implemented it in Test,
+                        @Test
+                        void findQtyAndPrice(){
+                            List<ProductEntity> byQuantityAndPrice = productRepository.findByQuantityAndPrice(14, BigDecimal.valueOf(234));
+                            System.out.println(byQuantityAndPrice);
+                        }
+                   3.
+                        List<ProductEntity> findByQuantityGreaterThanAndPriceLessThan (Integer qty, BigDecimal price);
+                     Implemented it in Test,
+                        @Test
+                        void findQtygreaterthanAndPriceLesserThan(){
+                            List<ProductEntity> conditionalmethod = productRepository.findByQuantityGreaterThanAndPriceLessThan(12, BigDecimal.valueOf(300));
+                            System.out.println(conditionalmethod);
+                        }
+                   4.
+                        List<ProductEntity> findByTitleLike (String title);
+                     Implemented it in Test,
+                        @Test
+                        void findByLike(){
+                            List<ProductEntity> byLike = productRepository.findByTitleLike("%Biscuit%");
+                            System.out.println(byLike);
+                        }
+                   5.
+                        List<ProductEntity> findByTitleContaining (String title); // This method is in JpaTutApplicationTests.java (Used Containing variable here)
+                     Implemented it in Test,
+                        @Test
+                        void findByContaining(){
+                            List<ProductEntity> byLike = productRepository.findByTitleContaining("Biscuit");
+                            System.out.println(byLike);
+                        }
+                   6.
+                        List<ProductEntity> findByTitleContainingIgnoringCase (String title); // This method is in JpaTutApplicationTests.java (Used Containing variable and will ignore the case)
+                     Implemented it in Test,
+                        @Test
+                        void findByContainingIgnoringcase(){
+                            List<ProductEntity> byLike = productRepository.findByTitleContainingIgnoringCase("BiScuiT");
+                            System.out.println(byLike);
+                        }
+                   7.
+                            // JPQL
+                            // @Query("SELECT e from ProductEntity e where e.title=?1 and e.price=?2")
+                            @Query("SELECT e from ProductEntity e where e.title=:title and e.price=:price") // 2nd way of writing custom jpql queries
+                            Optional<ProductEntity> findByTitleAndPrice(String title, BigDecimal price);
+                     Implemented it in Test,
+                        @Test
+                        void findByTitleAndPrice(){
+                            Optional<ProductEntity> pepsiDrink = productRepository.findByTitleAndPrice("Pepsi Drink", BigDecimal.valueOf(300));
+                            System.out.println(pepsiDrink);
+                        }

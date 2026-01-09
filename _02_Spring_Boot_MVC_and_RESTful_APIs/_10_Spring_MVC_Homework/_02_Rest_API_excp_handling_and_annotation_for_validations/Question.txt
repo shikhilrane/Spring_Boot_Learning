@@ -1,0 +1,30 @@
+01. Create the following REST endpoints for the following Entity,
+
+Department
+- id
+- title
+- isActive
+- createdAt
+
+REST APIS:
+GET: /departments
+POST: /departments
+PUT: /departments
+DELETE: / departments
+GET: /departments/{id}
+
+Q2. Write Exception Handling logic for the Department Entity.
+
+Q3. Add the appropriate fields in the Department and Employee Entities so that the following validations can be added:
+@Null, @NotNull, @AssertTrue, @AssertFalse, @Min, @Max, @DecimalMin, @DecimalMax, @Negative, @NegativerZero, @Positive, @PositiverZero,
+@Size,
+@Digits, @Past,
+@PastOrPresent, @Future, @FutureOrPresent,
+@Pattern,
+@Email,
+@NotEmpty,
+@NotBlank,
+@Length,
+@Range,
+@CreditCardNumber,
+@URL

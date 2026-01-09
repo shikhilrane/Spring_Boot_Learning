@@ -1,0 +1,7 @@
+pom.xml ->
+    maven is popular build automation tool used in many java projects. In a Spring Boot Project, dependencies are specified in pom.xml file. Maven then resolves these dependencies and includes them in a classpath
+    Starters like spring-boot-starter-parent include a ton of third-party libraries into your project by default. Its AutoConfigurations use these dependencies to setup and preconfigure these libraries automatically
+
+Auto-Configuration ->
+    Autoconfiguration refers to mechanism that automatically configures Spring Application based on dependencies present on the classpath and other application-specific settings.
+    This feature simplifies the setup and development process, allowing developers to focus more on writing business logic rather than configuring the framework.

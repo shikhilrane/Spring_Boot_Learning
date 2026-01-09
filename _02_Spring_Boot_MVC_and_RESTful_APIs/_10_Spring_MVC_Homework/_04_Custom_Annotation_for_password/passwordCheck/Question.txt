@@ -1,0 +1,5 @@
+Q. Create custom Annotation to check if the Password String field satisfies the following criteria:
+a. contains one uppercase letter
+b. contains one lowercase letter
+c. contains one special character
+d. minimum length is 10 characters

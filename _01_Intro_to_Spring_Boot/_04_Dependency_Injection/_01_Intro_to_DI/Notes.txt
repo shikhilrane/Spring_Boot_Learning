@@ -1,0 +1,44 @@
+Design Pattern :
+    1. Design patterns are like pre-tested and proven blue print for solving common software problems
+    2. They help developers write cleaner, more organized code by following established patterns for various tasks
+    3. Examples :
+        1. Singleton Pattern
+        2. Factory Method Pattern
+        3. DAO Design Pattern
+        4. MVC Design Pattern
+
+Dependency Injection ->
+
+    1. Dependency Injection is a type of design pattern
+    2. It is use to inject Dependency means one object into another object
+    3. Example :
+                                        Class 1                                               Class 2
+                                    class Student{                                      class Address{
+                                        private String name;                               private String city;
+                                        private Address address;                           private int pincode;
+
+                                        // getter setter                                   // getter and setter
+                                    }                                                  }
+
+                                ---------------------------                            ---------------------------
+                                |                         |         Injecting          |                         |
+                                |     Student's Object    |<------<-----<------<------<|    Address's Object     |
+                                |                         |                            |                         |
+                                ---------------------------                            ---------------------------
+
+        Here, inject object of Address class injecting into object of Student class using configurations. (XML, Java, or Annotation)
+
+
+Need of Dependency Injection ->
+    1. If we didn't use DI then, we will hardcode everything and that will increase the dependency of classes on each other.
+    2. Code Coupling
+        1. Hard Code : means directly putting specific values (e.g.numbers or String) in your code rather than using variable or external variables. This an make code unreadable
+        2. Tightly coupled : These classes have string dependency, where one class directly depends on another class
+        3. Loosely coupled : These classes minimizes dependencies and make code more maintainable and flexible (BEST)
+    3. DI is use to achieve loose coupling in Java
+
+Achieving DI :
+    There are 2 ways to achieve dependency injection
+        1. Setter Method DI (Rarely used)
+        2. Constructor DI (Widely used)
+        3. Field Injection (Using @Autowired annotation) (Sometime useful)

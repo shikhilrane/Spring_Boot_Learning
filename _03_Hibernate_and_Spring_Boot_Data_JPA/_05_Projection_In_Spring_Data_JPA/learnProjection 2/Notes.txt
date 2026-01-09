@@ -1,0 +1,95 @@
+Projection in Spring Data JPA :
+    Using projection we only provide the fields required by the user and not return all the fields from entity. It secures our application but more
+
+    1. Retrieving all patient's all info in test (Instead of creating API we can test our code directly here as well, Also we will see test in great detail in later part)
+        In test,
+            @Test
+            public void testPatient(){
+                List<Patient> patientList = patientRepository.findAll();
+                for (Patient i : patientList){
+                    System.out.println(i);
+                }
+            }
+
+    2. Using Interface
+        Retrieving all patient's id, name and email in test using IPatientInfo interface, and then created method for this interface in PatientRepository and wrote JPQL Query and the tested in test file.
+        In IPatientInfo,
+            Long getId();
+            String getName();
+            String getEmail();
+        In PatientRepository,
+            @Query("select p.id as id, p.name as name, p.email as email from Patient p")
+            List<IPatientInfo> getAllPatientsInfo();
+        In test,
+            @Test
+            public void getAllInfo(){
+                List<IPatientInfo> allPatientsInfo = patientRepository.getAllPatientsInfo();
+                for (IPatientInfo p : allPatientsInfo) {
+                    System.out.println( "ID=" + p.getId() + ", Name=" + p.getName() + ", Email=" + p.getEmail());
+                }
+            }
+        This way we can only view the data but can't modify the data as we have used interface here.
+        So to modify data we have to use class
+
+    3. Using Class
+        Retrieving all patient's id and name test using CPatientInfo class, and then created method for this class in PatientRepository and wrote JPQL Query and the tested in test file. Also add new keyword in JPQL query as it returns new object from DB and also pasted the path of the CPatientInfo class
+        In CPatientInfo,
+            @Data
+            @AllArgsConstructor
+            @NoArgsConstructor
+            public class CPatientInfo {
+                private Long id;
+                private String name;
+            }
+        In PatientRepository,
+            @Query("select new com.shikhilrane.projection.learnProjection.dto.CPatientInfo (p.id, p.name) from Patient p")
+            List<CPatientInfo> getAllPatientsInfoConcrete();
+        In test,
+            @Test
+            public void getAllInfoC(){
+                List<CPatientInfo> allPatientsInfoConcrete = patientRepository.getAllPatientsInfoConcrete();
+                for (CPatientInfo p : allPatientsInfoConcrete){
+                    System.out.println(p);
+                }
+            }
+        This way we can view and modify the data.
+
+    4. Aggregate Query
+        When we want to count the number of people with specific column count (i.e. count the number of people having same blood group)
+        Retrieving all patient's BloodGroupType and count test using BloodGroupStats class, and then created method for this class in PatientRepository and wrote JPQL Query and the tested in test file. Also add new keyword in JPQL query as it returns new object from DB and also pasted the path of the CPatientInfo class
+        In BloodGroupStats,
+            @Data
+            @AllArgsConstructor
+            public class BloodGroupStats {
+                private final BloodGroupType bloodGroupType;
+                private final Long count;
+            }
+        In Repository,
+            @Query("select new com.shikhilrane.projection.learnProjection.dto.BloodGroupStats (p.bloodGroup, COUNT(p)) from Patient p group by p.bloodGroup order by COUNT(p) DESC")    // Same as Class just we added order here
+            List<BloodGroupStats> getCountOfBloodGroupPeople();
+        In test,
+            @Test
+            public void getCountOfBloodGrp(){
+                List<BloodGroupStats> countOfBloodGroupPeople = patientRepository.getCountOfBloodGroupPeople();
+                for (BloodGroupStats p : countOfBloodGroupPeople){
+                    System.out.println(p);
+                }
+            }
+
+    5. Change the data
+        We can also update or delete queries, These are modifying queries
+        To change the data in DB using JPQL queries, for that we have to take some extra precautions like we have to use TransactionalContext and Modifying Annotations. So that we can tell DB that this query is supposed to modify the data.
+        Writing the program to change the name of the patient's name by using his id.
+        Here, query will tell us that number rof rows that have been affected,
+        In Repository,
+            @Transactional
+            @Modifying
+            @Query("update Patient p set p.name = :name where p.id = :id")
+            int updatePatientNameWithId(@Param("name") String name, @Param("id") Long id);
+        In test,
+            @Test
+            @Transactional
+            public void updatePatient(){
+                int updated = patientRepository.updatePatientNameWithId("Ishant Sharma", 10L);
+                System.out.println("Number of Rows affected : " + updated);
+            }

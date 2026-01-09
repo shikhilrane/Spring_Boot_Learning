@@ -1,0 +1,7 @@
+Spring Boot -
+    1. Starter Dependencies
+    2. Auto Configuration
+    3. Externalized Configuration
+    4. Embedded tomcat and jetty server
+    5. Build-in Metrics and Health Checks
+    6. We don't need to take care of version of any dependencies

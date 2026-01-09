@@ -1,0 +1,65 @@
+Maven ->
+    1. Maven is a build automation tool and project management tool primarily used for Java Projects.
+    2. It plays crucial role in development, build and dependency management of Spring application, including those using Spring Framework's component scanning and annotation driven configuration.
+    3.
+                                            pom.xml-------> Maven =========> .jar / .war
+                                                             ^
+                                                             |
+                                                             |
+                                                             |
+                                                        Dependencies
+    4. Maven is build tool, project and Dependency management tool.
+    5. It provides a structured way to manage Java Projects by defining project structure, dependencies and build configurations using a declarative XML-based format(pom.xml)
+    6. Developers use Maven to specify project's metadata, dependencies, plugins, repositories and other related configurations
+    7. Spring and its various modules are managed as dependencies in maven projects. Developers specify the Spring dependencies in the pom.xml and maven handles the rest.
+
+    8. Maven commands
+    Project Build & Compilation ->
+        | Command                | Description                                          |
+        | ---------------------- | ---------------------------------------------------- |
+        | `./mvnw clean`         | Deletes the `target/` directory (cleans the project) |
+        | `./mvnw compile`       | Compiles source code of the project                  |
+        | `./mvnw test-compile`  | Compiles test source code                            |
+        | `./mvnw clean compile` | Cleans and compiles the project                      |
+
+    Testing ->
+        | Command         | Description                                          |
+        | --------------- | ---------------------------------------------------- |
+        | `./mvnw test`   | Runs unit tests                                      |
+        | `./mvnw verify` | Verifies the project (runs integration tests if any) |
+
+    Packaging ->
+        | Command          | Description                                                |
+        | ---------------- | ---------------------------------------------------------- |
+        | `./mvnw package` | Packages the compiled code (e.g., into a `.jar` or `.war`) |
+        | `./mvnw install` | Installs the package to your local `.m2` repository        |
+        | `./mvnw deploy`  | Deploys the package to a remote repository (for release)   |
+
+    Running Applications ->
+    For Spring Boot or similar projects:
+        | Command                  | Description                          |
+        | ------------------------ | ------------------------------------ |
+        | `./mvnw spring-boot:run` | Runs a Spring Boot application       |
+        | `./mvnw exec:java`       | Executes a Java class (needs config) |
+
+    Dependency Management ->
+        | Command                     | Description               |
+        | --------------------------- | ------------------------- |
+        | `./mvnw dependency:resolve` | Downloads dependencies    |
+        | `./mvnw dependency:tree`    | Shows the dependency tree |
+        | `./mvnw dependency:list`    | Lists all dependencies    |
+
+    Project Info ->
+        | Command                          | Description                                       |
+        | -------------------------------- | ------------------------------------------------- |
+        | `./mvnw help:effective-pom`      | Shows the effective POM with all inherited config |
+        | `./mvnw help:effective-settings` | Shows effective settings.xml                      |
+        | `./mvnw validate`                | Validates the project structure and config        |
+
+    Cleaning and Rebuilding ->
+        | Command                | Description                                |
+        | ---------------------- | ------------------------------------------ |
+        | `./mvnw clean install` | Common full rebuild: clean, build, install |
+        | `./mvnw clean verify`  | Clean and run tests/integration checks     |
+        | `./mvnw clean package` | Clean and package project                  |
+

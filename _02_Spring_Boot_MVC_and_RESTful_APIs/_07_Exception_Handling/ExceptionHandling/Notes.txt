@@ -1,0 +1,21 @@
+Dependencies
+    1. Web
+    2. JPA
+    3. H2
+    4. Lombok
+    5. ModelMapper (used it rom maven library)
+    6. starter validation
+
+Exception Handling ->
+    1. Handling the error with try{}...catch{} block
+    2. Need of Handling exceptions
+        Prevent application crash   ->  If we tried to divide any number with 0, then app will crash , then we can use try{}...catch{} block
+        Provide user-friendly error responses   -> Use to show user the actual problem
+        Facilitates debugging and maintenance   -> You can log error and can debug easily from that logs
+        Ensure consistent error handling across the application
+    3. Handling Exceptions
+        Use @ExceptionHandler to handle specific exceptions in controllers
+        Use @RestControllerAdvice for global exception handling
+        Return appropriate HTTP status code and error message
+        Use Custom error response to provide structured error details
+

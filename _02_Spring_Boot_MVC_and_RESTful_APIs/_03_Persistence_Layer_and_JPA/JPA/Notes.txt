@@ -1,0 +1,22 @@
+Persistence layer (Repository) ->
+
+1. Created a Spring Boot Project with Spring web and Data JPA dependencies.
+2. Also we have used H2 database for that we added its dependency (H2 is a lightweight, in-memory, open-source relational database written in Java, often used for testing and development.)
+3. Created a controller and dto as we did it in last project
+4. Created an entities package and Created an EmployeeEntity class in it and mark that class as @Entity,
+    Used lombok dependency to use @Getter, @Setter, @AllArgsConstructor, @NoArgsConstructor that will directly done the work for getter setter and constructor
+5. Copied the properties from EmployeeDto that will create a table with the column name of the properties
+6. Created repositories packages, in which created EmployeeRepository interface (we don't have to define our own implementations so we made it interface and extends it from JpaRepository that will be responsible for CRUD operations) and in diamond brackets we have to provide which entity we want to handle and type of the ID of entity.
+7. In Controller, created a reference for EmployeeRepository with private final, As it become private final we have to use it in constructor.
+8. Created methods for findById, findAll and save (these are defined in JpaRepository) so we have to directly use it
+9. run the program from Postman to POST & GET
+
+application.properties
+to view h2 db details on UI,
+    spring.h2.console.enabled=true              ->  This will let us see log
+    spring.datasource.url=jdbc:h2:mem:testdb    ->  This is source of url at which db is placed
+    spring.datasource.username=shikhilDB        ->  username for db
+    spring.datasource.password=Shikhil@4        ->  password for db
+    spring.jpa.hibernate.ddl-auto=update        ->  this will update the db even after reconnecting
+Go to http://localhost:8080/h2-console and put url, username and password
+if we added employee using POST method from postman then we can see all that data here in UI

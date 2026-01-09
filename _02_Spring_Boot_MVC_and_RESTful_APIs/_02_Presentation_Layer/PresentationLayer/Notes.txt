@@ -1,0 +1,3 @@
+Presentation Layer (Controller) ->
+    It is responsible for communication between client and application
+    It is responsible for request and response

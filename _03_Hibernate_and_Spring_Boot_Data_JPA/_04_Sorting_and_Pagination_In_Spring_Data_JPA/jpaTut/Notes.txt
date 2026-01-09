@@ -1,0 +1,85 @@
+Sorting : If we want to sort. E.g. when we sort/filter items on amazon
+          We have lots of methods to achieve sorting using Spring Data JPA as following :
+            OrderBy : Use to sort by order of the field
+            Example -
+                1.
+                    In Repository,
+                        List<ProductEntity> findByTitleOrderByPrice(String title);
+                    In Controller,
+                        @GetMapping("/singleProduct")
+                        public List<ProductEntity> getProduct(){
+                            return productRepository.findByTitleOrderByPrice("Lays Chips");
+                        }
+                    It will give all the items with same title
+                2.
+                    In Repository,
+                        List<ProductEntity> findByOrderByPrice();
+                    In Controller,
+                        @GetMapping("/priceAscending")
+                        public List<ProductEntity> getAllProducts(){
+                            return productRepository.findByOrderByPrice();
+                        }
+                    It will give all the items in ascending order of price
+          But it is tightly coupled and we need to write multiple methods to sorts on different parameters)
+
+          To overcome this, We should use Sort Class
+            Sort Parameters In Query Methods so that it will implement sorting logic,
+                Example
+                In Repository,
+                    List<ProductEntity> findByOrderByPrice(Sort sort);
+                In Controller,
+                    @GetMapping("/sortByClass")
+                    public List<ProductEntity> getAllBySortClass(@RequestParam(defaultValue = "id") String sortBy){
+                        // return productRepository.findBy(Sort.by(sortBy));    // It will sort id in ascending order as we provided default value os id
+                        // return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy));   // It will sort in descending order
+                        // return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy, "price"));  // If default value (i.e. if ids are same) then sort them on basis of price
+                        return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy, "price", "quantity")); // If default value (i.e. if ids are same) then sort them on basis of price and even if price is same then sort them on basis of quantity
+                    }
+                    // If we want to sort wrt to title then pass, sortByClass?sortBy=title, so it will sort according to title
+
+          | Approach   |  Flexible | Scalable  |  Recommended |
+          | ---------- | ----------| --------- | ------------ |
+          | OrderBy    | ❌        | ❌        | ❌           |
+          | Sort Class | ✅        | ✅        | ✅           |
+
+
+Pagination :
+    A single chunk of data that contains a subset of total dataset. It is an interface representing a page of data, including information about the total number of pages, total number of elements, and the current page's data
+    Use to show content in small format. E.g. When there is lot of data then we see next page option on amazon website
+    We don't need to write lot of code for pagination because spring data JPA has already provided lot of functionalities for Pagination like Pagable and Pages.
+
+    Pagable :
+        An interface tha provides pagination information such as page number, page size and the sorting options
+        PageRequest : A concrete implementation of pageable that provides methods to create pagination and sorting information
+        InShort : PageRequest takes Pageable as input and returns page also Pageable have sorting in it as well
+
+        1st way :
+            @GetMapping("/pageable")
+            public List<ProductEntity> getAllByPageableClass(@RequestParam(defaultValue = "id") String sortBy,
+                                                             @RequestParam(defaultValue = "0") Integer pageNumber){
+                Pageable pageable = PageRequest.of(
+                        pageNumber,     // pageNumber , If we want to between pages, pageable?pageNumber=2, so it will sort according to title. Index of paging starts from 0
+                        PAGE_SIZE,      // number of elements on single page
+                        Sort.by(Sort.Direction.ASC, sortBy, "price", "quantity")); // sorting
+                return productRepository.findAll(pageable).getContent();    // getContent() provide only main content and not all the info about page
+            }
+
+        2nd way :
+            In Repository,
+                List<ProductEntity> findByTitleContainingIgnoringCase (String title, Pageable pageable);
+            In Controller,
+                @GetMapping("/pageableOpt")
+                public List<ProductEntity> getAllByPageableClassOptimised(
+                        @RequestParam(defaultValue = "") String title,  // If we pass, ?title=co, then it will return all the titles that contains co
+                        @RequestParam(defaultValue = "id") String sortBy,
+                        @RequestParam(defaultValue = "0") Integer pageNumber){
+                    return productRepository.findByTitleContainingIgnoringCase(
+                            title,
+                            PageRequest.of(pageNumber, PAGE_SIZE, Sort.by(Sort.Direction.ASC, sortBy, "price", "quantity"))
+                    );
+                }
+
+NOTE : Added more entries in table by creating data.sql file in resources and gave reference in application.properties by,
+            spring.sql.init.mode=always
+            spring.jpa.defer-datasource-initialization=true
+       putting these lines

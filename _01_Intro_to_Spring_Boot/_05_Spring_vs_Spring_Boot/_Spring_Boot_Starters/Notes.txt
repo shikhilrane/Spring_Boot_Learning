@@ -1,0 +1,65 @@
+Spring Boot Starters :
+    1. Spring Boot starters are "Dependency Descriptors".
+        Dependency - External libraries or JARs
+        Descriptors - Configurations specifying JARs and their versions.
+        So, It basically tells, which JAR files are adding and their versions and which configurations are going to add and which configurations Spring Boot provides automatically
+    2. It Combines all the necessary libraries (JAR files) for a particular features or technology into a single Dependency (spring-boot-starter-web).
+        If we want to create Spring Boot Web Applications, then in that case i need some JAR files like web.jar, web-mvc.jar, validation.jar, tomcat.jar, loggin.jar, etc. and other basic JAR files like AOP, Spring Core, Spring Context, Spring Expression, etc. then in that case i will only provide single Spring Boot Starter (i.e. dependency) and that Starter will add all these JAR files in our code
+    Example :
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot<groupId>          // Identifies the group or organization
+                <artifactId>spring-boot-starter-web<artifactId>     // The actual library or module
+                <version>3.2.0<version>                             // The version of the library
+            </dependency>
+            ---
+        </dependencies>
+
+    NOTE : If you're using Spring Boot's parent POM (i.e. pom.xml), you usually don’t need to specify the version for starters like spring-boot-starter-web because it inherits it automatically.
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </dependency>
+            </dependencies>
+
+            // We can even add other dependencies as well for DB and Testing
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-data-jpa</artifactId>
+                </dependency>
+            </dependencies>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-test</artifactId>
+                </dependency>
+            </dependencies>
+
+Use of Spring Boot Starter
+    1. Simplifies Configuration :
+        Starters automatically include the right libraries and setting we need, so that we can write code faster
+    2. Boost Productivity :
+        Saves time and efforts by providing sensible defaults and configurations, allowing  developers to focus on writing business logic rather than managing dependencies.
+    3. Ensure Compatibility :
+        Ensure that all included dependencies are compatible with each other and the Spring boot version being used, reducing the risk of conflicts.
+
+Important Spring Boot Starters :
+    1. spring-boot-starter
+        It is a core starter that includes auto-configuration support, logging, and YAML processing.
+    2. spring-boot-starter-web
+        It provides dependencies to build web applications, including Spring MVC, RESTful services and embedded Tomcat. Also Logging and Validations
+    3. spring-boot-starter-data-jpa
+        It provides dependencies for Spring Data JPA, Hibernate and database connection pool.
+    4. spring-boot-starter-security
+        It includes Spring Security and its dependencies for securing apps.
+    5. spring-boot-starter-thymeleaf (Server-side rendering with Thymeleaf)
+        It integrates the Thymeleaf templating engine with Spring MVC
+    6. spring-boot-starter- test
+        It includes testing libraries like JUnit, Hamcrest, and Mockito
+    7. spring-boot-starter-actuator
+        It provides production ready features to help monitor and manage your applications, including health checks and metrics
+    8. spring-boot-starter-aop
+        It brings in support for aspect oriented programming using Spring AOP and AspectJ.

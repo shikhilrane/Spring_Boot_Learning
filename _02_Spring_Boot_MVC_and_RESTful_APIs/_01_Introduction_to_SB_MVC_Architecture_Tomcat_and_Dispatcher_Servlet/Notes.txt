@@ -1,0 +1,293 @@
+API ->
+    API (Application Programming Interface) ->
+        1. API is a piece of code that includes classes, interfaces and methods.
+        2. API provides proper documentation that includes the rules, protocols, & guidelines to use API correctly and efficiently
+            e.g. JDBC is an API, that has some rules like,
+                    1. JDBC API Rules :
+                        DB connection using DriverManager.getConnection().
+                        Retrieve query results using ResultSet
+                        Retrieve query using ResultSet
+                        Properly close DB connection, statements and result sets to avoid memory leaks
+                    2. JDBC API Protocols :
+                        JDBC Drivers follows the DriverManager protocol to manage and loads drivers that communicate with DB
+                        JDBC follows the sql protocol for communication between the java application and the RDBMS
+                    3. JDBC API Guidelines :
+                        Use PreparedStatement over statement to prevent SQL Injection
+                        Always close resources in finally or use try-with-resources
+                        Handle exception properly
+                        Use connection pooling for better resource management
+
+
+    Use of API ->
+        1. API is used to perform specific task efficiently
+        2. (Standard API) Some Java Standard API's -
+                1. Collection API : Collection API defines how to handle group of objects like lists or sets using specific methods like add(), remove(), etc.
+                2. JDBC API : JDBC API specifies methods for connecting to DB, executing DQL queries and management transactions.
+                3. Java Persistence API : JPA API is used to manage the relational data in Java Application
+                4. Java Logging API : Logging API provides a mechanisms to log messages to log messages for various applications
+                5. Java Mail API : Mail API enables sending and receiving email messages.
+                etc.
+        3. (External API)APIs are used to communicate with multiple applications even if they are made on different technologies, in this case external API.
+                 App1 (Java) -------------------External----------------> App2 (Python)
+                 (My server) <--------------------API-----------------    (Google server)
+        4. We don't share each and everything from our server to another server, so to communicate with other servers we create External APIs that has documentation regagrding how to access, what is in this API, etc. If we directly letting anyone to access our server then that person or organisation can get my all sensitive data and can manipulate as well
+
+    How API Works ->
+                                                  API (Request)
+                                                        |
+                                                        V
+                                  App1 (Java) -------------------External----------------> App2 (Python)-----------> Database
+                                  (My server) <--------------------API-----------------    (Google server)<---------
+                                                                              ^
+                                                                              |
+                                                                    API (Response in XML or JSON)
+
+        1. To share data, created a formal like XML</> and JSON{;} are designed to standardize how information is structured and exchanged between different systems and applications. By using these formats, multiple technologies can easily share data, ensuring compatibility and simplifying communication across platforms.
+        2. In Java, creators made classes, interfaces and methods to read XML or JSON data or frameworks like FastAPI, Flask
+        3. Also in Python, creators made classes, functions to read XML or JSON data
+        4.  When Java application wants data from Python application,
+              ->  Then Java will request to API to get data from Python Application,
+              ->  Then API will check if it can deliver the data desired data to Java Application from Python application.
+              ->  Then API will authorize Python app with proper token, if authorization successful
+              ->  Then Python application will take data from its DB,
+              ->  Then that data will be stored in JSON or XML format
+              ->  Then this JSON or XML typed data will be delivered to Java application through API
+              ->  And in Java Application, there are some classes, interfaces and methods that will help us to read JSON or XML file
+
+    Example of APIs ->
+        Restaurant Web Application :
+            1. Register and Login of user   (API -> Google or Facebook API (Google or FB will authenticate user if user is registered with then and return some user data (name, emailid, profile pic, erc) to me))
+            2. List of Food Items
+            3. Select Food and pay          (API -> Payment Gateway (like Stripe, Razorpay pay will manage payment from user))
+            4. Track the order              (API -> Google Map API to track order online)
+            5. Delivery
+
+Architectural Style API -> (REST is architectural type API)
+    1. Architectural Style defines that multiple system should communicate with each other
+    2. Architectural Style outlines the Principles and Patterns for data exchange within multiple systems
+        1. Principles - Principle are basic rules that guide how systems should be build. They helps to ensure that systems works well, can grow easily and are easy to maintain. Example, loose coupling, scalability, etc.
+        2. Patterns are common ways to solve problems in system design. They offer reliable methods that can be adapted to fit different needs. Examples, Service-Oriented Architecture (SOA), RESTful APIs, Event-Driven Architecture, etc
+       Examples :
+        1. REST - Representational State Transfer.
+        2. SOAP - Simple Object Access Protocol.
+        3. GraphQL
+        4. RPC - Remote Procedural Call
+
+
+REST -> Representational State Transfer (Conceptual/Theoretical part)
+    1. REST is an Architectural Style
+    2. REST having 6 main constrains
+        1. client-server - The user (client) and the data provider (server) are separate, so each can evolve independently.
+        2. Stateless - Every request from the client must contain all the info needed — the server doesn’t remember past interactions.
+        3. Cacheble - Responses can say “you can reuse this,” so clients don’t have to ask the server again if nothing’s changed.
+        4. Uniform Interface - Everything follows a consistent structure (like using standard URLs, methods like GET/POST), making it easier to understand and use.
+        5. Layered System - There can be multiple steps or services between client and server (like proxies or gateways), and the client doesn’t need to know.
+        6. Code on Demand (Optional) - The server can send back code (like JavaScript) for the client to run, adding extra features if needed.
+    3. REST Architectural Design
+        Representational - How it should represent the data or object or resources in XML or JSON (even can be HTML, Videos, images).
+        State - Current Information means client send information and server will read that information and server will send response according to information
+        Transfer - Data transferring to client will follow which HTTP method Get,Post,Put,Delete
+
+                                                    1.        2.               3.
+                                          User  ---------------------REST----------------> Server
+                                       (client) <--------------------API------------------
+                                                    6.        5.               4.
+
+                   1. State - Client includes resources state in requests i.e. current data about the user or product
+                   2. Transfer - How Data is transferred i.e. using HTTPS methods Get,Post,Put,Delete
+                   3. HTTP Request - Which follows 6 REST constraints
+                   4. HTTP Response - 200 success, 400 client error, 500 server error, etc
+                   5. State - Response reflects resource state, showing current attributes and status
+                   6. Representational - Resource or Data or Object in represented in JSON or XML
+
+
+RESTful -> (Practical/code)
+    1. RESTful is actual API or Web Services which follows REST constraints
+    2. So, RESTful API Which is actaully used.
+    3. RESTful APIs are actually implemented to allow systems to communicate over the web, typically using HTTP methods like GET, POST, PUT, and DELETE.
+    4. RESTful APIs support multiple formats, most commonly JSON, but also XML, HTML, images, videos, etc.
+    5. Designed around resources (like /users, /products/123) and their state.
+
+Web Services ->
+    1. Web Services are a type of API that allow machine-to-machine communication over a network, using standard web protocols like HTTP.
+    2. They are not broader than APIs — they are a subset of APIs specifically designed to work over the web.
+    3. Types of Web Services include:
+           SOAP (uses XML, can run over HTTP, SMTP, etc.)
+           RESTful (usually uses JSON or XML over HTTP)
+           GraphQL (modern, flexible, typically over HTTP)
+    4. Web services typically use XML or JSON for data exchange.
+    5. While REST-based web services use HTTP methods (GET, POST, PUT, DELETE), SOAP can work over other protocols too (like SMTP or FTP), making REST more restricted in that sense.
+
+API and Web Services ->
+    1. API: A generic interface that allows software components to talk to each other — not limited to the web.
+    2. Web Service: A type of API that operates over the web (via HTTP), allowing systems to exchange data remotely.
+    3. Real-World Analogy
+           API = A universal remote control that lets you talk to any machine — TV, AC, or lights (different protocols).
+           Web Service = A remote control that only works over Wi-Fi or internet.
+
+Terminology ->
+    REST API -> There is nothing like REST API
+    RESTful API -> Term widely used in python or nodejs
+    RESTful Web services -> Term widely used in Spring Boot
+
+
+                                                       +------------------------- API --------------------------+
+                                                       |                                                        |
+                                                       |  - Generic interface for software components           |
+                                                       |  - Not limited to web or HTTP                          |
+                                                       |  - Can use various protocols and data formats          |
+                                                       |                                                        |
+                                                       |        +--------------- Web Services ---------------+  |
+                                                       |        |                                            |  |
+                                                       |        | - A type of API for machine-to-machine     |  |
+                                                       |        |   communication over the web               |  |
+                                                       |        | - Uses HTTP or other protocols (SOAP, REST,|  |
+                                                       |        |   GraphQL)                                 |  |
+                                                       |        | - Mostly uses XML or JSON                  |  |
+                                                       |        |                                            |  |
+                                                       |        |       +-RESTful APIs or web services-+     |  |
+                                                       |        |       |                              |     |  |
+                                                       |        |       | - Web Services that follow   |     |  |
+                                                       |        |       |   REST constraints           |     |  |
+                                                       |        |       | - Use HTTP methods (GET,     |     |  |
+                                                       |        |       |   POST, PUT, DELETE)         |     |  |
+                                                       |        |       | - Represent data as JSON,    |     |  |
+                                                       |        |       |   XML, or others             |     |  |
+                                                       |        |       | - Designed around resources  |     |  |
+                                                       |        |       |   and their state            |     |  |
+                                                       |        |       |                              |     |  |
+                                                       |        |       +------------------------------+     |  |
+                                                       |        +--------------------------------------------+  |
+                                                       +--------------------------------------------------------+
+
+
+
+
+
+MVC Architecture ->
+
+    Spring Web Module ->
+        1. Spring Web Module is a part of Spring Framework, by using this module we can create Spring web application
+        2. It offers various features like handling HTTP request and response, integrating with various web technologies, managing sessions, etc.
+
+    Spring Web-MVC ->
+        1. Spring Web-MVC is a specific module within Spring web that implements the Model-View-Controller (MVC) Design
+        2. It simplifies building web applications by separating the Data layer (Model), Presentation Layer(View), Logic layer(Controller)
+
+
+
+                                        ---------------------                                                    ---------------------    5.1     ---------------------
+                                        |                   |                                                    |                   |----------->|                   |
+                                        |   HandlerMapping  |                                                    |       Model       |            |     Service       |
+                                        |                   |                                                    |   (Command class) |<-----------|  (Business logic) |
+                                        ---------------------                                                    ---------------------    5.8     ---------------------
+                                              ^       |                                                                ^        |                      ^        |
+                                            2 |     3 |                                                                |        |                      |        | 5.2
+                                              |       V                                                              5 |      6 |                 5.7  |        |
+        ---------------------           ---------------------          4          ---------------------                |        |                      |        V
+        |                   | 1 Request |                   |>--------->--------->|                   |------>---------|        |                 ---------------------
+        |      client       |---------->| Front Controller  |          7          |   Controller 1    |                         V                 |                   |
+        |                   |           |(DispatcherServlet)|<---------<---------<|                   |------<---------<--------|                 |   Entity Class    |
+        ---------------------           ---------------------                     ---------------------                                           |                   |
+           ^                               |        ^       |                                                                                     ---------------------
+           |                               V        |       |                     ---------------------                                                ^       |
+           |                       10      |      9 |       V 8                   |                   |                                                |       | 5.3
+        11 |                --------<-------        ^       |                     |   Controller 2    |                                           5.6  |       |
+           ^                |                       |       |                     |                   |                                                |       V
+           |                |                       |       V                     ---------------------                                           ---------------------
+           |                |           ---------------------                                                                                     |                   |
+           |                V           |                   |                     ---------------------                                           |     Repository    |
+        ---------------------           |    ViewResolver   |                     |                   |                                           |    (Data Access)  |
+        |                   |           |                   |                     |   Controller 3    |                                           ---------------------
+        |       View        |           ---------------------                     |                   |                                                ^       |
+        |                   |                                                     ---------------------                                                |       | 5.4
+        ---------------------                                                                                                                      5.5 |       |
+                                                                                  ---------------------                                                |       V
+                                                                                  |                   |                                           ---------------------
+                                                                                  |   Controller 4    |                                           |                   |
+                                                                                  |                   |                                           |      DataBase     |
+                                                                                  ---------------------                                           |                   |
+                                                                                                                                                  ---------------------
+
+                1. Client send request, then that request always goes to front controller which is DispatcherServlet class
+                    Any request from user will always go through by front controller.
+                2. Front Controller will send request to Handler Mapping
+                    Handler Mapping, in web apps we create lots of controller like controller 1, 2, 3, 4....
+                    So, Front Controller will ask Handler Mapping to which controller it should go
+                3. Then Handler Mapping (interface) will tell to Front Controller which controller, Front Controller should send request  i.e. it will return the name of controller at which Front Controller should send request
+                4. If, Handler Mapping gave name of Controller 1 then, Front Controller will send request to controller 1. Controller 1 will perform logical operations
+                5. Controller 1 when communicate with further layer, it will add data in command classes or Model class or Model
+                6. So, it will give data to controller 1
+                7. Controller 1 will send response back Model (data) and View (return name of View page) object to Front Controller.
+                8. Now Front Controller will send to name resolve view to View Resolver. It will tell in which folder the given view page is and extension of it like .html or .jsp
+                    like if the given name file is in WEB-INF/views/home.jsp then,
+                        WEB-INF/views/ => Prefix
+                        home => name of the file from model class
+                        .jsp => Suffix
+                9. ViewResolver will send back full resolved name to front controller (WEB-INF/views/home.jsp)
+                10. Send the request (Data from Model and full resolved name) to View page to display dynamic webpage
+                11. Response to client
+
+                NOTE :
+                    1. we map DispatcherServlet to web.xml file or Java class
+                    2. we map HandlerMapping (interface) and ViewResolver (interface) to SpringConfigFile file or Java class
+
+Web MVC ->
+                            ----------------------     DTO      ----------------------    Entity    ----------------------              ----------------------
+    client Request -------->|                    |------------->|                    |------------->|                    |------------->|                    |
+                            | Presentation layer |              |    Service Layer   |              |  Persistence Layer |              |       DataBase     |
+    converted JSON <--------|                    |<-------------|                    |<-------------|                    |<-------------|                    |
+                            ----------------------     DTO      ----------------------    Entity    ----------------------              ----------------------
+
+               Client Request
+                    The user's HTTP request (e.g., form submission or API call) sent to the server.
+
+               Presentation Layer
+                    Handles HTTP requests and responses, typically using Controllers to process input and return views or data.
+
+               DTO (Data Transfer Object)
+                    A simple Java object used to transfer data between layers without exposing internal domain models.
+
+               Service Layer
+                    Contains business logic and coordinates between the presentation layer and persistence layer using DTOs and entities.
+
+               Entity
+                    A Java class annotated with JPA/Hibernate annotations that maps directly to a table in the database.
+
+               Persistence Layer
+                    Responsible for database operations like save, update, delete, and fetch using repositories or DAOs.
+
+               Database
+                    The actual storage system (like MySQL, PostgreSQL) where structured data is saved and retrieved.
+
+               Converted JSON
+                    The HTTP response sent back to the client, usually in JSON format, after being processed and converted from internal data.
+
+
+
+How does Web Server works :
+                                                                Browser/Postman
+                                                                       |
+                                                                       V
+                                                            Embedded tomcat webserver
+                                                                       |
+                                                                       V
+                                                               DispatcherServlet
+                                                                       |
+                                                                       V
+                                                        HandlerMapping -> Which Controller?
+                                                                       |
+                                                                       v
+                                                      HandlerAdapter -> Call Controller method
+                                                                       |
+                                                                       v
+                                                        Controller Method returns POJO/DTO
+                                                                       |
+                                                                       v
+                                                  HttpMessageConverter (e.g., Jackson -> JSON)
+                                                                       |
+                                                                       v
+                                                 DispatcherServlet writes to HttpServletResponse
+                                                                       |
+                                                                       v
+                                                              Client gets JSON

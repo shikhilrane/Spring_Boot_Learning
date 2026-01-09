@@ -1,0 +1,30 @@
+What is Programming Language ->
+    Communication medium between humans and computers
+    Provides syntaxes(Rules) and semantics(Format)
+    Used to develop software apps, technologies, libraries and even framework
+    e.g. C,C++,Java,JS,etc
+
+Libraries ->
+    Libraries are collection of packages.
+    Every JAR file in Spring and Spring Boot is a library.
+    Library makes our code easier to write.
+    e.g. mysql-connector-java.jar
+
+Framework ->
+    Framework is collection of multiple Libraries
+    Framework follows Design Pattern
+    e.g. Spring and Spring Boot
+
+Web App Architecture ->
+    | User Interface       |           | Web layer      Business Layer   DAO (JDBC)            |           |          |
+    | (HTML,CSS,JS,React)  | --------> | (servlet jsp)   (Code logic)     (Code for DB Access) | --------> | Database |
+    | Frontend Application |           |              Backend Application                      |           |          |
+              1.                                                  2.                                            3.
+    Frameworks are for User Interface, Web Layer and Database
+        1. User Interface -> React (It is library but when we use this with Next JS then it works as Framework) and Angular
+        2. Web Framework -> Obsolete now, and replace by Spring
+        3. Database -> ORM Framework like Hibernate
+    Spring contains all of these framework, So it is also called as Framework of Frameworks
+
+Spring is Modular framework ->
+    1. Spring Core : 
