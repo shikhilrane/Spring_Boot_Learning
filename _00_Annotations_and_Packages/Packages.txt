@@ -1,9 +1,0 @@
-Packages
-    1. main
-    2. java
-    3. resources
-    4. webapp
-    5. WEB-INF
-    6. main
-    7. beans
-    8. config
