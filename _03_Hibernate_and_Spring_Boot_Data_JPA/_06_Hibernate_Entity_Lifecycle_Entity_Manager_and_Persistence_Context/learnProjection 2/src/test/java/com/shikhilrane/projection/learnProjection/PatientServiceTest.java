@@ -1,11 +1,8 @@
 package com.shikhilrane.projection.learnProjection;
 
-import com.shikhilrane.projection.learnProjection.dto.BloodGroupStats;
-import com.shikhilrane.projection.learnProjection.dto.CPatientInfo;
-import com.shikhilrane.projection.learnProjection.dto.IPatientInfo;
 import com.shikhilrane.projection.learnProjection.entities.Patient;
 import com.shikhilrane.projection.learnProjection.repositories.PatientRepository;
-import jakarta.transaction.Transactional;
+import com.shikhilrane.projection.learnProjection.service.PatientService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,45 +15,18 @@ public class PatientServiceTest {
     @Autowired
     private PatientRepository patientRepository;
 
+    @Autowired
+    private PatientService patientService;
+
     // Retrieving all Patient's all info
     @Test
     public void testPatient(){
-        List<Patient> patientList = patientRepository.findAll();
-        for (Patient i : patientList){
-            System.out.println(i);
-        }
-    }
-
-    // Return All Patient's id, name and email only from interface (Unmodifiable or Read-only)
-    @Test
-    public void getAllInfoI(){
-        List<IPatientInfo> allPatientsInfo = patientRepository.getAllPatientsInfo();
-        for (IPatientInfo p : allPatientsInfo) {
-            System.out.println( "ID=" + p.getId() + ", Name=" + p.getName() + ", Email=" + p.getEmail());
-        }
-    }
-
-    // Return All Patient's id and name only from Class (Modifiable)
-    @Test
-    public void getAllInfoC(){
-        List<CPatientInfo> allPatientsInfoConcrete = patientRepository.getAllPatientsInfoConcrete();
-        for (CPatientInfo p : allPatientsInfoConcrete){
-            System.out.println(p);
-        }
+        Patient p1 = new Patient();     // Transient State i.e. Not in Hibernate and not in DB
+        patientRepository.save(p1);     // It will call persist method to save object in DB. Persistent i.e. track by Hibernate and Saved in DB
     }
 
     @Test
-    public void getCountOfBloodGrp(){
-        List<BloodGroupStats> countOfBloodGroupPeople = patientRepository.getCountOfBloodGroupPeople();
-        for (BloodGroupStats p : countOfBloodGroupPeople){
-            System.out.println(p);
-        }
-    }
-
-    @Test
-    @Transactional
-    public void updatePatient(){
-        int updated = patientRepository.updatePatientNameWithId("Ishant Sharma", 4L);
-        System.out.println("Number of Rows affected : " + updated);
+    public void  patientTransactionFromService(){
+        patientService.testPatientTransaction();
     }
 }

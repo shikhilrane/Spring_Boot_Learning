@@ -1,0 +1,119 @@
+Transmission of Method request from our code to Database :
+
+When we extends any interface with JpaRepository<>, we get all pre-defined methods like findById(), findAll(), delete(), deleteAll(), save() ,etc
+Because JpaRepository extends ListPagingAndSortingRepository which have findAll(Pageable) and findAll(Sort) methods
+and ListPagingAndSortingRepository<> extends CrudRepository<> which have findById(), findAll(), delete(), deleteAll(), save() ,etc methods.
+i.e. JpaRepository<> --> ListPagingAndSortingRepository<> --> CrudRepository<>
+But how do these methods do get implemented? : There is a class SimpleJpaRepository that implements all these methods and that class internally uses Entity manager to implements these methods. We can see it - JpaRepository -> SimpleJpaRepository -> EntityManager and all these methods are implemented there.
+Like for example : if we used delete() method in api then methods from SimpleJpaRepository will call delete method and SimpleJpaRepository will use, entityManager.remove(entity); to delete.
+So in short, when we call a method from JpaRepository<> then, that method is in the CrudRepository<> and to implement that method, JpaRepository uses SimpleJpaRepository class that have the all logic to handle the request and CrudRepository<> methods are implemented by EntityManager in SimpleJpaRepository
+
+
+                                                        CrudRepository                                       ← interface only
+                                                           ↓
+                                                        PagingAndSortingRepository                           ← interface only
+                                                           ↓
+                                 Your Code     →        JpaRepository method (like save, delete, findById)   ← interface only
+                                                           ↓
+                                                        SimpleJpaRepository                                  ← real implementation
+                                                           ↓
+                                                        EntityManager                                        ← JPA API
+                                                           ↓
+                                                        Hibernate                                            ← JPA provider / ORM
+                                                           ↓
+                                                        Database
+
+    1. JpaRepository, PagingAndSortingRepository, and CrudRepository are only interfaces. They just define method names like save(), delete(), findById(), etc.
+    2. The inheritance chain is:
+        JpaRepository → PagingAndSortingRepository → CrudRepository
+    3. These interfaces do not contain any implementation.
+    4. The real implementation of all these methods is provided by a class called SimpleJpaRepository.
+    5. When you call any repository method (like save(), delete(), findById()):
+        Spring actually calls the method from SimpleJpaRepository.
+    6. SimpleJpaRepository uses EntityManager to perform database operations.
+    7. EntityManager is a JPA interface that provides low-level operations like:
+           persist()
+           merge()
+           find()
+           remove()
+    8. Hibernate provides the actual implementation of EntityManager.
+    9. Hibernate converts these calls into SQL queries and executes them on the database.
+
+JpaRepository inherits CRUD methods from CrudRepository, SimpleJpaRepository implements them using EntityManager, and EntityManager delegates the work to Hibernate which finally interacts with the database.
+
+And EntityManager uses internally uses Hibernate Entity Lifecycle to implement methods from CrudRepository
+
+Hibernate Entity Lifecycle :
+
+        Transient ->
+            Object is just created using new
+            Not associated with Hibernate
+            Not saved in DB
+
+        Persistent ->
+            Object is associated with Hibernate session / EntityManager
+            Changes are automatically tracked
+            Will be saved/updated in DB
+
+        Detached ->
+            Object was persistent, but session is closed
+            Exists in DB but Hibernate is no longer tracking it
+
+        Removed ->
+            Object is marked for deletion
+            Will be deleted from DB on transaction commit
+
+    1. If we created a Object in Entity then tried to save it in DB :
+        In that case, entity will persist (i.e. save) in DB using PersistenceContext
+        In test,
+                Patient p1 = new Patient();     // Transient State i.e. Not in Hibernate and not in DB
+                patientRepository.save(p1);     // It will call persist() method to save object in DB. Persistent i.e. track by Hibernate and Saved in DB
+        NOTE : EntityManager will check that, the entity we are trying to save in DB is new entity or trying to update the entity. If new then, then it will call persist() method or if updating the existing entity then it wil call merge() method
+
+    2. PersistenceContext :
+        Entity → EntityManager → PersistenceContext → Hibernate → Database
+            PersistenceContext = Persistence Context is a cache where Hibernate stores and manages all entities that are currently being tracked.
+        In PatientService,
+            @Transactional  // This will call the persistence context
+            public void testPatientTransaction(){
+                Patient patient1 = patientRepository.findById(1L).orElseThrow();
+                Patient patient2 = patientRepository.findById(1L).orElseThrow();
+
+                System.out.println(patient1 + " " + patient2);
+                System.out.println(patient1 == patient2);
+            }
+        In test,
+            @Test
+            public void  patientTransactionFromService(){
+                patientService.testPatientTransaction();
+            }
+
+        Hibernate always checks Persistence Context first before hitting the database
+
+        Here both of the object is demanding for the same data of id = 1 from db, and we get both data from DB but @Transactional will make the difference
+        1. Without @Transactional -> (patient1 == patient2) will be false because both data will have their separate Persistence Context i.e. get from DB to Hibernate to DIFFERENT Persistence Context. So memory location will be different. That's why pointing to different data. (different Persistence Contexts → different objects.)
+        2. With @Transactional -> (patient1 == patient2) will be true because both data will get saved Persistence Context i.e. get from DB to Hibernate to SAME Persistence Context. So memory location will be SAME. That's why pointing to same data (same Persistence Context → same object reference.)
+
+        Persistence Context is only involved when the entity is in Persistent or Removed state.
+        | Entity State | In Persistence Context?  | Explanation                                                                                           |
+        | ------------ | ------------------------ | ----------------------------------------------------------------------------------------------------- |
+        | Transient    | ❌ No                    | Object is just created with `new`. Hibernate doesn’t know it yet.                                     |
+        | Persistent   | ✅ Yes                   | Entity is managed by Hibernate and stored inside Persistence Context.                                 |
+        | Detached     | ❌ No                    | Entity was in Persistence Context earlier, but now it is removed from it (session closed / detached). |
+        | Removed      | ✅ Yes                   | Entity is still inside Persistence Context but marked for deletion.                                   |
+
+        new Entity()            → Transient        (outside PC)
+        persist(entity)         → Persistent       (inside PC)
+        detach()/close session  → Detached         (outside PC)
+        remove(entity)          → Removed          (inside PC)
+        commit                  → Deleted from DB, removed from PC
+
+        Layman version:
+            Transient → “Hibernate doesn’t know it”
+            Persistent → “Hibernate is watching it”
+            Detached → “Hibernate stopped watching it”
+            Removed → “Hibernate is watching it and will delete it”
+        Persistence Context is basically the place where Hibernate “watches” entities like Persistent and Removed.
+
+
+REFER diagram for complete Understanding of Hibernate Entity Lifecycle
