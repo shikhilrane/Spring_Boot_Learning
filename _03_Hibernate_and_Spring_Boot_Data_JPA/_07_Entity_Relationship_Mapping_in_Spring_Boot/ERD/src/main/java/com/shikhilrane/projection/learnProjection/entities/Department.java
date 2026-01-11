@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,5 +22,10 @@ public class Department {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
+    @OneToOne
+    @JoinColumn(nullable = false)
+    private Doctor headDoctor;
 
+    @ManyToMany
+    private List<Doctor> doctors = new ArrayList<>();
 }

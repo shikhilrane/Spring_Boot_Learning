@@ -28,4 +28,10 @@ public class Doctor {
 
     @OneToMany(mappedBy = "doctor")
     private List<Appointment> appointments = new ArrayList<>();
+
+    @OneToOne(mappedBy = "headDoctor")
+    private Department department;
+
+    @ManyToMany(mappedBy = "doctors")
+    private List<Department> departments = new ArrayList<>();
 }

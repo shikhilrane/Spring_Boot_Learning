@@ -9,18 +9,16 @@ Entity Relationship :
     Understanding of these mappings :
         We can understand their relationship by ER Diagram (i.e. Entity Relationship Diagram)
         Symbols :
-            1. || mapping with partial participation
-            2. |0 mapping with full participation
-            3. <= mapping with partial participation
-            4. o<= mapping with full participation
-            NOTE : o indicates full participation in relationship
+            1. O  → Partial participation (optional)
+            2. |  → Full participation (mandatory)
+            3. <  → Many
             Refer Diagram for more understanding
 
             Example :
-                1. One-to-One : || to 0| (one has partial participation to one who has full participation)
-                2. One-to-Many : || to 0<= (one has partial participation to many who has full participation)
-                3. Many-to-One : => to 0| (many has full participation to one who has partial participation)
-                4. Many-to-Many : => to )<= (many has full participation to one who has partial participation)
+                1. One-to-One : ||  to  O|  ,   One side mandatory other side optional
+                2. One-to-Many : ||  to  O<   ,     One side mandatory, many side optional
+                3. Many-to-One : O<  to  ||     ,     Many side optional, one side mandatory
+                4. Many-to-Many : O<  to  O<    ,   Both sides optional (logically), implemented using a join table
 
         A table who have Foreign key will own the relationship means it wil decide how inverse side relationship should be added in table and the other side is inverse side (FK means inverse side is added in this table)
 
@@ -62,6 +60,24 @@ Entity Relationship :
                 @OneToMany(mappedBy = "doctor")
                 private List<Appointment> appointments = new ArrayList<>();
 
+        4. One-to-One : 'One Department' can have 'One headDoctor' (Each Department can have one headDoctor)
+            in Department,
+                @OneToOne
+                @JoinColumn(nullable = false)   // FK
+                private Doctor headDoctor; // Owning Side
+            in Doctor
+                @OneToOne(mappedBy = "headDoctor")
+                private Department department;
+
+        5. Many-to-Many : 'Many Department' can have 'Many Doctors' (Each dept can have multiple other doctors & also one doctor can work in multiple department)
+            in Department,
+                @ManyToMany
+                private List<Doctor> doctors = new ArrayList<>();
+            in Doctor,
+                @ManyToMany(mappedBy = "doctors")
+                private List<Department> departments = new ArrayList<>();
+            NOTE : When we create Many-to-Many relationship, hibernate will create a joint table for it
+                   Joint-table will have only 2 columns like department_id and doctors_id
 
 
     NOTES :
