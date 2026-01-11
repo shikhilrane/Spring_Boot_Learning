@@ -1,0 +1,69 @@
+Entity Relationship :
+    1. In Spring Boot (with JPA/Hibernate), entity relationship means how your database tables are connected and how you represent those connections using annotations in your Java entity classes.
+    2. Main types of relationships:
+        1. One-to-One = one table connected to one table
+        2. One-to-Many = one table connected to many table
+        3. Many-to-One = many table connected to one table
+        4. Many-to-Many = many table connected to many table
+
+    Understanding of these mappings :
+        We can understand their relationship by ER Diagram (i.e. Entity Relationship Diagram)
+        Symbols :
+            1. || mapping with partial participation
+            2. |0 mapping with full participation
+            3. <= mapping with partial participation
+            4. o<= mapping with full participation
+            NOTE : o indicates full participation in relationship
+            Refer Diagram for more understanding
+
+            Example :
+                1. One-to-One : || to 0| (one has partial participation to one who has full participation)
+                2. One-to-Many : || to 0<= (one has partial participation to many who has full participation)
+                3. Many-to-One : => to 0| (many has full participation to one who has partial participation)
+                4. Many-to-Many : => to )<= (many has full participation to one who has partial participation)
+
+        A table who have Foreign key will own the relationship means it wil decide how inverse side relationship should be added in table and the other side is inverse side (FK means inverse side is added in this table)
+
+
+    Code Example :
+        1. One-to-One : one can have only one of other table ('One Patient' can have only 'One Insurance')
+            in Patient,
+                @OneToOne
+                @JoinColumn(name = "patient_insurance_id", unique = true)   // Can be used only at owning side (use to rename the name of to mapping in DB table)
+                private Insurance insurance;    // Owning Side (Means Patient can't exist without Insurance) (this will work as Foreign Key in Patient table so it is a Owning side)
+            in Insurance,
+                @OneToOne(mappedBy = "insurance") // As we have used mappedBy here, so in DB, insurance doesn't have column patient_id
+                private Patient patient;    // Inverse side (Means Insurance can exist without Patient) (Optional to add this)
+
+            If a Foreign Key (FK) with name of another table, is present in table then that table is owning side means that table can't exist without another table
+
+            Description of Majors :
+                @OneToOne : Use to indicate relationship
+                @JoinColumn name : Use strictly at owning side. It is used to rename the name of to mapping in DB table
+                @JoinColumn unique = true : One patient can only have one insurance
+                mappedBy = "insurance" : It is inverse side and in DB, insurance doesn't have column patient_id
+
+        2. Many-to-One : Many can have One of other table ('Many Appointment' can be booked by 'One Patient')
+            in Appointment,
+                @ManyToOne
+                @JoinColumn(nullable = false)   // Owning side
+                private Patient patient;
+            in Patient,
+                // One-To-Many with Appointment
+                @OneToMany(mappedBy = "patient") // Inverse Side
+                private List<Appointment> appointments = new ArrayList<>(); // Numbers of appointments will be stored here
+
+        3. Many-to-One : Many can have One of other table ('Many Appointment' can be booked by 'One Doctor')
+            in Appointment,
+                @ManyToOne
+                @JoinColumn(nullable = false)   // Owning side
+                private Doctor doctor;
+            in Doctor,
+                @OneToMany(mappedBy = "doctor")
+                private List<Appointment> appointments = new ArrayList<>();
+
+
+
+    NOTES :
+        1. Relationship with FK is owning side and It has full participation (i.e. it is 'from Side')
+            But If in FK table @JoinColumn(nullable = true) then it becomes partial participation because it can be null i.e. can be process further without 'to Side'
