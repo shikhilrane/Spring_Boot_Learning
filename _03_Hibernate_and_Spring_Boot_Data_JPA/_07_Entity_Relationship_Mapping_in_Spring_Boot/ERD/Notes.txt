@@ -66,4 +66,5 @@ Entity Relationship :
 
     NOTES :
         1. Relationship with FK is owning side and It has full participation (i.e. it is 'from Side')
-            But If in FK table @JoinColumn(nullable = true) then it becomes partial participation because it can be null i.e. can be process further without 'to Side'
+            But If in FK table @JoinColumn(nullable = true) then it becomes partial participation because it can be null i.e. can be process further without 'to Side'.
+        2. The side where is 0 in ER Diagram, means the other table can have value as 0 for the table.
