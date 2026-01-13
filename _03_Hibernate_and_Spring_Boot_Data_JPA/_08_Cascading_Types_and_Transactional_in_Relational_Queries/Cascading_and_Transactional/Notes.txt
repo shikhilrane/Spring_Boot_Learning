@@ -4,4 +4,54 @@ Operations on Entity Relationship to add Data in DB :
     3. We will use Cascading to do that. Using cascading we will perform operations on parent and those operations will get propogated over to child side as well.
     4. Also we will understand transaction context as well
 
-    Operation 1 : Adding Insurance to Patient
+Transactional : Use for dirty checking / changes in method
+    Important: It creates ONE persistence context for the whole method.
+    Without it, each repository call may run in its own transaction/persistence context.
+    With it:
+        1. All operations happen in a single persistence context.
+        2. Hibernate can do dirty checking.
+        3. If any exception occurs, the whole method is rolled back.
+
+Cascading : Whatever action you do on Parent, Hibernate automatically does the same on Child.
+    CascadeType:
+        - Used to propagate parent entity operations to child entity.
+        - Removes the need to explicitly save/delete the child.
+        - Works only when relationship is already established.
+        - CascadeType.ALL = PERSIST + MERGE + REMOVE + REFRESH + DETACH.
+        - Most common use: parent owns and controls lifecycle of child.
+
+    There are several types of Cascading :
+        1. CascadeType.PERSIST = Saving parent saves child
+        2. CascadeType.MERGE = Updating parent updates child
+        3. CascadeType.REMOVE = Deleting parent deletes child
+        4. CascadeType.REFRESH = Refreshing parent refreshes child
+        5. CascadeType.DETACH = Detaching parent detaches child from persistence context
+        6. CascadeType.ALL = Includes all above (PERSIST, MERGE, REMOVE, REFRESH, DETACH)
+
+
+Operations on Entities
+    Operation 1 : Adding Insurance to Patient :-
+        Patient : Owing Side
+        Insurance : Inverse Side
+
+        Step 1 :
+            Create Repository for Both the entities
+        Step 2 :
+            Create Service for both entities
+        Step 3 :
+            As Insurance is the Inverse side, we will make create an insurance in InsuranceService and assign it to relevant Patient
+
+        Code :
+            In InsuranceService : (Process to create and assign a insurance to given patientId)
+                @Transactional // Its important to have @Transactional, if we don't have every fetching and saving opn will have their own persistence context but we add then every operation from given method will happen in single persistence context. Also, if some operation fails then this will roll the method
+                public Insurance assignInsuranceToPatient(Insurance insurance, Long patientId){ // Created Insurance will be assigned to entered patientId
+                    Patient patient = patientRepository.findById(patientId).orElseThrow();      // Find the patientId first or throw not found
+                    patient.setInsurance(insurance);                                            // If patientId matches then Insurance will be assign to that patientId
+                    insurance.setPatient(patient);                                              // Optional but good for bidirectional mapping consistency
+                    return insurance;                                                           // It will return the insurance according to CascadeType
+                }
+            In Patient : (Use to define how operations will take place)
+                @OneToOne(cascade = {CascadeType.ALL})
+                @JoinColumn(name = "patient_insurance_id", unique = true)   // Can be used only at owning side (use to rename the name of to mapping in DB table)
+                private Insurance insurance;    // Owning Side (this will work as Foreign Key in Patient table so it is a Owning side)
+            In test :
