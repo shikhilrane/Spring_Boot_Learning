@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PatientService {
-    private final InsuranceRepository insuranceRepository;
     private final PatientRepository patientRepository;
 
     @Transactional
     public void deletePatient(Long patientId){
-        Patient patient = patientRepository.findById(patientId).orElseThrow();
-        patientRepository.deleteById(patientId);
+        Patient patient = patientRepository.findById(patientId).orElseThrow();  // Find the patientId first or throw not found
+        patientRepository.deleteById(patientId);                                // If found, Then delete that patient from DB using Patient Repository
     }
 }

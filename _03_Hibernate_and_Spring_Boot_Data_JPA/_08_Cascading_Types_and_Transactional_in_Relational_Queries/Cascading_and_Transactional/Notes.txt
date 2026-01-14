@@ -54,4 +54,104 @@ Operations on Entities
                 @OneToOne(cascade = {CascadeType.ALL})
                 @JoinColumn(name = "patient_insurance_id", unique = true)   // Can be used only at owning side (use to rename the name of to mapping in DB table)
                 private Insurance insurance;    // Owning Side (this will work as Foreign Key in Patient table so it is a Owning side)
-            In test :
+            In test : (for testing)
+                @Autowired
+                private InsuranceService insuranceService; // add PatientRepository, So that we can fetch data of patient from PatientRepository
+                @Test
+                public void testAssignInsuranceToPatient(){
+                    Insurance insurance = Insurance.builder()   // Used builder pattern for creating object of Insurance in DB
+                            .provider("HDFC Ergo")
+                            .policyNumber("HDFC_23G")
+                            .validUntil(LocalDate.of(2030, 1,1))
+                            .build();
+
+                    Insurance insurance1 = insuranceService.assignInsuranceToPatient(insurance, 1L);   // Called method from InsuranceService and save it in Insurance
+                    System.out.println(insurance1);
+                }
+
+        One Line NOTE : Created a Insurance from InsuranceService and Added to Patient
+
+            Deleting a Patient :
+                In PatientService,
+                    private final PatientRepository patientRepository; // add PatientRepository, So that we can fetch data of patient from PatientRepository
+                    @Transactional
+                    public void deletePatient(Long patientId){
+                        Patient patient = patientRepository.findById(patientId).orElseThrow();  // Find the patientId first or throw not found
+                        patientRepository.deleteById(patientId);                                // If found, Then delete that patient from DB using Patient Repository
+                    }
+                In test :
+                    @Test
+                    public void testAssignInsuranceToPatient(){
+                        Insurance insurance = Insurance.builder()
+                                .provider("HDFC Ergo")
+                                .policyNumber("HDFC_23G")
+                                .validUntil(LocalDate.of(2030, 1,1))
+                                .build();
+
+                        Insurance insurance1 = insuranceService.assignInsuranceToPatient(insurance, 1L);
+                        System.out.println(insurance1);
+
+                        patientService.deletePatient(1L);   // Deleting Patient will delete the Insurance assigned to him as well
+                    }
+
+    Operation 2 : Appointment is in Relationship with Patient and Doctor in Many-to-One
+        Appointment : Owning Side
+        Doctor and Patient : Inverse Side
+
+        Step 1 :
+            Create Repository for all the entities
+        Step 2 :
+            Create Service for all entities
+        Step 3 :
+            As Patient and Doctor is the Inverse side, we will make create an Appointment in AppointmentService and assign it to relevant Patient and Doctor
+
+        Code :
+            In AppointmentService,
+             private final AppointmentRepository appointmentRepository;  // add AppointmentRepository, So that we can fetch data of patient from AppointmentRepository
+             private final DoctorRepository doctorRepository;            // add DoctorRepository, So that we can fetch data of patient from DoctorRepository
+             private final PatientRepository patientRepository;          // add PatientRepository, So that we can fetch data of patient from PatientRepository
+
+             @Transactional
+             public Appointment createNewAppointment(Appointment appointment, Long patientId, Long doctorId){
+                 Patient patient = patientRepository.findById(patientId).orElseThrow();  // Find the patientId first or throw not found
+                 Doctor doctor = doctorRepository.findById(doctorId).orElseThrow();      // Find the doctorId first or throw not found
+
+                 appointment.setPatient(patient);        // If patient found then set patient in appointment
+                 appointment.setDoctor(doctor);          // If doctor found then set patient in appointment
+
+                 appointmentRepository.save(appointment);    // Save their appointment in AppointmentRepository
+
+                 return appointment;     // Return the Appointment
+             }
+            In Insurance,
+                @ManyToOne
+                @JoinColumn(nullable = false)   // Owning side
+                @ToString.Exclude
+                @JsonIgnore     // tells Jackson to skip that field while converting an object to JSON, preventing recursion and unwanted data in API responses.
+                private Patient patient;
+
+                @ManyToOne
+                @JoinColumn(nullable = false)
+                @ToString.Exclude
+                @JsonIgnore     // tells Jackson to skip that field while converting an object to JSON, preventing recursion and unwanted data in API responses.
+                private Doctor doctor;
+
+            In Patient,
+                // One-To-Many with Appointment
+                @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL) // Inverse Side
+                private List<Appointment> appointments = new ArrayList<>();
+                Here we have added Cascade.Type in Patient. because, we want to delete appointment when, then Patient should not get deleted but when we want to delete patient then its appointment should get deleted
+            In test,
+                @Test
+                public void testCreateInAppointment(){
+                    Appointment appointment = Appointment.builder()
+                            .appointmentTime(LocalDateTime.of(2025, 11, 1,14,0,0))
+                            .reason("Cancer")
+                            .build();
+
+                    Appointment appointment1 = appointmentService.createNewAppointment(appointment, 1L, 2L); // Created appointment of doctor with patient
+
+                    System.out.println(appointment1);
+
+                    patientService.deletePatient(1L); // When we delete the patient then appointment will also get deleted
+                }
