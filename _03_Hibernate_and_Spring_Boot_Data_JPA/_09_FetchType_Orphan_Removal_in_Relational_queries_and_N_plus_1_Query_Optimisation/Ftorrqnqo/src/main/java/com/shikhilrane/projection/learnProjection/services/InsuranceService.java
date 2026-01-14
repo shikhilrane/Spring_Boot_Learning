@@ -19,4 +19,18 @@ public class InsuranceService {
         insurance.setPatient(patient);                                              // Optional but good for bidirectional mapping consistency
         return insurance;                                                           // It will return the insurance according to CascadeType
     }
+
+    public Insurance updateInsuranceToPatient(Insurance insurance, Long patientId){ // Created Insurance will be assigned to entered patientId
+        Patient patient = patientRepository.findById(patientId).orElseThrow();      // Find the patientId first or throw not found
+        patient.setInsurance(insurance);                                            // If patientId matches then Insurance will be assign to that patientId
+        insurance.setPatient(patient);                                              // Optional but good for bidirectional mapping consistency
+        return insurance;                                                           // It will return the insurance according to CascadeType
+    }
+
+    public Patient removeInsuranceToPatient(Long patientId){ // Created Insurance will be assigned to entered patientId
+        Patient patient = patientRepository.findById(patientId).orElseThrow();      // Find the patientId first or throw not found
+        patient.setInsurance(null);                                            // If patientId matches then Insurance will be assign to that patientId
+
+        return patient;
+    }
 }

@@ -30,7 +30,7 @@ public class Appointment {
     @JsonIgnore     // tells Jackson to skip that field while converting an object to JSON, preventing recursion and unwanted data in API responses.
     private Patient patient;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @ToString.Exclude
     @JsonIgnore     // tells Jackson to skip that field while converting an object to JSON, preventing recursion and unwanted data in API responses.

@@ -59,4 +59,17 @@ public class PatientServiceTest {
         int updated = patientRepository.updatePatientNameWithId("Ishant Sharma", 4L);
         System.out.println("Number of Rows affected : " + updated);
     }
+
+    @Test
+    public void nPlusOneQ(){
+//        List<Patient> patientList = patientRepository.findAll();
+//        for (var i : patientList) {
+//            System.out.println(i);
+//        }
+
+        List<Patient> allPatientsWithAppointments = patientRepository.getAllPatientsWithAppointments();
+        for (var i : allPatientsWithAppointments){
+            System.out.println(i);
+        }
+    }
 }

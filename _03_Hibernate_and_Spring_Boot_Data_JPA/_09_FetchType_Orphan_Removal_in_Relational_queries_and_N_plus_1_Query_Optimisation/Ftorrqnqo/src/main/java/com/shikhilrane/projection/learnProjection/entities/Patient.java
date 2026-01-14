@@ -36,11 +36,12 @@ public class Patient {
     private LocalDateTime createdAt;
 
     // One-To-One with Insurance
-    @OneToOne(cascade = {CascadeType.ALL})
+    @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "patient_insurance_id", unique = true)   // Can be used only at owning side (use to rename the name of to mapping in DB table)
     private Insurance insurance;    // Owning Side (this will work as Foreign Key in Patient table so it is a Owning side)
 
     // One-To-Many with Appointment
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL) // Inverse Side
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Inverse Side
+//    @ToString.Exclude
     private List<Appointment> appointments = new ArrayList<>();
 }

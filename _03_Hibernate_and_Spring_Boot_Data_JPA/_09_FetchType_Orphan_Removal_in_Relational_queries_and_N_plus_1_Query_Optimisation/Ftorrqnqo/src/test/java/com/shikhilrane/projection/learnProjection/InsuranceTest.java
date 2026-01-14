@@ -2,6 +2,7 @@ package com.shikhilrane.projection.learnProjection;
 
 import com.shikhilrane.projection.learnProjection.entities.Appointment;
 import com.shikhilrane.projection.learnProjection.entities.Insurance;
+import com.shikhilrane.projection.learnProjection.entities.Patient;
 import com.shikhilrane.projection.learnProjection.services.AppointmentService;
 import com.shikhilrane.projection.learnProjection.services.InsuranceService;
 import com.shikhilrane.projection.learnProjection.services.PatientService;
@@ -34,7 +35,10 @@ public class InsuranceTest {
         Insurance insurance1 = insuranceService.assignInsuranceToPatient(insurance, 1L);
         System.out.println(insurance1);
 
-        patientService.deletePatient(1L);
+//        patientService.deletePatient(1L);
+
+        Patient patient = insuranceService.removeInsuranceToPatient(1L);
+        System.out.println(patient);
     }
 
     @Test
