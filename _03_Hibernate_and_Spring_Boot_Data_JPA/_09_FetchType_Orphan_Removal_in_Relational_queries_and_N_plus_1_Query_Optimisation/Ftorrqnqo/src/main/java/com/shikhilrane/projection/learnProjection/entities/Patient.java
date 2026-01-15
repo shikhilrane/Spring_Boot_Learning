@@ -36,7 +36,7 @@ public class Patient {
     private LocalDateTime createdAt;
 
     // One-To-One with Insurance
-    @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_insurance_id", unique = true)   // Can be used only at owning side (use to rename the name of to mapping in DB table)
     private Insurance insurance;    // Owning Side (this will work as Foreign Key in Patient table so it is a Owning side)
 

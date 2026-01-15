@@ -1,7 +1,6 @@
 package com.shikhilrane.projection.learnProjection.services;
 
 import com.shikhilrane.projection.learnProjection.entities.Patient;
-import com.shikhilrane.projection.learnProjection.repositories.InsuranceRepository;
 import com.shikhilrane.projection.learnProjection.repositories.PatientRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

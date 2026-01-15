@@ -1,0 +1,90 @@
+Orphan Removal : Remove Child from Parent if that Child is not needed By Parent
+    1. Sometimes we want to remove the children when they become orphan, like when you removed the association from Parent to Child, then also child become orphan and to remove the child we have to use orphan removal.
+    2. For that we have flag called 'orphanRemoval = true' by default it is false. which can put inside @One-To-Many and @One-To-One annotations only. Especially at Parent side.
+
+    From our code :
+        When a Patient want to stay in DB, but he wants to update Insurance to new Insurance or want to remove his Insurance. In these both cases Patient has to get rid of Insurance.
+
+        1. Update Insurance : Old Insurance will get deleted and this Insurance will get replaced by this Insurance.
+            In InsuranceService,
+                public Insurance updateInsuranceToPatient(Insurance insurance, Long patientId){ // Created Insurance will be assigned to entered patientId
+                    Patient patient = patientRepository.findById(patientId).orElseThrow();      // Find the patientId first or throw not found
+                    patient.setInsurance(insurance);                                            // If patientId matches then Insurance will be assign to that patientId
+                    insurance.setPatient(patient);                                              // Optional but good for bidirectional mapping consistency
+                    return insurance;                                                           // It will return the insurance according to CascadeType
+                }
+
+        2. Remove Insurance : Insurance of the Patient will get deleted
+            In InsuranceService,
+                public Patient removeInsuranceToPatient(Long patientId){                        // Removed Insurance of entered patientId
+                    Patient patient = patientRepository.findById(patientId).orElseThrow();      // Find the patientId first or throw not found
+                    patient.setInsurance(null);                                                // If patientId matches then Insurance marks as 'null' to that patientId
+
+                    return patient;
+                }
+
+        To these both operation occur, we have to put orphanRemoval = true in Patient, Because Parent side dictate how Child side should work
+            In Patient,
+                @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
+
+        When we mark orphanRemoval as true then, i want to get rid of orphan entity doesn't make sense in DB
+
+        In Test,
+            Patient patient = insuranceService.removeInsuranceToPatient(1L);
+            System.out.println(patient);
+
+    3. orphanRemoval works on Parent side, because Parent side dictate how Child side should work. Even though @Many-TO-One (like Appointment to Patient) Appointment is owning side, Patient side is Parent side because there is a existence of Appointment because of Patient but not vice versa
+    4. Difference between CascadeType.REMOVE and orphanRemoval = true
+        CascadeType.REMOVE -> Deletes the child entity only when the parent is deleted
+        orphanRemoval = true -> Deletes the child entity when they are no longer referenced by the parent even if Parent side remains in the DB
+    5. Use case of orphanRemoval = true
+        Ideal for relationships where child entity has no meaning without the parent
+        Example : An Appointment without a Doctor or Patient, or an Insurance without a Patient
+
+
+Fetch : Use to fetch or Not to fetch Left Join Col
+    fetch is use to retrieve data of child element from Entity,
+    Like, In Patient, we have Insurance as child, So when getting a data of Patient Entity we can decide if we want to get data of Insurance or not.
+    If Yes, fetch = FetchType.EAGER -> This will make a Left Join call and run extra query to fetch the Insurance.
+    If No, fetch = FetchType.LAZY -> This won't make a Left Join call and run extra query to fetch the Insurance.
+    NOTE = If we want to really get Left Join Col then in that case use as EAGER, but if we don't need of Insurance then we should use LAZY because for EAGER, JPA has to run extra query and that can lead to performance optimisation
+    In Patient,
+        @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY) for Insurance
+
+N+1 Queries : Use to reduce number of query calls made by JPA, by writing our own logic as JPQL
+    1. Unoptimised Approach (Without Understanding of N+1 Queries)
+        In PatientServiceTest,
+            @Test
+                public void nPlusOneQ(){
+                    List<Patient> patientList = patientRepository.findAll();
+                    for (var i : patientList) {
+                        System.out.println(i);
+                    }
+                }
+            Here we are trying to fetch all the Patient from DB
+
+        In Patient,
+            @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Inverse Side
+            private List<Appointment> appointments = new ArrayList<>();
+            Trying to fetch all the number of Appointments belongs to any particular Patient because we set fetch = FetchType.EAGER (Want to get Left Join Col here)
+            So to JPA will try to execute separate queries for every single appointment. So If there are more number of appointments for Patients then there will be that much numbers of query call has to make for JPA and that will be Unoptimised Approach
+
+    2. optimised Approach (With Understanding of N+1 Queries)
+        In PatientRepository,
+            @Query("select p from Patient p LEFT JOIN FETCH p.appointments") // JPQL for Query Optimisation
+            List<Patient> getAllPatientsWithAppointments();
+        In PatientServiceTest,
+            public void nPlusOneQ(){
+                List<Patient> allPatientsWithAppointments = patientRepository.getAllPatientsWithAppointments();
+                for (var i : allPatientsWithAppointments){
+                    System.out.println(i);
+                }
+            }
+        In Patient,
+            @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Inverse Side
+            private List<Appointment> appointments = new ArrayList<>();
+
+        Here, We have wrote our custom query (JPQL) to fetch all the appointment in PatientRepository. So that JPA will make only single call to fetch all Appointments
+
+    When we have set fetch = FetchType.EAGER, Then JPA will make separate query for every separate Appointment and that will make our system slow
+    So to Optimise this we use N+1 Query Optimisation by writing our custom logic in JPQL without being fully dependent on JPA
