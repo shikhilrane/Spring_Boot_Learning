@@ -1,0 +1,45 @@
+JPA :
+    Spring Data JPA --> JPA --> Hibernate --> JDBC --> Database
+    1. Spring Data JPA : A shortcut tool that lets you work with databases without writing SQL or DAO code. (removes boilerplate)
+    2. JPA : A rulebook that explains how Java objects should be connected to database tables. (defines rules)
+    3. Hibernate Framework : A helper that automatically converts Java objects into database data and back. (does mapping)
+    4. JDBC : A tool that lets Java directly talk to a database using SQL queries. (talks to DB)
+    5. Database : Use to store data
+
+    Hibernate Configurations (In application.properties):
+        spring.jpa.hibernate.ddl-auto=update/create/validate/create-drop/none       // Use to define nature of table in DB
+        spring.jpa.show-sql=true                                                    // Use to show sql queries on log
+        spring.jpa.properties.hibernate.format_sql=true                             // Makes Hibernate’s SQL output neat, readable, and properly formatted.
+        spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect // Tells Hibernate which database language (SQL style) it should use. (Optional)
+
+    Connecting app to DB :
+        spring.datasource.url=jdbc:mysql://localhost:3306/test?useSSL=false
+        spring.datasource.username=root
+        spring.datasource.password=Shikhil@4
+
+    Entity :
+        @Entity - Use to annotate that, this is a entity class and make table in DB according to this class
+        @Table in detail : Used to give the database table a custom name or extra table settings.
+                @Table(
+                        name = "product_table",     // Sets the table name in the database. (Optional. If not provided then it will use entity class name)
+                        catalog = "product_catalog",    // Specifies the database catalog (rarely used in real projects).
+                        schema = "hr",     // Specifies the database schema where the table will be created.
+                        uniqueConstraints = {
+                                @UniqueConstraint(name = "sku_unique", columnNames = {"sku"}),  // Every "sku" must be unique
+                                @UniqueConstraint(name = "title_price_unique", columnNames = {"title_x", "price"})    // can't add two or more title with same price
+                        },
+                        indexes = {
+                                @Index(name = "sku_index", columnList = "sku")  // Creates an index on SKU to make searches faster.
+                        }
+                )
+        @Id - Marks a field as the primary key of the table.
+        @GeneratedValue(strategy = GenerationType.IDENTITY) - Tells the database to automatically generate the primary key value.
+        @Column(name = "name", nullable = false, length = 50) - Used to customize a column’s properties in the database.
+            name → column name in DB
+            nullable = false → column cannot be null
+            length = 50 → maximum size of the column
+        @CreationTimestamp - Automatically stores the date and time when a record is created.
+        @UpdateTimestamp - Automatically updates the date and time whenever a record is modified.
+
+    Step to connect to DB
+         Hibernate Configurations --> Connecting app to DB --> Entity

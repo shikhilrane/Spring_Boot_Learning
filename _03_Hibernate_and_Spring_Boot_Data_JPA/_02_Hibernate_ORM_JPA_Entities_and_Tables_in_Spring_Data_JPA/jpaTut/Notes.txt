@@ -123,7 +123,7 @@ Hibernate ORM Mapping :
 
         4. spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect (Optional)
             Tells Hibernate which database language (SQL style) it should use.
-            But now a days programs are smarter so spring boot knows which dialect to use
+            But nowadays programs are smarter so spring boot knows which dialect to use
             Dialect tells Hibernate which SQL database (MySQL, PostgreSQL, Oracle, etc.) SQL to generate, but Spring Boot usually auto-detects it, so it’s optional.
 
 
