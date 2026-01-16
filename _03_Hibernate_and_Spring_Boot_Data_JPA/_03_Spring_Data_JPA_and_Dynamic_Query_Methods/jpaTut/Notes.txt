@@ -1,33 +1,33 @@
 Spring Data JPA -
-            1. Spring Data JPA is a part of larger spring data family
-            2. Builds on top of JPA
-            3. Spring Data JPA makes it easier to implement JPA-based repositories by providing boilerplate code, derived query methods, and utilities, so we don’t need to write common methods like findById() and findAll() manually.
-            4. We can write methods manually in JPQL (Java Persistence Query Language)
-            5. Repositories provided by Spring Data JPA :
-                a. Repository – Marker interface used to enable Spring Data repository features.
-                b. CrudRepository – Provides basic CRUD operations like save, find, delete, and count.
-                c. PagingAndSortingRepository – Extends CRUD and adds pagination and sorting support.
-                d. JpaRepository – Extends CRUD and Paging, adds JPA-specific methods like flush and batch operations.
-                e. JpaSpecificationExecutor – Provides support for dynamic and complex queries using Specifications.
-                                        Repository
-                                           ↓
-                                        CrudRepository
-                                           ↓
-                                        PagingAndSortingRepository
-                                           ↓
-                                        JpaRepository
+        1. Spring Data JPA is a part of larger spring data family
+        2. Builds on top of JPA
+        3. Spring Data JPA makes it easier to implement JPA-based repositories by providing boilerplate code, derived query methods, and utilities, so we don’t need to write common methods like findById() and findAll() manually.
+        4. We can write methods manually in JPQL (Java Persistence Query Language)
+        5. Repositories provided by Spring Data JPA :
+            a. Repository – Marker interface used to enable Spring Data repository features.
+            b. CrudRepository – Provides basic CRUD operations like save, find, delete, and count.
+            c. PagingAndSortingRepository – Extends CRUD and adds pagination and sorting support.
+            d. JpaRepository – Extends CRUD and Paging, adds JPA-specific methods like flush and batch operations.
+            e. JpaSpecificationExecutor – Provides support for dynamic and complex queries using Specifications.
+                                    Repository
+                                       ↓
+                                    CrudRepository
+                                       ↓
+                                    PagingAndSortingRepository
+                                       ↓
+                                    JpaRepository
 
-                    | Repository                 | CRUD  | Paging  | Sorting |     JPA Features      |
-                    | -------------------------- | ----- | ------- | -------- | -------------------- |
-                    | Repository                 | ❌    | ❌      | ❌       | ❌                   |
-                    | CrudRepository             | ✅    | ❌      | ❌       | ❌                   |
-                    | PagingAndSortingRepository | ✅    | ✅      | ✅       | ❌                   |
-                    | JpaRepository              | ✅    | ✅      | ✅       | ✅                   |
-                    | JpaSpecificationExecutor   | ❌    | ❌      | ❌       | ✅ (Dynamic Queries) |
-            6. There operations are defined in SimpleJpaRepository, from which JpaRepository is implemented by.
-            7. We can test our cases in test folder. there,
-                We need to Autowired the repository
-                we write methods to add data, get all data, get data by id, and etc.
+                | Repository                 | CRUD  | Paging  | Sorting |     JPA Features      |
+                | -------------------------- | ----- | ------- | -------- | -------------------- |
+                | Repository                 | ❌    | ❌      | ❌       | ❌                   |
+                | CrudRepository             | ✅    | ❌      | ❌       | ❌                   |
+                | PagingAndSortingRepository | ✅    | ✅      | ✅       | ❌                   |
+                | JpaRepository              | ✅    | ✅      | ✅       | ✅                   |
+                | JpaSpecificationExecutor   | ❌    | ❌      | ❌       | ✅ (Dynamic Queries) |
+        6. There operations are defined in SimpleJpaRepository, from which JpaRepository is implemented by.
+        7. We can test our cases in test folder. there,
+            We need to Autowired the repository
+            we write methods to add data, get all data, get data by id, etc.
 
     Key Features of Spring Data JPA :
         1. Repository Abstraction : Provides a Repository interface with methods for common data access operations

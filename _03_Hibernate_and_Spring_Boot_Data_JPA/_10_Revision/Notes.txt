@@ -43,3 +43,56 @@ JPA :
 
     Step to connect to DB
          Hibernate Configurations --> Connecting app to DB --> Entity
+
+Spring Data JPA :
+    1. By using Spring Data JPA, we can easily implement JPA-based repositories by providing boilerplate code, derived query methods, and utilities, so we don’t need to write common methods like findById() and findAll() manually.
+    2. We can also write our own queries manually in JPQL (Java Persistence Query Language) if we want to execute a method according to our logic
+    3. Repositories Provided by Spring Data JPA -
+        JpaRepository --> extends --> CrudRepository --> extends --> PagingAndSortingRepository --> extends --> JpaRepository
+        | Repository                 | CRUD  | Paging  |  Sorting  |    JPA Features     |
+        | -------------------------- | ----- | ------- | --------- | --------------------|
+        | Repository                 | ❌    | ❌      | ❌       | ❌                   |
+        | CrudRepository             | ✅    | ❌      | ❌       | ❌                   |
+        | PagingAndSortingRepository | ✅    | ✅      | ✅       | ❌                   |
+        | JpaRepository              | ✅    | ✅      | ✅       | ✅                   |
+    4. We use JpaRepository generally so that we will get all the features
+    5. JpaRepository Interface is implemented by SimpleJpaRepository Class.
+    6. Key Features of Spring Data JPA :
+            1. Repository Abstraction : Provides a Repository interface with methods for common data access operations
+            2. Custom Queries Methods : Allows defining custom query methods by simply declaring method names (like if we want to look for products between some range)
+            3. Pagination and Sorting : Offers built-in support for Pagination and Sorting
+            4. Query Derivation : Automatically generates queries with method names (automatic means it follows rules to generate)
+                e.g. In test file, we created a method queryDerivation() that returns List of ProductEntity by method findByTitle() and passed title of sku. It wont generate if we provide titles because in our entity class there is not anything like titles.
+                     Then we need to create a method with same name in ProductRepository as well
+                     So now, when we run that method from test, then all the entries of same title will be returned
+
+                Rules for creating Query Methods :
+                    List<ProductEntity> findByDateCreatedBetween(LocalDateTime startDate, LocalDateTime endDate);
+                            ^              ^            ^                       ^
+                       Return Type    Query Subject    Query Predicate      Input Parameters
+
+                       1. Return type - It can be like List<>, Optional<>, or ProductEntity itself
+                       2. Query Subject - countBy, findBy, updateBy. Indicates the type of operation to perform
+                       3. Query Predicate - inside DateCreatedBetween we have one more operator i.e. Between. Specifies the field (dateCreated) and condition (Between)
+                       4. Input Parameters - Parameters that we provide. Values used by the predicate to filter data
+                Spring reads your method name → converts it into SQL → binds parameters → returns mapped Java objects
+
+                       Rules of Method Names :
+                          1. The name of query method must start with one of the following prefix : findBy, readBy, queryBy, and getBy
+                              Example : findByName, readByName, queryByName, getByName
+                          2. If we want to limit the number of returned query results we can add First or Top keyword before first by word.
+                              Example : findFirstByName, readFirst2ByName, findTop10ByName
+                          3. If we want to select unique results, We have to add distinct keyword before the First by word
+                              Example : findDistinctByName or findNameByDistinct
+                          4. Combine property expression with AND or OR
+                              Example : findByNameOrDescription, findByNameAndDescription
+                          More rules on : https://docs.spring.io/spring-data/jpa/reference/repositories/query-keywords-reference.html
+
+Sorting : If we want to sort. E.g. when we sort/filter items on amazon
+    Two ways of Sort :
+    1. OrderBy - Use to sort by order of the field But it is tightly coupled and we need to write multiple methods to sorts on different parameters)
+    2. Sort Class - To overcome tight coupling, We should use Sort Class
+
+Paging :
+    1. A single chunk of data that contains a subset of total dataset. It is an interface representing a page of data, including information about the total number of pages, total number of elements, and the current page's data
+    2. Use to show content in small format. E.g. When there is lot of data then we see next page option on amazon website
