@@ -24,7 +24,7 @@ public class EmployeeController {
 
 //    @GetMapping(path= "/employees")                   // Before using @RequestMapping
     @GetMapping                                         // this will be mapped to /employees
-    public String getAllEmployees(@RequestParam (required = false) Integer age,     // as we know @RequestParam is required field so remove compulsion use false
+    public String getAllEmployees(@RequestParam (required = false) Integer age,    // as we know @RequestParam is required field, so remove compulsion use false
                                   @RequestParam (required = false) String sortBy){
         return "Hi age " + age + " " + sortBy;
         // http://localhost:8080/employees?age=16&sortBy=Shikhil
@@ -37,7 +37,7 @@ public class EmployeeController {
 
     @PostMapping(path = "/createEmployee")
     public EmployeeDto createNewEmployee(@RequestBody EmployeeDto inputEmployee){
-        inputEmployee.setId(100L);
+        inputEmployee.setId(10L);
         return inputEmployee;
     }
 }

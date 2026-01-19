@@ -1,6 +1,5 @@
 package com.persistenceLayer.JPA.controllers;
 
-import com.persistenceLayer.JPA.dto.EmployeeDto;
 import com.persistenceLayer.JPA.entities.EmployeeEntity;
 import com.persistenceLayer.JPA.repositories.EmployeeRepository;
 import org.springframework.web.bind.annotation.*;
