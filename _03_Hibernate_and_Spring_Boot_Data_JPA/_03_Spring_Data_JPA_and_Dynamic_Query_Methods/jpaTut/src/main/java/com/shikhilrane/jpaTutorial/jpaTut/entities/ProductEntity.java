@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 //        catalog = "product_catalog",    // Specifies the database catalog (rarely used in real projects).
 //        schema = "hr",                  // Specifies the database schema where the table will be created.
         uniqueConstraints = {
-                @UniqueConstraint(name = "sku_unique", columnNames = {"sku"}),  // Every "sku" must be unique
+//                @UniqueConstraint(name = "sku_unique", columnNames = {"sku"}),  // Every "sku" must be unique
                 @UniqueConstraint(name = "title_price_unique", columnNames = {"title_x", "price"})    // can't add two or more title with same price
         },
         indexes = {

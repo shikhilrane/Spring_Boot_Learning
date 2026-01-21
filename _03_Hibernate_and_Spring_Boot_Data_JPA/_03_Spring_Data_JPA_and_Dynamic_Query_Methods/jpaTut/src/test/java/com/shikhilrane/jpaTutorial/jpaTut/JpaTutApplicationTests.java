@@ -52,7 +52,7 @@ class JpaTutApplicationTests {
     // Finding by title
     @Test
     void queryDerivation(){
-        List<ProductEntity> titles =  productRepository.findByTitle("Nestle Chocolate");
+        List<ProductEntity> titles =  productRepository.findByTitle("Colgate Toothpaste");
         System.out.println(titles);
     }
 
@@ -80,7 +80,7 @@ class JpaTutApplicationTests {
     // Finding by title containing specified character or String
     @Test
     void findByLike(){
-        List<ProductEntity> byLike = productRepository.findByTitleLike("%Biscuit%");
+        List<ProductEntity> byLike = productRepository.findByTitleLike("%a%");
         System.out.println(byLike);
     }
 
