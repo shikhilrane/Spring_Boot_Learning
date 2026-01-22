@@ -1,13 +1,14 @@
 package com.shikhilrane.project.collegeManagement.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -19,4 +20,18 @@ public class SubjectEntity {
 
     @Column(unique = true, nullable = false, length = 100)
     private String title;
+
+    // Subject with Professor (Owning Side). {Many to One}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_id", nullable = false)
+    private ProfessorEntity professorEntity;
+
+    // Subject with Student (Owning Side). {Many to Many}
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "subject_student",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<StudentEntity> studentEntity = new ArrayList<>();
 }

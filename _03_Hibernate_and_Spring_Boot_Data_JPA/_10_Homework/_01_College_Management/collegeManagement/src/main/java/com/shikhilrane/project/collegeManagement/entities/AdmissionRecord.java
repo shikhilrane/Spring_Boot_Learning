@@ -1,13 +1,11 @@
 package com.shikhilrane.project.collegeManagement.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -19,4 +17,9 @@ public class AdmissionRecord {
 
     @Column(nullable = false)
     private Integer fees;
+
+    // AdmissionRecord with Student (Owning Side). {One to One}
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private StudentEntity studentEntity;
 }
