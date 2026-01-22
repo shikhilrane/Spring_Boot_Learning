@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -40,5 +41,26 @@ public class ProfessorController {
         return ResponseEntity.ok(allProfessor);
     }
 
+    // Put Mapping (Update)
+    @PutMapping("/{updateProfessor}")
+    public ResponseEntity<ProfessorDto> updateProfessor(@RequestBody ProfessorDto professorDto, @PathVariable(name = "updateProfessor") Long id){
+        ProfessorDto updatedProfessorInfo = professorService.updateProfessorInfo(id, professorDto);
+        return ResponseEntity.ok(updatedProfessorInfo);
+    }
 
+    // Delete mapping (Delete)
+    @DeleteMapping("/{deleteProfessorById}")
+    public ResponseEntity<Boolean> deleteprofessor(@PathVariable(name = "deleteProfessorById") Long id){
+        boolean gotDeleted = professorService.deleteProfessor(id);
+        if (gotDeleted) return ResponseEntity.ok(true);
+        return ResponseEntity.notFound().build();
+    }
+
+    // Patch Mapping (Patch)
+    @PatchMapping("/{patchProfessor}")
+    public ResponseEntity<ProfessorDto> patchProfessor(@RequestBody Map<String, Object> updates, @PathVariable(name = "patchProfessor") Long id){
+        ProfessorDto patchProfessorDto = professorService.patchPrpfessor(id, updates);
+        if (patchProfessorDto == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(patchProfessorDto);
+    }
 }

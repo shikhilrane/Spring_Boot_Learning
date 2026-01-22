@@ -1,0 +1,45 @@
+Mapping :
+    1. Many to Many :
+        i. Check where is FK Constraints, and make that entity owning side
+        ii. If FK present or absent in both, then decide which one is more relevant to own the side, and make that entity owning side
+    2. One to One :
+        i. Check where is FK Constraints, and make that entity owning side
+        ii. If FK present or absent in both, then decide which one is more relevant to own the side, and make that entity owning side
+    3. One to Many OR Many to One :
+        i. FK is always on the Many side → Many side is the owning side
+        ii. If designing from scratch, FK will go to the Many side, so Many side must be owning
+
+Cascade :
+    1. Many to Many :
+        No need to Specify cascading
+    2. One to One :
+        At owning side
+    3. One to Many :
+        At One side
+    4. Many to One :
+        No need to Specify cascading
+
+orphanRemoval :
+    1. Many to Many :
+        No need to Specify orphanRemoval
+    2. One to One :
+        At owning side
+    3. One to Many :
+        At One side
+    4. Many to One :
+        No need to Specify orphanRemoval
+
+fetch :
+    👉 Applies to BOTH owning & inverse sides
+    👉 Always prefer LAZY
+
+    Relationship	Default
+    ManyToOne	    EAGER
+    OneToOne	    EAGER
+    OneToMany	    LAZY
+    ManyToMany	    LAZY
+
+    Best practice - Always LAZY unless absolutely required
+    Side	Fetch
+    Owning	LAZY
+    Inverse	LAZY
