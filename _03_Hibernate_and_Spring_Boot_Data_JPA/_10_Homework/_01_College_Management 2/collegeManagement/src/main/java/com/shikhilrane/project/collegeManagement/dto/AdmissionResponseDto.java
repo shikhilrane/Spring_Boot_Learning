@@ -1,0 +1,12 @@
+package com.shikhilrane.project.collegeManagement.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class AdmissionResponseDto {
+    private Long id;
+    private Integer fees;
+    private Long studentId;
+}

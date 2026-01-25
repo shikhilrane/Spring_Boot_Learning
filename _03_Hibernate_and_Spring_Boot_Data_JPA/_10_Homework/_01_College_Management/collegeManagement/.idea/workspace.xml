@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="84f2c6e1-dabe-4b00-b4a4-7606ce2b888d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../../_01_College_Management 2/collegeManagement/src/main/java/com/shikhilrane/project/collegeManagement/dto/CreateStudentDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../_01_College_Management 2/collegeManagement/src/main/java/com/shikhilrane/project/collegeManagement/dto/StudentResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/IMPORTANT_NOTES.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/CollegeManagementApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/config/MapperConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/controllers/ProfessorController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/dto/AdmissionRecordDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/dto/ProfessorDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/dto/StudentDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/dto/SubjectDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/entities/AdmissionRecord.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/entities/ProfessorEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/entities/StudentEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/entities/SubjectEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/repositories/AdmissionRecordRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/repositories/ProfessorRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/repositories/StudentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/repositories/SubjectRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/AdmissionRecordService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/ProfessorService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/ServiceImplementation/AdmissionRecordServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/ServiceImplementation/ProfessorServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/ServiceImplementation/StudentServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/ServiceImplementation/SubjectServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/StudentService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement/services/SubjectService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/shikhilrane/project/collegeManagement/CollegeManagementApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/shikhilrane/project/collegeManagement/ProfessorServiceTesting.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/shikhilrane/Downloads/Programming/Git-remote-repos/Learnings/_13_Spring_Boot_CS/Spring_Boot_Learning/_03_Hibernate_and_Spring_Boot_Data_JPA/_10_Homework/_01_College_Management/collegeManagement" value="38be4YWAbwmJwarrdLcBpxrSa6a" />
+    </persistenceIdMap>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="com.intellij.jpb.JpaRepository" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;shikhilrane&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/shikhilrane/Spring_Boot_Learning.git&quot;,
+    &quot;accountId&quot;: &quot;cc3592a6-0115-4a01-a21d-e1e90f7806c2&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="38be4YWAbwmJwarrdLcBpxrSa6a" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.CollegeManagementApplication.executor": "Run",
+    "JUnit.ProfessorServiceTesting.testCreatedProfessor.executor": "Run",
+    "JUnit.ProfessorServiceTesting.testDeleteProfessor.executor": "Run",
+    "JUnit.ProfessorServiceTesting.testGetAllProfessors.executor": "Run",
+    "JUnit.ProfessorServiceTesting.testGetProfessorById.executor": "Run",
+    "JUnit.ProfessorServiceTesting.testPatchProfessor.executor": "Run",
+    "JUnit.ProfessorServiceTesting.testUpdateProfessor.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/shikhilrane/Downloads/Programming/Git-remote-repos/Learnings/_13_Spring_Boot_CS/Spring_Boot_Learning/_03_Hibernate_and_Spring_Boot_Data_JPA/_10_Homework/_01_College_Management/collegeManagement"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/java/com/shikhilrane/project/collegeManagement" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.ProfessorServiceTesting.testGetAllProfessors">
+    <configuration name="ProfessorServiceTesting.testCreatedProfessor" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="collegeManagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shikhilrane.project.collegeManagement.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.shikhilrane.project.collegeManagement" />
+      <option name="MAIN_CLASS_NAME" value="com.shikhilrane.project.collegeManagement.ProfessorServiceTesting" />
+      <option name="METHOD_NAME" value="testCreatedProfessor" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProfessorServiceTesting.testDeleteProfessor" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="collegeManagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shikhilrane.project.collegeManagement.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.shikhilrane.project.collegeManagement" />
+      <option name="MAIN_CLASS_NAME" value="com.shikhilrane.project.collegeManagement.ProfessorServiceTesting" />
+      <option name="METHOD_NAME" value="testDeleteProfessor" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProfessorServiceTesting.testGetAllProfessors" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="collegeManagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shikhilrane.project.collegeManagement.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.shikhilrane.project.collegeManagement" />
+      <option name="MAIN_CLASS_NAME" value="com.shikhilrane.project.collegeManagement.ProfessorServiceTesting" />
+      <option name="METHOD_NAME" value="testGetAllProfessors" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProfessorServiceTesting.testPatchProfessor" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="collegeManagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shikhilrane.project.collegeManagement.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.shikhilrane.project.collegeManagement" />
+      <option name="MAIN_CLASS_NAME" value="com.shikhilrane.project.collegeManagement.ProfessorServiceTesting" />
+      <option name="METHOD_NAME" value="testPatchProfessor" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProfessorServiceTesting.testUpdateProfessor" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="collegeManagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.shikhilrane.project.collegeManagement.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.shikhilrane.project.collegeManagement" />
+      <option name="MAIN_CLASS_NAME" value="com.shikhilrane.project.collegeManagement.ProfessorServiceTesting" />
+      <option name="METHOD_NAME" value="testUpdateProfessor" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.ProfessorServiceTesting.testGetAllProfessors" />
+        <item itemvalue="JUnit.ProfessorServiceTesting.testPatchProfessor" />
+        <item itemvalue="JUnit.ProfessorServiceTesting.testCreatedProfessor" />
+        <item itemvalue="JUnit.ProfessorServiceTesting.testDeleteProfessor" />
+        <item itemvalue="JUnit.ProfessorServiceTesting.testUpdateProfessor" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="84f2c6e1-dabe-4b00-b4a4-7606ce2b888d" name="Changes" comment="" />
+      <created>1769072506851</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1769072506851</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>
