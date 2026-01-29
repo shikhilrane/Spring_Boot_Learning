@@ -1,0 +1,85 @@
+Auditing in Spring Boot
+    1. Auditing in Spring Boot automatically tracks who created or modified a database record and when it happened.
+    2. If there is a project on which two people are working and one made a changes in another person's work then we can't able to know who made the changes in the project, but with Auditing it is possible to know who brings the changes
+    3. It is Just similar to Git.
+    4. Git tracks file changes. but, Spring Boot Auditing tracks database record changes.
+    5. Auditing in SpringBOot allows you to automatically populate certain fields, such as creation and modification timestamps, as well as the user who created or modified the entity
+    6. Steps to Add Auditing :
+       1. Create Auditable base Entity using the following annotations : @EntityListeners(AuditingEntityListener.class),@MappedSuperclass, @CreatedBy, @CreatedDate, @LastModifiedBy, and @LastModifiedDate annotations.
+            1.1 Create a AuditingConfig class, This class switches on auditing so Spring can automatically track changes
+                    package com.shikhilrane.shikhil.prod_ready_features.config;
+
+                    import org.springframework.context.annotation.Configuration;
+                    import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+                    @Configuration
+                    @EnableJpaAuditing
+                        public class AuditingConfig {
+                    }
+            1.2 Create a AuditableEntity class in Entity and add,
+                    @MappedSuperclass                               // Makes this class a parent so its fields are shared with all child entities
+                    @EntityListeners(AuditingEntityListener.class)  // Automatically fills created/updated date and user fields
+                    @Getter
+                    @Setter
+
+            1.3 Then add its supporting annotation that brings the information about changes in AuditableEntity
+                    @CreatedDate
+                    private LocalDateTime createdDate;  // this will be created at once only
+
+                    @LastModifiedDate
+                    private LocalDateTime updatedDate;  // this will get updated as any changes happens in db from the entity that uses AuditableEntity
+
+                    @CreatedBy
+                    private String createdBy;           // who created this entry in DB
+
+                    @LastModifiedBy
+                    private String lastModifiedBy;      // who modified the column details last
+
+       2. Extend all Entities from the Superclass. (i.e. from AuditableEntity)
+
+       NOTE : But still changes made by createdBy and lastModifiedBy giving null
+       So to make that changes happen,
+
+       3. Create a class in auth package and implement the AuditorAware<String> interface to provide the current authenticated user from Spring Security.
+            We do this thing by Spring Security, Not hardcode the name, but we haven't learnt Spring Security yet & we are learning Auditing we have hardcoded the value (i.e. name of the Auditor in this class)
+                        @Component("auditorProvider")
+                        public class AuditorAwareImpl implements AuditorAware<String> {
+
+                            @Override
+                            public Optional<String> getCurrentAuditor() {
+                                // later this will come from Spring Security
+                                // get security context
+                                // get Authentication
+                                // get the principle
+                                // get the username from spring security
+                                return Optional.of("Shikhil Rane"); // This is just hard coded value we have provided here for understanding otherwise we get it by spring security
+                            }
+                        }
+
+       4. Enable JPA Auditing by adding the @EnableJpaAuditing annotation to a configuration class. i.e. Provide the name of component in the AuditingConfig class
+                        @Configuration
+                        @EnableJpaAuditing(auditorAwareRef = "auditorProvider")
+                            public class AuditingConfig {
+                        }
+
+       5. Pass the reference of the AuditorAware class bean to the @EnableJpaAuditing interface.
+
+       FLOW :
+                AuditorAwareImplementation  -> AuditingConfig -> AuditableEntity -> Entity/Entities
+
+Higher Level Auditing :
+    1. But we can't get full log here like, who made the changes, from which entity changes have been made, like that.
+    2. So to get these type of logs we need to use "Envers Dependency"
+    3. Add the Envers Dependency :
+        <!-- Source: https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-envers -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>7.2.1.Final</version>
+            <scope>compile</scope>
+        </dependency>
+    4. Add @Audited (it Automatically keeps a history of changes made to this entity) in the AuditableEntity and in the entity. Additionally we can Put @NotAudited (Tells Spring not to track changes for this field or entity) to the fields of Entity that should not be get tracked.
+    5. It creates 2 tables posts_aud and revinfo in the DB
+        posts_aud : This table stores the history of all changes made to the Posts table
+        revinfo : This table stores revision details like revision id and time of change
+    6. But this way is not that efficient because multiple users or admin can can enter lots of entries in these table, so it will result into heavy DB usage,so usually companies avoid it
