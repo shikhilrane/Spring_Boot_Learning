@@ -83,3 +83,13 @@ Higher Level Auditing :
         posts_aud : This table stores the history of all changes made to the Posts table
         revinfo : This table stores revision details like revision id and time of change
     6. But this way is not that efficient because multiple users or admin can can enter lots of entries in these table, so it will result into heavy DB usage,so usually companies avoid it
+
+Creating APIs for admins
+    1. Creating API for admins so that they can know which particular field is updated and how many revisions were made on that particular entity
+    2. Create APIs for admins.
+    3. We can create different PostAuditController for different entities as well.
+    4. Following steps :
+        1. Create an AuditController like a normal controller
+        2. Create a DTO that has auditing fields
+        3. Return list of all those fields from API using EntityManagerFactory, AuditReader and .getRevisions() method
+    5. Whenever changes happen in any particular entity then, this controller shows whole history of that particular id

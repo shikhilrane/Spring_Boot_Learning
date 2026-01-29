@@ -25,6 +25,6 @@ public class PostEntity extends AuditableEntity{
     private String title;
 
     @Column(nullable = false)
-    @NotAudited                 // Tells Spring not to track changes for this field or entity
+//    @NotAudited                 // Tells Spring not to track changes for this field or entity
     private String description;
 }
