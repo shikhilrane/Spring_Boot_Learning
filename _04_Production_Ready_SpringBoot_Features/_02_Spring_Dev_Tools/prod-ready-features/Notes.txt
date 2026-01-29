@@ -1,1 +1,18 @@
-Installation of MySQL and DBeaver
+Spring Dev Tools
+    1. Spring Boot DevTools helps developers see their code changes instantly without manually restarting the server.
+    2. To use Spring Dev tools we to add dependency, so add Dependency :
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+    3. So to enable this feature we have to go to setting (cmd + ,) --> Build,Execution,Deployment --> Compiler --> Check the box in front of "Build Project Automatically". By default this box is unchecked
+    4. So it will automatically build our project
+    5. Devtool dependency looks for the changes in Compiled classes and if it find any changes then it will trigger the auto build.
+    6. When you run the application, and while running you made changes in code then it will reflect those changes in execution without even restarting the project
+    7. It takes some time to changes happen but it does gracefully
+    8. It makes more sense in production apps
+    9. Some useful configurations for Dev-Tools
+        spring.devtools.restart.enabled=false                 // To toggle on and off restart
+        spring.devtools.restart.exclude=static/**,public/**   // We can exclude some packages for reload on runtime(simply copy the path from content root of package)
+        spring.devtools.restart.pollInterval=20               // Check changes in every 20 seconds
+        spring.devtools.restart.quietPeriod=10                // After getting changes, it will wait for 10 seconds

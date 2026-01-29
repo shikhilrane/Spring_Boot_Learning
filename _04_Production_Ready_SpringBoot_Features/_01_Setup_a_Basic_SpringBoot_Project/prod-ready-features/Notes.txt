@@ -1,1 +1,1 @@
-Created Basic Project for Spring Boot app with single entity 
+Created Basic Project for Spring Boot app with single entity
