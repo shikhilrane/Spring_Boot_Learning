@@ -1,1 +1,1 @@
-Installation of MySQL and DBeaver
+Created Basic Project for Spring Boot app with single entity 
