@@ -1,0 +1,24 @@
+RestClient (HTTP Client) :
+    1. RestClient is use to get data that is not present in our server, but it is presented by some other 3rd party server.
+    2. If we want to get data that is present in other 3rd party service, and then we can get the data by this RestAPI call called RestClient in Blocking Manner
+    3. Blocking Manner : Your code gets blocked until your data gets return from service layer i.e. in synchronous manner
+    4. RestClient will facilitate us to call any 3rd party service APIs to our own server or application
+    5. Before RestClient, we used to have RestTemplate. So now RestClient is upgradation over RestTemplate because this provides modern way to deal with HTTP Services.
+    6. We also have other HTTP client like WebClient that can be use to get data in Non-Blocking Manner. i.e. in asynchronous manner. This deals in flux for that we have to learn about web-flux.
+    7. RestClient provides abstraction over lots of Http libraries, Also we can use those libraries as well, but in that case we have to handle a lot of stuff like how we are handling http request and how we are handling response, handling the error, and, etc. if we use those raw http libraries. So we use RestClient in place of those raw libraries.
+    8. RestClient uses Jackson library to convert the data from JSON to Java Object and Java Object to JSON
+    9. RestClient is already present in SpringBoot Web dependency so we don't have to add any external dependency
+
+Building RestClient :
+    RestClient restClient = RestClient.builder()                                // Builder to create RestClient object
+        .baseUrl(BASE_URL)                                                      // Pass the base URL for all HTTP requests
+        .defaultHeader(HttpHeaders.AUTHORIZATION,                               // Add default Authorization header
+            encodeBasic(properties.getUsername(), properties.getPassword())     // Generates Basic base64(username:password)
+        )                                                                       // Basic Auth header
+        .build();                                                               // Build the RestClient object
+
+Creating RestClient :
+    Calling APIs from Week 2's Transform API Project
+    Step 1 : Change the Port of any of the one project because both the servers can't run on same server.
+    Step 2 : Create a config class called RestClientConfig
+    step 3 :
