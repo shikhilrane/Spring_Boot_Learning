@@ -25,6 +25,7 @@ public class EmployeeClientImpl implements EmployeeClient {
     private final RestClient restClient;
     private static final Logger log = LoggerFactory.getLogger(EmployeeClientImpl.class);
 
+    // Get all Employees
     @Override
     public List<EmployeeDto> getAllEmployees() {
 //        log.error("error log");
@@ -42,15 +43,15 @@ public class EmployeeClientImpl implements EmployeeClient {
                     .onStatus(
                             status -> status.is4xxClientError(),
                             (req, res) -> {
-                                log.debug("4xx error occurred. So,could not fetch the Employee List");
-                                log.error("error{}", Arrays.toString(res.getBody().readAllBytes()));
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
                                 throw new RuntimeException("Client error while fetching employees"); }
                     )
                     .onStatus(
                             status -> status.is5xxServerError(),
                             (req, res) -> {
-                                log.debug("5xx error occurred. So,could not fetch the Employee List");
-                                log.error("error{}", Arrays.toString(res.getBody().readAllBytes()));
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from server. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
                                 throw new RuntimeException("Server error while fetching employees"); }
                     )
                     .toEntity(new ParameterizedTypeReference<>() {});               // convert response body
@@ -63,8 +64,10 @@ public class EmployeeClientImpl implements EmployeeClient {
         }
     }
 
+    // Get Employee by ID
     @Override
     public Optional<EmployeeDto> getEmployeeById(Long id) {
+        log.trace("Trying to fetch Employee by ID");
         try {
             ResponseEntity<APIResponse<EmployeeDto>> response = restClient.get()                            // create GET request
                     .uri("/employees/{employeeId}", id)                                 // endpoint with path variable
@@ -72,23 +75,31 @@ public class EmployeeClientImpl implements EmployeeClient {
                     .onStatus(
                             status -> status.value() == 404,
                             (req, res) -> {
+                                log.debug("404 response body: {}", res.getBody().toString());
+                                log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
                                 throw new ResourceNotFoundException("Employee not found with id : " + id); }
                     )
                     .onStatus(
                             status -> status.is5xxServerError(),
                             (req, res) -> {
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from server. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
                                 throw new RuntimeException("Server error while fetching employee"); }
                     )
                     .toEntity(new ParameterizedTypeReference<APIResponse<EmployeeDto>>() {});   // map wrapper
-
+            log.trace("Successfully retrieved the Employee in getEmployeeById for trace : {}", response.getBody().getData());
+            log.info("Successfully retrieved the Employee in getEmployeeById, it is use to give information that our application is successfully executed");
             return Optional.ofNullable(response.getBody().getData());                                 // extract actual employee
         } catch (Exception e) {
+            log.error("Exception occurred in getEmployeeById : {}", String.valueOf(e));
             throw new RuntimeException(e);
         }
     }
 
+    // Create Employee
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
+        log.trace("Trying to create an Employee");
         try {
             ResponseEntity<APIResponse<EmployeeDto>> employeeDtoAPIResponse = restClient.post()     // create POST request
                     .uri("/employees/createEmployee")                           // endpoint to create employee
@@ -96,21 +107,32 @@ public class EmployeeClientImpl implements EmployeeClient {
                     .retrieve()                                                     // execute HTTP call
                     .onStatus(
                             status -> status.is4xxClientError(),
-                            (req, res) -> { throw new RuntimeException("Invalid employee data"); }
+                            (req, res) -> {
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                                throw new RuntimeException("Invalid employee data"); }
                     )
                     .onStatus(
                             status -> status.is5xxServerError(),
-                            (req, res) -> { throw new RuntimeException("Server error while creating employee"); }
+                            (req, res) -> {
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from server. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                                throw new RuntimeException("Server error while creating employee"); }
                     )
                     .toEntity(new ParameterizedTypeReference<>() {});                   // map response body
+            log.trace("Successfully created an employee for trace : {}", employeeDtoAPIResponse.getBody().getData());
+            log.info("Successfully created an employee, it is use to give information that our application is successfully executed");
             return employeeDtoAPIResponse.getBody().getData();                                // return created employee
         } catch (Exception e) {
+            log.error("Exception occurred in getEmployeeById : {}", String.valueOf(e));
             throw new RuntimeException(e);
         }
     }
 
+    // Update Employee
     @Override
     public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto) {
+        log.trace("Trying to update an Employee");
         try {
             ResponseEntity<APIResponse<EmployeeDto>> response = restClient.put()    // create PUT request
                     .uri("/employees/{id}", id)                 // endpoint with employee id
@@ -118,37 +140,62 @@ public class EmployeeClientImpl implements EmployeeClient {
                     .retrieve()                                     // execute HTTP call
                     .onStatus(
                             status -> status.value() == 404,
-                            (req, res) -> { throw new RuntimeException("Employee not found for update"); }
+                            (req, res) -> {
+                                log.debug("404 response body: {}", res.getBody());
+                                log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                                throw new RuntimeException("Employee not found for update"); }
                     )
                     .onStatus(
                             status -> status.is5xxServerError(),
-                            (req, res) -> { throw new RuntimeException("Server error while updating employee"); }
+                            (req, res) -> {
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from server. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                                throw new RuntimeException("Server error while updating employee"); }
                     )
                     .toEntity(new ParameterizedTypeReference<>() {});   // map response
+            log.trace("Successfully updated an employee with id : {} for trace : {}", id, response.getBody().getData());
+            log.info("Successfully updated an employee, it is use to give information that our application is successfully executed");
             return response.getBody().getData();                              // return updated employee
         } catch (Exception e) {
+            log.error("Exception occurred in getEmployeeById : {}", String.valueOf(e));
             throw new RuntimeException(e);
         }
     }
 
+    // Patch Employee
     @Override
     public EmployeeDto updatePartialEmployee(Long id, Map<String, Object> updates) {
-        ResponseEntity<APIResponse<EmployeeDto>> response = restClient.patch()      // create PATCH request
-                .uri("/employees/{id}", id)                     // endpoint with employee id
-                .body(updates)                                      // send only fields to update
-                .retrieve()                                         // execute HTTP call
-                .onStatus(
-                        status -> status.value() == 404,
-                        (req, res) -> { throw new RuntimeException("Employee not found for patch"); }
-                )
-                .onStatus(
-                        status -> status.is5xxServerError(),
-                        (req, res) -> { throw new RuntimeException("Server error while patching employee"); }
-                )
-                .toEntity(new ParameterizedTypeReference<>() {});       // map response
-        return response.getBody().getData();                                  // return updated employee
+        log.trace("Trying to patch an Employee");
+        try {
+            ResponseEntity<APIResponse<EmployeeDto>> response = restClient.patch()      // create PATCH request
+                    .uri("/employees/{id}", id)                     // endpoint with employee id
+                    .body(updates)                                      // send only fields to update
+                    .retrieve()                                         // execute HTTP call
+                    .onStatus(
+                            status -> status.value() == 404,
+                            (req, res) -> {
+                                log.debug("404 response body: {}", res.getBody());
+                                log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                                throw new RuntimeException("Employee not found for pstch"); }
+                    )
+                    .onStatus(
+                            status -> status.is5xxServerError(),
+                            (req, res) -> {
+                                log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                                log.error("{} error from server. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                                throw new RuntimeException("Server error while patching employee"); }
+                    )
+                    .toEntity(new ParameterizedTypeReference<>() {});       // map response
+            log.trace("Successfully patched an employee with id : {} for trace : {}", id, response.getBody().getData());
+            log.info("Successfully patched an employee, it is use to give information that our application is successfully executed");
+            return response.getBody().getData();                                  // return updated employee
+        }catch (Exception e) {
+            log.error("Exception occurred in getEmployeeById : {}", String.valueOf(e));
+            throw new RuntimeException(e);
+        }
     }
 
+    // Delete Employee
     @Override
     public void deleteEmployee(Long id) {
         restClient.delete()                     // create DELETE request
@@ -156,11 +203,17 @@ public class EmployeeClientImpl implements EmployeeClient {
                 .retrieve()                     // execute HTTP call
                 .onStatus(
                         status -> status.value() == 404,
-                        (req, res) -> { throw new RuntimeException("Employee not found for delete"); }
+                        (req, res) -> {
+                            log.debug("404 response body: {}", res.getBody());
+                            log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                            throw new RuntimeException("Employee not found for delete"); }
                 )
                 .onStatus(
                         status -> status.is5xxServerError(),
-                        (req, res) -> { throw new RuntimeException("Server error while deleting employee"); }
+                        (req, res) -> {
+                            log.debug("{} response body: {}", res.getStatusCode(), res.getBody());
+                            log.error("{} error from server. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
+                            throw new RuntimeException("Server error while deleting employee"); }
                 )
                 .toBodilessEntity();            // no response body needed
     }

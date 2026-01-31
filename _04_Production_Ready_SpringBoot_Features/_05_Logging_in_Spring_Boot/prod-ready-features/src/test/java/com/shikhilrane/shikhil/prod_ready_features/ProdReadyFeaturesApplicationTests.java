@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @SpringBootTest
@@ -25,6 +26,27 @@ class ProdReadyFeaturesApplicationTests {
 	}
 
     @Test
+    @Order(6)
+    public void deleteEmployee(){
+        employeeClient.deleteEmployee(1L);
+    }
+
+    @Test
+    @Order(5)
+    public void patchEmployee(){
+        EmployeeDto employeeDto = employeeClient.updatePartialEmployee(1L, Map.of("name", "Rohan"));
+        System.out.println(employeeDto);
+    }
+
+    @Test
+    @Order(4)
+    public void updateEmployee(){
+        EmployeeDto employeeDto = new EmployeeDto(null,"Aman","aman@gmail.com",43,"USER",235365,31.45, LocalDate.of(2022, 4,16),true);
+        employeeClient.updateEmployee(1L, employeeDto);
+        System.out.println();
+    }
+
+    @Test
     @Order(3)
     public void getEmployees(){
         List<EmployeeDto> allEmployees = employeeClient.getAllEmployees();
@@ -34,7 +56,7 @@ class ProdReadyFeaturesApplicationTests {
     @Test
     @Order(2)
     public void getEmployeeById(){
-        Optional<EmployeeDto> employeeById = employeeClient.getEmployeeById(1L);
+        Optional<EmployeeDto> employeeById = employeeClient.getEmployeeById(5L);
         System.out.println(employeeById);
     }
 
