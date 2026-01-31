@@ -21,4 +21,59 @@ Creating RestClient :
     Calling APIs from Week 2's Transform API Project
     Step 1 : Change the Port of any of the one project because both the servers can't run on same server.
     Step 2 : Create a config class called RestClientConfig
-    step 3 :
+    step 3 : Configure the RestClient in config package
+            @Bean
+            @Qualifier("employeeRestClient")
+            public RestClient getEmployeeServiceRestClient(){
+                return RestClient.builder()
+                        .baseUrl(BASE_URL)
+                        .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                        .build();
+            }
+    Step 4 : Create EmployeeDto in which data should be traverse
+    Step 5 : Create separate client package to create service for foreign APIs
+    Step 6 : Create Controller to access Data from services
+
+Error Handling in Rest Client :
+    1. Use onStatus() in methods of Service
+    2. Use 2 onStatus(), Because :
+        1. 404 – client mistake / resource not found
+            .onStatus(
+                status -> status.value() == 404,
+                (req, res) -> { throw new ResourceNotFoundException("Employee not found"); }
+            )
+            Notes : Use status.value() == 404, in all methods except create method because only 404 can be occurred in all method
+                    Use status.is4xxClientError, in create method because there can 400, 401, 403, 409 so we use generic method here
+        2. 5xx – server issue
+            .onStatus(
+                status -> status.is5xxServerError(),
+                (req, res) -> { throw new RemoteServerException("Service down"); }
+            )
+            Notes : We use status.is5xxServerError(), everywhere to show server error because server could be anything
+                    We can put 5xx error in RestClientConfig as well by using .defaultStatusHandler
+        Also we can throw our custom errors using exceptions and advice
+    3. 4xx and 5xx errors:
+        4xx (Client Errors):
+        400 Bad Request – request data is invalid
+        401 Unauthorized – authentication missing or invalid
+        403 Forbidden – access not allowed
+        404 Not Found – resource does not exist
+        405 Method Not Allowed – HTTP method not supported
+        408 Request Timeout – client took too long to send request
+        409 Conflict – request conflicts with existing data
+        410 Gone – resource permanently removed
+        415 Unsupported Media Type – wrong content type sent
+        422 Unprocessable Entity – validation failed
+        429 Too Many Requests – rate limit exceeded
+
+        5xx (Server Errors):
+        500 Internal Server Error – server failed unexpectedly
+        501 Not Implemented – feature not supported by server
+        502 Bad Gateway – invalid response from upstream server
+        503 Service Unavailable – server temporarily down
+        504 Gateway Timeout – upstream server did not respond
+        507 Insufficient Storage – server out of storage
+        508 Loop Detected – infinite request loop on server
+
+Complete Flow ---->
+        Configure Port -> Config RestClient -> ClientCto -> Service -> Controller

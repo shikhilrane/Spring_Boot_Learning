@@ -2,6 +2,7 @@ package com.shikhilrane.shikhil.prod_ready_features.controllers;
 
 import com.shikhilrane.shikhil.prod_ready_features.clients.EmployeeClient;
 import com.shikhilrane.shikhil.prod_ready_features.dto.EmployeeDto;
+import com.shikhilrane.shikhil.prod_ready_features.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class EmployeeRestClientController {
         Optional<EmployeeDto> employee = employeeClient.getEmployeeById(id);
         return employee
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found  with id : " + id));
     }
 
     // CREATE
