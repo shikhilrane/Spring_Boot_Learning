@@ -1,0 +1,52 @@
+Logging :
+    1. we use System.out.println(); to print error on console in our apps
+    2. But when we deploy our app on server for production, then we need to view those error while debugging on certain place after code runs, in such case Logging works
+    3. Also, we can get flow of our application using logs, it helps to track where exactly the code crashes and thus eases debugging
+    4. To write logs in java we use frameworks like 'logback' and abstract layer implementation on top of logback called 'slf4j'
+    5. Logging frameworks allow us to configure log levels, log file locations, formats, and messages.
+    6. There are lots of logging frameworks like : log4J, java.util.logging (JUL), tiny log, logback, etc
+    7. "Logback" comes with spring boot in starter dependency so we don't need to add other dependency in it
+    8. Elements of Logging Framework :
+        1. Logger : Capture the messages
+            Log Levels :
+                FATAL – application cannot continue (very severe error or fatal error)
+                ERROR – runtime errors
+                WARN  – something unexpected but application still works
+                INFO  – normal application flow messages
+                DEBUG – information about the flow of the system for developer
+                TRACE – very detailed logs, used for deep debugging
+            Creation of logs :
+                1. First make a private static final object of Logger in service and use LoggerFactory.getLogger method to create an object imported from, import org.slf4j.Logger; and LoggerFactory from import org.slf4j.LoggerFactory;
+                2. then we can use
+                    log.error("error log");
+                    log.warn("warn log");
+                    log.info("info log");
+                    log.debug("debug log");
+                    log.trace("trace log");
+                   these methods in any method
+                3. But when we run that method debug and trace won't run because by default only logs till info are enabled and debug and trace are disabled
+                4. If we want to see debug and trace logs, we have to enable it by setting the log levels
+                    Setting the Log Levels :
+                                                    FATAL
+                                                    ERROR
+                                                    WARN
+                                                    INFO
+                                                     ^
+                                              enabled by default
+                                                  Log level
+                                              disabled by default
+                                                     v
+                                                    DEBUG
+                                                    TRACE
+                            We have to enable DEBUG and TRACE to see these logs
+                            In application.properties file, use logging.level.(package_name_of_service)=TRACE
+                            Example :
+                                1. For service layer : logging.level.com.shikhilrane.shikhil.prod_ready_features.clients=TRACE
+                                2. Setting log level for different package : logging.level.com.shikhilrane.shikhil.prod_ready_features.config=debug
+                                3. Setting log level to root : logging.level.root=TRACE
+                            Now we can see see all the logs till TRACE
+                5. Write log.info() in try block before return statement and log.error() in catch block before throw statement, to print specific logs
+                6. We can write .error() logs in onStatus() as well to see what exactly happen
+
+        2. Formatter : Formats the message captured by the Logger
+        3. Handler : Dispatches the messages by printing them on the console or storing them in a file, sending an email, etc.
