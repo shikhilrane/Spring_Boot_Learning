@@ -49,4 +49,46 @@ Logging :
                 6. We can write .error() logs in onStatus() as well to see what exactly happen
 
         2. Formatter : Formats the message captured by the Logger
+            1. It is use to format our logs
+            2. The log patterns can be formatted and customised according to our requirements by setting colors, messages format, etc.
+            3. To Format the logs we need to modify the configuration :
+                    spring.output.ansi.enabled=ALWAYS
+                    logging.pattern.console=%clr(%d{dd-MM-yyyy HH:mm:ss}){blue} [%level] [%t] [%c{1}] --- %m%n , in application.properties
+                here,
+                    spring.output.ansi.enabled=ALWAYS = use to enabling colors
+                    clr = colour
+                    %d = date
+                    %level = log level
+                    %t = thread executing
+                    %c = class path
+                    %m = message
+                    %n = new line
+                Example :
+                    logging.pattern.console=%d{dd-MM-yyyy HH:mm:ss} [%level] [%c{1}] --- %m%n
+                    here,
+                        %d{dd-MM-yyyy HH:mm:ss} : formatted the date
+                        [%level] : formatted the level
+                        [%t] : thread on which this method executed
+                        [%c{1}] : Shows only last qualified file name fully and else will be truncated
+                        %m%n : message and new line
+
         3. Handler : Dispatches the messages by printing them on the console or storing them in a file, sending an email, etc.
+            1. Use to make and push log message in .log file
+            2. To format the log file,
+                logging.file.name=application.log
+                logging.pattern.file=%d{dd-MM-yyyy HH:mm:ss} [%level] [%t] [%c{1}] --- %m%n
+                here,
+                    logging.file.name=application.log = creation of log file in root folder with given name
+                    logging.pattern.file=%d{dd-MM-yyyy HH:mm:ss} [%level] [%t] [%c{1}] --- %m%n = this pattern will be get followed in this file
+
+            3. Creating Rolling logs :
+                1. When we want to print different logs to be get printed in different files. Like log for Day 1, Day 2, Day 3, etc...
+                2. We want to configure the 'Logback' to achieve this thing
+                3. 'Logback' can't be configured by application.properties, we have to write some .xml files for that
+                4. Creating this :
+                    1. Create logback-spring.xml file  in resources folder
+                    2. Copy and paste the .xml code for logback configuration (don't try to remember it, its just a one time use file)
+                    3. Configure this file in application.properties :
+                        logging.config=classpath:logback-spring.xml
+                    4. Now when we run a method logs package will be get created and all the day logs will be get printed in it according to data we provided in logback-spring.xml file.
+                    5. It will create separate file for separate day, and according to data if 30 logs are printed then it will deleted first log data while executing 31st log.

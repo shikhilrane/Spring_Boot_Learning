@@ -56,7 +56,7 @@ class ProdReadyFeaturesApplicationTests {
     @Test
     @Order(2)
     public void getEmployeeById(){
-        Optional<EmployeeDto> employeeById = employeeClient.getEmployeeById(5L);
+        Optional<EmployeeDto> employeeById = employeeClient.getEmployeeById(1L);
         System.out.println(employeeById);
     }
 

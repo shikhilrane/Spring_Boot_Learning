@@ -11,3 +11,5 @@ public class ProdReadyFeaturesApplication {
 	}
 
 }
+
+// Always run TransformResponse of module 2, because we are using RestClient of that project

@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +36,8 @@ public class EmployeeClientImpl implements EmployeeClient {
 
         log.trace("Trying to fetch all Employees");
         try {
-            ResponseEntity<APIResponse<List<EmployeeDto>>> employeeDtoList = restClient.get()   // create GET request
+            ResponseEntity<APIResponse<List<EmployeeDto>>> employeeDtoList = restClient.get()   // create GET request (We don't use ResponseEntity<> in Service Layer but here we used, because it is not Producing HTTP Response, instead it is Consuming HTTP Response from foreign API and Same for APIResponse)
+
                     .uri("/employees/findAll")                              // endpoint to get all employees
                     .retrieve()                                                 // execute HTTP call
                     .onStatus(
@@ -55,6 +55,10 @@ public class EmployeeClientImpl implements EmployeeClient {
                                 throw new RuntimeException("Server error while fetching employees"); }
                     )
                     .toEntity(new ParameterizedTypeReference<>() {});               // convert response body
+            APIResponse<List<EmployeeDto>> body = employeeDtoList.getBody();
+            if (body == null) {
+                throw new RuntimeException("Empty response from Employee service");
+            }
             log.trace("Successfully retrieved the Employees in getAllEmployees for trace : {}", employeeDtoList.getBody().getData());
             log.info("Successfully retrieved the Employees in getAllEmployees, it is use to give information that our application is successfully executed");
             return employeeDtoList.getBody().getData(); // return employee list from response
@@ -75,7 +79,7 @@ public class EmployeeClientImpl implements EmployeeClient {
                     .onStatus(
                             status -> status.value() == 404,
                             (req, res) -> {
-                                log.debug("404 response body: {}", res.getBody().toString());
+                                log.debug("404 response body: {}", res.getBody());
                                 log.error("{} error from client. Status: {}, Reason: {}", res.getStatusCode(), res.getStatusCode(), res.getStatusText());
                                 throw new ResourceNotFoundException("Employee not found with id : " + id); }
                     )
@@ -87,11 +91,15 @@ public class EmployeeClientImpl implements EmployeeClient {
                                 throw new RuntimeException("Server error while fetching employee"); }
                     )
                     .toEntity(new ParameterizedTypeReference<APIResponse<EmployeeDto>>() {});   // map wrapper
+            APIResponse<EmployeeDto> body = response.getBody();
+            if (body == null) {
+                throw new RuntimeException("Empty response from Employee service");
+            }
             log.trace("Successfully retrieved the Employee in getEmployeeById for trace : {}", response.getBody().getData());
             log.info("Successfully retrieved the Employee in getEmployeeById, it is use to give information that our application is successfully executed");
             return Optional.ofNullable(response.getBody().getData());                                 // extract actual employee
         } catch (Exception e) {
-            log.error("Exception occurred in getEmployeeById : {}", String.valueOf(e));
+            log.error("Exception occurred in getEmployeeById", e);
             throw new RuntimeException(e);
         }
     }
