@@ -1,0 +1,40 @@
+Spring Boot Actuators :
+    1. Actuators are use to gain lot more matrix and information about the health checks, number of beans are there, server configurations, heap term, how many threads are being created,etc. can be get by some apis that have been provided by spring boot developers
+    2. To configure all this, we need to put Actuator dependency in pom.xml file
+            <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-actuator</artifactId>
+            </dependency>
+    3. Now,  we hit http://localhost:9000/actuator, then it will give some endpoint where health updates are stated. But it will not show all the endpoints now
+    4. So to configure this situation we need to configure application.properties
+        management.endpoints.web.exposure.include=*             // This will allow to every endpoints of actuator
+
+        management.info.env.enabled=true
+        info.app.author=Shikhil Rane
+        info.app.version=1.0.0
+        info.app.documentation=https://shikhilrane.com/docs
+        management.info.build.enabled=true
+        management.info.git.enabled=true
+        management.info.java.enabled=true
+        management.info.os.enabled=true                         // This will show info about author and all at /info endpoint
+
+        self            : Main actuator entry point
+        beans           : Shows all Spring beans in the application
+        conditions      : Shows which auto-configurations are applied or not
+        configprops     : Shows all configuration properties
+        configprops-prefix : Shows configuration properties for a specific prefix
+        env             : Shows environment variables and properties
+        env-toMatch     : Finds a specific environment property
+        info            : Shows basic application information
+        logfile         : Shows application log file
+        loggers         : Shows current logging levels
+        loggers-name    : Change log level for a specific class/package
+        threaddump      : Shows all running threads in the application
+        sbom            : Shows list of project dependencies
+        sbom-id         : Shows details of a specific dependency
+        scheduledtasks  : Shows all scheduled (cron) tasks
+        mappings        : Shows all API endpoints and mappings
+        health          : Shows application health status
+        health-path     : Shows health of a specific component
+        metrics         : Shows available application metrics
+        metrics-requiredMetricName : Shows value of a specific metric
