@@ -1,0 +1,39 @@
+*AS OF TODAY OPENAPI AND SWAGGER DON'T SUPPORT SPRING BOOT VERSION 4.X.X, SO WE DID IT IN SPRINGBOOT VERSION 3*
+
+OpenAPI and Swagger :
+    1. We have to write documentation for our spring boot project. So that all developers can understand how many APIs do we have and how to use those APIs like what kind of request it accepts and what kind of response it gives
+    2. OpenAPI and Swagger can generate APIs on our behalf
+    3. Springdoc OpenAPI is a library that simplifies integration of SWaager UI and OpenAPI 3 into Spring Boot applications. Allowing you to automatically generate API documentation from your Spring MVC endpoints. Here's how you can set it up
+    4. Put this Dependency in pom.xml,
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+    5. Now run the app and go to
+        localhost:8080/v3/api-docs  : for JSON based UI
+        http://localhost:8080/swagger-ui.html   :   for html based nice UI
+        we can configure the path by : springdoc.swagger-ui.path=/docs , So, now hit http://localhost:8080/docs
+
+Configuring Swagger-UI
+    1. Create a config file for Swagger
+    2. Create a method that returns OpenAPI
+    3.
+        1.
+        return new OpenAPI()
+                       .info(                                           // Use to change title and description of Swagger UI
+                           new Info()
+                                   .title("CRUD Operations APIs")
+                                   .description("By Shikhil")
+                       )
+                       .servers(List.of(                               // Use to tell API URL available on
+                               new Server().url("https://localhost:8081").description("local"),
+                               new Server().url("https://localhost:8082").description("live")
+                       ));
+
+        2.
+        Change the name of APIs :
+            @Tag(name = "CRUD APIs for Employee", description = "Read by ID, Read All, Create, Update, Delete and Patch the Employee")
+
+        3.
+        @Operation(summary = "Get Employee by ID")      // User to configure API name on swagger
