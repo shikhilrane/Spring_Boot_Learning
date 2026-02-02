@@ -1,0 +1,58 @@
+Spring Security :
+    1. Spring Security is a framework in Spring that protects your application.
+    2. It decides who can access your app and what they are allowed to do.
+    3. Spring Security helps you with:
+           Authentication – Who are you? (login, username/password, JWT, OAuth)
+           Authorization – What are you allowed to access? (roles like ADMIN, USER)
+    4. Spring Security is a Spring framework used to secure applications by handling authentication and authorization.
+
+Security Attacks :
+    1. Security attacks are malicious attempts by hackers to break, misuse, or damage an application by exploiting its weaknesses.
+    2. The goal of a security attack is to:
+       1. Steal sensitive data (passwords, bank details)
+       2. Perform unauthorized actions
+       3. Control or crash the system
+    3. Security attacks are intentional actions performed by attackers to exploit vulnerabilities in an application and cause harm.
+    4. Common Types of Security Attacks :
+        1. Cross-Site Request Forgery (CSRF) :
+            1. CSRF tricks a logged-in user into performing an action without their knowledge.
+            2. Cross-Site Request Forgery (CSRF) is a security attack where a user is tricked into performing actions on a website without knowing it, while they are already logged in. The attacker takes advantage of the website’s trust in the user’s browser.
+                Example :
+                    if a banking website is not protected against CSRF, an attacker can make a logged-in user transfer money without their permission or awareness.
+            3. How to avoid CSRF Attack :
+                1. Use a CSRF token :
+                    Maintain the user session on the server and include a CSRF token with each request.
+                    The token should be random and hard to guess, so attackers cannot forge requests.
+                2. Use Stateless Authentication (JWT) :
+                    Make the application stateless by using JWT tokens for authentication.
+                    Since JWTs are sent explicitly in request headers, CSRF attacks are not possible.
+        2. Cross-Site Scripting (XSS) :
+            1. Cross-Site Scripting (XSS) is a security attack in which an attacker injects malicious scripts into a website. When other users open the affected page, the script runs in their browser and can steal data, take over sessions, change website content, or perform other harmful actions.
+                Example :
+                  An attacker stores the following script in a comment section:
+                  <script>alert('XSS');</script>
+                  When another user opens the page, the script executes in their browser.
+            2. How to Avoid XSS Attacks :
+               1. Input Validation :
+                   Validate and sanitize all user input to make sure it does not contain malicious code.
+                   Use frameworks or libraries that automatically handle input validation.
+               2. Output Encoding :
+                   Encode all output before displaying it in the browser so that dangerous characters are treated as text, not code.
+                   This prevents injected scripts from executing.
+        3. SQL Injection :
+            1. SQL Injection is a type of security attack where an attacker injects malicious SQL code into an application’s input fields. This allows the attacker to change the intended SQL query and access, modify, or delete data in the database without authorization.
+            2. Example:
+                   Server query:
+                   SELECT * FROM users WHERE username = 'input';
+
+                   Attacker input:
+                   ' OR '1'='1
+
+                   Resulting query:
+                   SELECT * FROM users WHERE username = '' OR '1'='1';
+
+                   Since the condition is always true, the attacker can bypass authentication and access data.
+            3. How to avoid SQL Injection:
+                1. Use prepared statements and parameterized queries so user input is treated as data, not executable SQL.
+                2. Use ORM frameworks that abstract direct SQL queries and handle them safely.
+                3. Validate and sanitize all user inputs.
