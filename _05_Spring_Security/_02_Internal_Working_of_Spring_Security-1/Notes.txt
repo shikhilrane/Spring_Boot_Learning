@@ -1,0 +1,91 @@
+Spring Security Internal Working :
+    1. To add Spring Security in our project we need to add dependency of it in our Project
+    2. Dependency :
+            <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-security</artifactId>
+            </dependency>
+    3. Authentication and Authorization
+        Authentication : Authentication is the process of verifying the identity of a user. It ensures that the user is who they claim to be. Authentication typically involves credentials, such as a username and password, and creating a security context for the user.
+        Authorization : Authorization is the process of determining whether an authenticated user has the necessary permissions to access a particular resource or perform an action. It controls what an authenticated user can or cannot do.
+
+Spring Security Internal Working :
+    1. Spring Boot kya karta hai? :
+
+       Jab tum Spring Security dependency add karte ho,
+       to Spring Boot automatically ek filter register karta hai:
+
+       👉 DelegatingFilterProxy
+       👉 naam hota hai: springSecurityFilterChain
+
+       Iska kaam bas request ko Spring Security tak pahunchana hota hai.
+
+    2. Request aate hi kya hota hai?
+           Client se request aayi
+           Tomcat ke FilterChain me enter hui
+           Sabse pehle DelegatingFilterProxy milta hai
+       👉 DelegatingFilterProxy khud security check nahi karta
+
+    3. DelegatingFilterProxy kya karta hai?
+
+       👉 Ye Spring context ke andar ek bean dhundhta hai, Wo bean hota hai 👉 FilterChainProxy, and usko forward karta hai
+       👉 Aur bolta hai:
+
+       “Is request ko handle karo, Spring Security”
+
+    4. FilterChainProxy (Spring bean)
+           FilterChainProxy:
+               springSecurityFilterChain ko use karta hai
+               Decide karta hai:
+                   Kaunse security filters chalenge
+                   Kis order me chalenge
+
+    FLOW :
+
+        Client → Tomcat FilterChain
+                        ↓
+            -----------------------------------------
+            |   Filter 1 → For encoding             |
+            |   Filter 2 → CORS                     |
+            |   Filter 3 → logging                  |             (Bean)
+            |   Filter 4 → DelegatingFilterProxy--->|----------> FilterChainProxy ---------->  springSecurityFilterChain
+            |   Filter 5 → Limit filter             |                                                    ↓
+            -----------------------------------------                           ------------------------------------------------------
+                                                                                |   Filter 1 → SecurityContextPersistenceFilter      |
+                                                                                |   Filter 2 → UsernamePasswordAuthenticationFilter  |
+                                                                                |   Filter 3 → AuthenticationFilter                  |
+                                                                                |   Filter 4 → AnonymousAuthenticationFilter         |
+                                                                                |   Filter 5 → BearerTokenAuthenticationFilter       |
+                                                                                |   Filter 6 → ExceptionTranslationFilter            |
+                                                                                ------------------------------------------------------
+
+                                                                                1.SecurityContextPersistenceFilter
+                                                                                → User ki security information ko load aur save karta hai.
+
+                                                                                2. UsernamePasswordAuthenticationFilter
+                                                                                → Form login ke liye username–password authenticate karta hai.
+
+                                                                                3. BearerTokenAuthenticationFilter
+                                                                                → JWT / token based authentication handle karta hai.
+
+                                                                                4. AuthenticationFilter
+                                                                                → Custom authentication logic ke liye use hota hai.
+
+                                                                                5. FilterSecurityInterceptor
+                                                                                → Authorization ka final decision leta hai (roles / permissions).
+
+                                                                                6. ExceptionTranslationFilter
+                                                                                → Authentication aur authorization errors (401 / 403) handle karta hai.
+
+Default behaviour of Spring Security :
+    1. Spring Security automatically creates a bean called springSecurityFilterChain and registers it as a filter with the servlet container. This filter is applied to every incoming request.
+    2. It enables HTTP Basic Authentication by default, which is mainly used for APIs, web services, and remoting calls.
+    3. It automatically generates a default login page if you do not create one yourself.
+    4. Spring Security creates a default user with:
+        username: user
+        password: generated at startup and printed in the console logs.
+    5. User passwords are stored securely using BCrypt password hashing.
+    6. It enables the logout feature by default.
+    7. It also provides built-in security features such as:
+        CSRF protection
+        Session fixation protection
