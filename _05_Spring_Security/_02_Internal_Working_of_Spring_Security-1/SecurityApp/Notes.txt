@@ -89,3 +89,54 @@ Default behaviour of Spring Security :
     7. It also provides built-in security features such as:
         CSRF protection
         Session fixation protection
+
+Enabling Spring Security in Spring Boot Project :
+    1. Add Spring Security Dependency in our project
+    2. Run the project then we can see that Spring Security has generated a 'security password' to authenticate our project
+    3. Now every API or EndPoint in our all controllers will get secured with this password with Username as 'user'
+    4. When we hit the api in browser, Form with proper username and password will appear on screen created by Spring Security, it will ask for username and password to put
+    5. Put the username as 'user' and password as 'from-terminal'
+    6. Now you can access the api.
+    7. And we also get a logout page with it, if we are logged in and want to logout, hit http://localhost:8080/logout
+    9. Again if we want to login, then hit the url http://localhost:8080/login then put the api url then you will go to the api end point
+
+Cookies and JSESSIONID :
+    1. When we are logged in, go to Inspect > Applications > Cookies > localhost:8080
+    2. We can see there, JSESSIONID has created for us, then if we refresh the tab and go to url then our session will remain logged in and JSESSIONID will remains same
+    3. When we delete the JSESSIONID from cookies tab then our session will get logged out OR else if we hit logout url then our JSESSIONID will get refreshed so can't use that same JSESSIONID again for login because Spring Security manages the session using HTTP session
+    4. Spring Security manages the session. If we logged in then JSESSIONID will remain same and if we logout then JSESSIONID will get deleted or get refreshed
+
+username, password and _csrf :
+    1. When we ar on login page, go to Inspect > Elements > Body tag > form tag > Input tag with name as '_csrf'
+    2. That _csrf value is being send by browser with username and password to authenticate user
+    3. Once user logged in, go to Inspect > Network > login
+        1. Headers : Data sent to log in the user
+        2. Payload : This is where our login request is made, username + password + _csrf + flag with isValidate, combine possible to login the user
+
+Overwriting default username and password :
+    1. In application.properties,
+        spring.security.user.name=Shikhil
+        spring.security.user.password=Shikhil@4
+    2. Now all endpoints are secured with this username and password
+
+From Screenshot :
+    1. Request comes in springSecurityFilterChain
+    2. Request will go through the all the filters like SecurityContextPersistenceFilter, BearerTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter, etc
+    3. We will only concentrate on UsernamePasswordAuthenticationFilter
+    4. From UsernamePasswordAuthenticationFilter filter, request is delegated to AuthenticationManager
+    5. AuthenticationManager (interface) uses AuthenticationProvider to authentic user
+            AuthenticationProvider = {
+                                        DaoAuthenticationProvider,      (DB / JPA / DAO based) (IMPORTANT & dont have to look for all the provider)
+                                        InMemoryAuthenticationProvider, (In-memory users)
+                                        OAuth2AuthenticationProvider,   (Authentication from OAuth2)
+                                        etc...
+                                     }
+    6. DaoAuthenticationProvider uses UserDetailService and PasswordEncoder to authenticate user
+            UserDetailService : This is the service, from where it will go to the repository and get the data from our DB that contains username and password
+            PasswordEncoder bean : It can then Encode the password, and It compares the password entered from the user and Encoded password from DB
+                              If matches, then allow to login and If not then, login will be failed
+    7. AuthenticationProvider returns the object of authenticated user to AuthenticationManager along with other details like email, phone number, etc...
+    8. AuthenticationManager returns the response to UsernamePasswordAuthenticationFilter
+    9. After then UsernamePasswordAuthenticationFilter will set the user in SecurityCotext
+    10. SecurityContext : SecurityContext is a place where Spring Security stores information about the currently logged-in user.
+    11. Then it will parse from SecurityContext to DispatcherServlet, and the controller is executed.
