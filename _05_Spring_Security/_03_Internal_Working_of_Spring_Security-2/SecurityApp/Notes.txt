@@ -1,0 +1,15 @@
+Authentication Manager (Refer AuthenticationManager.png) :
+    1. In image, all the rounded corner boxes are Interface and Square boxes are Implementations
+    2. In AuthenticationManager interface, we have a method called authenticate();  (like, Authentication authenticate(Authentication authentication)). From this Authentication we will get authenticated user
+    3. This authenticate() method take an object of Authentication inside our login controller. i.e. in our login controller we will create an object called Authentication. That will contain user information like login email and password
+    4. AuthenticationManager delegates the authentication process to the appropriate AuthenticationProvider using ProviderManager (ProviderManager is an implementation class for AuthenticationManager).
+    5. ProviderManager holds a list of AuthenticationProviders like DaoAuthenticationProvider, InMemoryAuthenticationProvider, OAuth2AuthenticationProvider
+
+    Till Now : AuthenticationManager (I) receives an Authentication object, delegates authentication to ProviderManager (C), and returns an authenticated Authentication object on success.
+           AuthenticationManager > ProviderManager > AuthenticationProvider(DaoAuthenticationProvider(C), InMemoryAuthenticationProvider(C), OAuth2AuthenticationProvider(C))
+                    |                   |                   |
+                    V                   |                   |
+                 Interface              |                   -----------------------------------------------------|
+                                        V                                                                        |
+                                      Class                                                                      V
+                         (Impl class for AuthenticationManager)                                          AuthenticationProvider
