@@ -1,15 +1,55 @@
 Authentication Manager (Refer AuthenticationManager.png) :
     1. In image, all the rounded corner boxes are Interface and Square boxes are Implementations
     2. In AuthenticationManager interface, we have a method called authenticate();  (like, Authentication authenticate(Authentication authentication)). From this Authentication we will get authenticated user
-    3. This authenticate() method take an object of Authentication inside our login controller. i.e. in our login controller we will create an object called Authentication. That will contain user information like login email and password
-    4. AuthenticationManager delegates the authentication process to the appropriate AuthenticationProvider using ProviderManager (ProviderManager is an implementation class for AuthenticationManager).
-    5. ProviderManager holds a list of AuthenticationProviders like DaoAuthenticationProvider, InMemoryAuthenticationProvider, OAuth2AuthenticationProvider
+    3. This authenticate() method take an Authentication object as input. This Object contains login credentials like username and password of user.
+    4. In the default Spring Security flow, this Authentication object is created by the UsernamePasswordAuthenticationFilter and passed to the AuthenticationManager.
+    5. AuthenticationManager delegates the authentication process to the appropriate AuthenticationProvider using ProviderManager (ProviderManager is an implementation class for AuthenticationManager).
+    6. ProviderManager holds a list of AuthenticationProviders like List<AuthenticationProviders> = DaoAuthenticationProvider, InMemoryAuthenticationProvider, OAuth2AuthenticationProvider. (AuthenticationProvider is interface that has list of AuthenticationProviders)
+    7. (IMPORTANT) ProviderManager(C) implements authenticate method of AuthenticationManager(I), that uses one of the AuthenticationProvider from AuthenticationProvider(I) like DaoAuthenticationProvider, InMemoryAuthenticationProvider, OAuth2AuthenticationProvider, etc. to authenticate user
+    8. Visualisation
+           AuthenticationManager > ProviderManager < List<AuthenticationProvider> = DaoAuthenticationProvider(C), InMemoryAuthenticationProvider(C), etc.)
+                    |                   |                          |
+                    V                   |                          V
+                Interface               |                      Interface
+                                        V
+                                      Class
+                         (Impl class for AuthenticationManager)
+                                       ||
+                                       V
+             Implements of authentication method of AuthenticationManager Interface, That takes one of the AuthenticationProvider from List<AuthenticationProvider>
 
-    Till Now : AuthenticationManager (I) receives an Authentication object, delegates authentication to ProviderManager (C), and returns an authenticated Authentication object on success.
-           AuthenticationManager > ProviderManager > AuthenticationProvider(DaoAuthenticationProvider(C), InMemoryAuthenticationProvider(C), OAuth2AuthenticationProvider(C))
-                    |                   |                   |
-                    V                   |                   |
-                 Interface              |                   -----------------------------------------------------|
-                                        V                                                                        |
-                                      Class                                                                      V
-                         (Impl class for AuthenticationManager)                                          AuthenticationProvider
+
+
+
+
+    Till now, we have understood, How ProviderManager implements authenticate method of AuthenticationManager using one of the AuthenticationProvider like DaoAuthenticationProvider
+    Now we will understand, How DaoAuthenticationProvider validates the user?
+
+
+
+
+
+    9. In DaoAuthenticationProvider, (from AuthenticationManager.png)
+        A. UserDetailsService :
+           1. we have UserDetailsService interface, that is use to get userdata from,
+              a. InMemoryUserDetailsManager = userdata hardcoded in our machine. (Used for testing )
+              b. UserDetailsService implementation class (manually created by user) = It uses DB to fetch details
+           2. We will get user details through UserDetails interface (like getUsername, getPassword, getAuthorities means roles) according to our created UserEntity.
+           NOTE : We will create MyUserDetailsServiceImpl (implementation class of UserDetailsService) and UserEntity only.
+        B. PasswordEncoder :
+           1. Now DaoAuthenticationProvider has username and password (password is encoded because we always put password that is encoded by using PasswordEncoder during signup using encode() from PasswordEncoder)
+           2. Encoding means Hash the password in one way Hash (means if its hashed then it won't be get revert) so that no one should see password if they get access of DB
+           3. There are two methods in PasswordEncoder,
+              a. encode() : Used when new user is signing up and then store that encoded password in DB
+              b. matches() : In this method, we have to pass two things, first one is password entered by the user for login and second one is, encoded/hashed password from DB. Then this method wil try to match both passwords, if matches user will logged in and if not then login failed
+
+Steps to Implement this in Project :
+    1. Create a 'User' entity and put id, email and password and implement UserDetails interface with it with its methods like getUsername, getPassword, getAuthorities.
+    2. return this.email from getUsername and this.password from getPassword and keep getAuthorities() as it is for now.
+    3. Create a repository for User, and create a custom method in to find user by email like Optional<User> findByEmail(String email);
+    4. Create a service MyUserDetailsService that extends UserDetails interface and implement UserDetails method's loadUserByUsername in MyUserDetailsService implement class
+    5. Now we will get user details by loadUserByUsername() method from MyUserDetailsServiceImpl class
+    6. Now return the user using userRepository.findByEmail() method
+    7. We will load MyUserDetailsServiceImpl in WebSecurityConfig (we will create in next project) to load our userdata
+
+    Until now : User > UserRepository > MyUserDetailsService
