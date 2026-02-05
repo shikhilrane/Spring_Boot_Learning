@@ -1,0 +1,6 @@
+Configuring SpringSecurityFilterChain :
+    1. We can configure the SpringSecurityFilterChain so that it can allow certain routes if we want to, provide some other login form, disable some authentication, disable some safety features like _csrf, remove some state from there, to add some more routes to spring security.
+    2. Also we can add more filter-chain in SpringSecurityFilterChain
+
+Configuring our project to add our service to userdata that we got from DB :
+    1.
