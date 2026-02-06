@@ -1,6 +1,105 @@
 Configuring SpringSecurityFilterChain :
     1. We can configure the SpringSecurityFilterChain so that it can allow certain routes if we want to, provide some other login form, disable some authentication, disable some safety features like _csrf, remove some state from there, to add some more routes to spring security.
-    2. Also we can add more filter-chain in SpringSecurityFilterChain
+    2. Also, we can add more filter-chain in SpringSecurityFilterChain
 
 Configuring our project to add our service to userdata that we got from DB :
-    1.
+    1. Create a config class called WebSecurityConfig and add @Configuration and @EnableWebSecurity to enable security inside it
+    2. Create a bean of SecurityFilterChain in which we put HttpSecurity as Parameter
+        Scenario 1 :
+            @Bean
+            public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+                httpSecurity
+                        .formLogin(Customizer.withDefaults());
+                        /*
+                             We are using formLogin because this application currently follows
+                             session-based authentication (JSESSIONID) along with CSRF protection.
+
+                             In modern applications where the frontend is handled separately
+                             (React/Angular) and authentication is done using JWT tokens,
+                             we usually disable formLogin, sessions, and CSRF because the API
+                             becomes stateless.
+
+                             We will not use this once we started using JWT Token with Stateless APIs
+                        */
+                return httpSecurity.build();
+            }
+            Now if we run our application from here, we can redirect to any api without login
+
+        Scenario 2 :
+            @Bean
+            public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+                httpSecurity
+                        .authorizeHttpRequests(auth -> auth
+                            .anyRequest().authenticated())      // This will verify every api request
+                        .formLogin(Customizer.withDefaults());
+                return httpSecurity.build();
+            }
+            1. Here, AuthenticationManager configured with UserDetailsService bean with name myUserDetailsServiceImpl, that we created to get user data from DB will not work because It will first try to get user details from there but as we have not created any user, it will fail to fetch user details
+            2. So will remove or comment @Service from MyUserDetailsServiceImpl so it won't go there to get user details as UserDetailsService extended with it.
+            3. We will use InMemoryUserDetailsManager, so that it will directly get user details from applications.properties, that why removed or commented @Service for while.
+            4. Now every api request needs to verify itself with username and password to access the controller's APIs
+
+        Scenario 3 :
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/posts/getAllPosts").permitAll()
+                    .anyRequest().authenticated())
+            .formLogin(Customizer.withDefaults());
+            1. Here we used requestMatchers() Spring Security me ek method hai jo incoming HTTP requests ke URL pattern ko match karke unpe specific security rules apply karta hai.
+            2. In this case, the endpoint "/posts/getAllPosts" is made public using permitAll(), so it can be accessed without authentication.
+            3. But we have to authenticate first to access "/posts/1" this api.
+
+        Scenario 4 :
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/posts/**").permitAll()
+                    .anyRequest().authenticated())
+            .formLogin(Customizer.withDefaults());
+            1. Now any api request from this url don't need to authenticate
+            2. For "/posts/getAllPosts" and "/posts/1" and "/posts/createPost", we don't need to authenticate.
+
+        Scenario 5 :
+            @Bean
+            public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+                httpSecurity
+                        .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/posts/getAllPosts").permitAll()
+                                .requestMatchers("/posts/createPost").hasAnyRole("ADMIN", "MANAGER")
+                                .requestMatchers("/posts/*").hasRole("USER")
+                                .anyRequest().authenticated())
+                        .formLogin(Customizer.withDefaults());
+                return httpSecurity.build();
+            }
+
+            @Bean
+            UserDetailsService myInMemeoryUserDetailsService(){
+                UserDetails manager = User
+                        .withUsername("Shikhil")
+                        .password(passwordEncoder().encode("Skr"))
+                        .roles("MANAGER")
+                        .build();
+
+                UserDetails user = User
+                        .withUsername("abc")
+                        .password(passwordEncoder().encode("abc"))
+                        .roles("USER")
+                        .build();
+
+                return new InMemoryUserDetailsManager(manager, user);
+            }
+
+            @Bean
+            public PasswordEncoder passwordEncoder(){
+                return new BCryptPasswordEncoder();
+            }
+
+            1. .requestMatchers("/posts/getAllPosts").permitAll() : Can be accessible to anyone
+            2. .requestMatchers("/posts/*").hasRole("USER") : Can be accessible to only those who has role as "USER" . (* is used to target by id)
+            3. .requestMatchers("/posts/createPost").hasAnyRole("ADMIN", "MANAGER") : Can be accessible to only those who has role as "ADMIN" or "MANAGER"
+            4.
+                for MANAGER,
+                    getAllPosts = accessible,
+                    createPost = accessible (but if try to access this we will redirect but 400 (Bad Request) will appear as we have't fully configure create api)
+                    * = Not Accessible (403 forbidden, logged in but not does not have specified role to access)
+                for USER,
+                    getAllPosts = accessible,
+                    createPost = Not Accessible (403 forbidden, logged in but not does not have specified role to access)
+                    * = Accessible
