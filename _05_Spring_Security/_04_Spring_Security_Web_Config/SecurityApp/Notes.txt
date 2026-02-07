@@ -94,12 +94,49 @@ Configuring our project to add our service to userdata that we got from DB :
             1. .requestMatchers("/posts/getAllPosts").permitAll() : Can be accessible to anyone
             2. .requestMatchers("/posts/*").hasRole("USER") : Can be accessible to only those who has role as "USER" . (* is used to target by id)
             3. .requestMatchers("/posts/createPost").hasAnyRole("ADMIN", "MANAGER") : Can be accessible to only those who has role as "ADMIN" or "MANAGER"
-            4.
+            4. Now instead of adding user from application.context file, we will use UserDetailsService directly in WebSecurityConfig file using UserDetails
+            5. we have to user PasswordEncoder method that encodes our password while storing in memory
+            6. We will return new InMemoryUserDetailsManager()
+            7. Which role to access which endpoint? :
                 for MANAGER,
                     getAllPosts = accessible,
-                    createPost = accessible (but if try to access this we will redirect but 400 (Bad Request) will appear as we have't fully configure create api)
+                    createPost = accessible (but if try to access this we will redirect but 400 (Bad Request) will appear as we haven't fully configure create api)
                     * = Not Accessible (403 forbidden, logged in but not does not have specified role to access)
                 for USER,
                     getAllPosts = accessible,
                     createPost = Not Accessible (403 forbidden, logged in but not does not have specified role to access)
                     * = Accessible
+            8. This is barely used in development environment, actually it is used in testing purposes
+            9. We will store password securely in db
+            10. We will use @Service from next lectures
+            11. We are using _csrf and JSESSIONID in this website
+
+        Scenario 6 :
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/posts/getAllPosts").permitAll()
+                    .requestMatchers("/posts/createPost").hasAnyRole("ADMIN", "MANAGER")
+                    .requestMatchers("/posts/*").hasRole("USER")
+                    .anyRequest().authenticated())
+            .csrf(csrfConfig -> csrfConfig.disable())
+            .sessionManagement(sessionConfig -> sessionConfig
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .formLogin(Customizer.withDefaults());
+            1. We have disabled _csrf, so now we dont have _csrf protection in our app
+                That means:
+                    Browser-based attacks can send fake POST/DELETE requests
+                    Server will not check any CSRF token
+            2. Stateless session = no session stored, JSESSIONID mostly not used
+                That means:
+                    Server will not remember the user after login
+                    No session cookie like JSESSIONID will be used
+                    Every request must bring its own authentication (like JWT token)
+                SessionCreationPolicy ke 4 states:
+                    1. ALWAYS = Session hamesha banega
+                    2. IF_REQUIRED (Default) = Zarurat hui tabhi session banega
+                    3. NEVER = Session create nahi karega, but existing ho toh use karega
+                    4. STATELESS = No session at all, har request me token/JWT chahiye
+                Stateless + CSRF Disabled means:
+                    Your app is designed for REST APIs
+                    No server session
+                    Authentication should be done using JWT tokens
