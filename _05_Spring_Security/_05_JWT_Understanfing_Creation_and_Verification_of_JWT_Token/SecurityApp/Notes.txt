@@ -1,0 +1,83 @@
+JWT (JSON Web Token) :
+    1. JWT is Stateless
+    2. Stateless means our server doesn't need to store all the information about user that are logged in currently like we don't need to manage dedicated authentication server and db that holds the data of all sessions at backend.
+    3. Because, JWT is capable enough for holding all information needed to make sure the user that is logged in, is actually a valid user. So don't need to maintain DB separately for this.
+    4. Scalable in Distributed System :
+        4.1 With _csrf (Hard to Scale) :
+            If there are 10 servers
+            Every server needs to store session data
+            And needs one shared session storage like Redis/DB
+        4.2 With JWT (Easy to Scale):
+            Token is stored on the client side
+            Any server can verify the token and accept the request
+            No shared session storage is needed
+    5. Cross Domain Authentication :
+        Cross-domain authentication means when a user logs in on one domain, but the authentication also works on another domain or subdomain.
+        Example:
+            Frontend: https://app.com
+            Backend API: https://api.com
+            The user logs in through app.com, but the requests are sent to api.com.
+            If authentication works across both domains, it is called cross-domain authentication.
+        Problem with Session-Based Authentication
+                Session cookies like JSESSIONID are usually limited to the same domain.
+                Sharing session cookies across different domains is difficult.
+                CSRF protection also becomes more complex.
+            So, cross-domain authentication is harder with session-based security.
+        JWT Makes Cross-Domain Authentication Easy
+            JWT tokens are stored on the client side.
+            The client sends the token with every request in the header:
+                Authorization: Bearer <token>
+            Any server or domain can verify the token without needing shared session storage.
+    6. Ideal for Decentralised systems and microservices :
+        JWT is commonly used in microservices because each service can verify the token independently without relying on a central session store.
+    7. Highly Secure :
+        JWT is secure only when implemented correctly:
+            Use HTTPS
+            Use strong signing algorithms
+            Keep token expiry short
+            Store tokens safely (avoid localStorage for sensitive apps)
+
+Understanding JWT :
+    1. JWT is a compact, URL-safe of representing claims to be transferred between two parties
+    2. JWT is often use to transmit non-sensitive data that doesn't require confidentially but still needs integrity and authenticity.
+    3. It requires user identifiers, roles, permissions, and other claims necessary for making access control decisions.
+    4. Structure of JWT :
+        Header : {
+                   "alg": "HS256",
+                   "typ": "JWT"
+                 }
+        Payload : {
+                    "userId": 101,
+                    "name": "Shikhil",
+                    "role": "USER",
+                    "iat": 1700000000,
+                    "exp": 1700003600
+                  }
+        Signature : Base64URLSafe(
+                        HMACSHA256(<header>,<payload>,<secret key>)
+                    )
+
+
+        Header (Base64 Encoded) : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        Payload (Base64 Encoded) : eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9
+        Secret Key in JWT : A secret key is a private string used to sign the JWT token. It ensures that token is not modified and trusted by the server
+
+        Signature (Generated using HS256 + Secret Key) :
+            Signature = Hash(Header + Payload, SecretKey)
+            here,
+                Signature = HMACSHA256(
+                                         Header + "." + Payload,
+                                         SecretKey
+                                      )
+                So:
+                    HMACSHA256 = Algorithm use to generate signature
+                    Header + Payload = data.
+                    Secret key is used to generate a hashed signature.
+                    Signature proves token is not changed
+                    
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
+
+        JWT = Header + Payload + Signature
+
+        Use in API Request :
+            Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
