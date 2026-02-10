@@ -1,3 +1,16 @@
+Public-Private Key Cryptography :
+    1. It is a Security Mechanism
+    2. There are 2 keys generated in it
+        1. Public Key :
+            We can distribute Public Key
+            Encrypted Data of Public key will be Decrypted by my own Private Key
+        2. Private Key :
+            We can't distribute Public Key (JWT works on this concept)
+
+Stateless and Stateful :
+    1. Stateless : It's state can't be stored in DB/File (JWT uses this)
+    2. Stateful : It's state can be stored in DB/File
+
 JWT (JSON Web Token) :
     1. JWT is Stateless
     2. Stateless means our server doesn't need to store all the information about user that are logged in currently like we don't need to manage dedicated authentication server and db that holds the data of all sessions at backend.
@@ -41,7 +54,9 @@ Understanding JWT :
     1. JWT is a compact, URL-safe of representing claims to be transferred between two parties
     2. JWT is often use to transmit non-sensitive data that doesn't require confidentially but still needs integrity and authenticity.
     3. It requires user identifiers, roles, permissions, and other claims necessary for making access control decisions.
-    4. Structure of JWT :
+    4. JWT is random collection of letters and numbers with 3 components by concatenating them with .
+    5. First part is Header, Second part is Payload and Third part is Signature
+    6. Structure of JWT :
         Header : {
                    "alg": "HS256",
                    "typ": "JWT"
@@ -57,16 +72,17 @@ Understanding JWT :
                         HMACSHA256(<header>,<payload>,<secret key>)
                     )
 
-
-        Header (Base64 Encoded) : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-        Payload (Base64 Encoded) : eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9
-        Secret Key in JWT : A secret key is a private string used to sign the JWT token. It ensures that token is not modified and trusted by the server
-
-        Signature (Generated using HS256 + Secret Key) :
+        encodedHeader (Base64 Encoded) : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 (It determines the algorithm we are using)
+        encodedPayload (Base64 Encoded) : eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9 (Determines the data)
+        Signature (Hashing : Generated using HS256 + Secret Key) :
+            Signature is used to determine there should not be any manipulation
+            Secret Key in JWT : A secret key is a private string used to sign the JWT token. It ensures that token is not modified and trusted by the server
+                                The secret key is stored securely on the server and is never shared with the client.
+                                It must be kept completely private, because anyone with the secret key can generate fake valid tokens.
             Signature = Hash(Header + Payload, SecretKey)
             here,
                 Signature = HMACSHA256(
-                                         Header + "." + Payload,
+                                         encodedHeader + "." + encodedPayload,
                                          SecretKey
                                       )
                 So:
@@ -75,9 +91,12 @@ Understanding JWT :
                     Secret key is used to generate a hashed signature.
                     Signature proves token is not changed
                     
-            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
 
-        JWT = Header + Payload + Signature
+        JWT = encodedHeader.encodedPayload.Signature
+                                              |
+                                              V
+                            Hash(encodedHeader + encodedPayload, SecretKey)
+        JWT Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
 
         Use in API Request :
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="26d245fa-06ae-43f1-834c-46fa49d215c1" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/AuthenticationManager.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/Notes.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/Screenshot 2026-02-04 at 6.11.41 PM.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/ShortFormExplainSS.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/SecurityAppApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/advice/ApiError.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/advice/GlobalExceptionHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/config/MapperConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/config/WebSecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/controllers/PostController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/dto/PostDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/entities/PostEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/entities/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/exceptions/ResourceNotFoundException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/repositories/PostRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/repositories/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/Implementation/MyUserDetailsServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/Implementation/PostServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/MyUserDetailsService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/PostService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_05_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/test/java/com/shikhilrane/shikhil/SecurityApp/SecurityAppApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/shikhilrane/Downloads/Programming/Git-remote-repos/Learnings/_13_Spring_Boot_CS/Spring_Boot_Learning/_05_Spring_Security/_05_JWT_Learning" value="39Ty6A9QUmXpnGHjl57tMOpqSZV" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "shikhilrane"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/shikhilrane/Spring_Boot_Learning.git",
+    "accountId": "cc3592a6-0115-4a01-a21d-e1e90f7806c2"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8
+}]]></component>
+  <component name="ProjectId" id="39Ty6A9QUmXpnGHjl57tMOpqSZV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/shikhilrane/Downloads/Programming/Git-remote-repos/Learnings/_13_Spring_Boot_CS/Spring_Boot_Learning/_05_Spring_Security/_05_JWT_Learning"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="26d245fa-06ae-43f1-834c-46fa49d215c1" name="Changes" comment="" />
+      <created>1770734177960</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770734177960</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>
