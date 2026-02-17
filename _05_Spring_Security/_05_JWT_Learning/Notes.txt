@@ -57,46 +57,79 @@ Understanding JWT :
     4. JWT is random collection of letters and numbers with 3 components by concatenating them with .
     5. First part is Header, Second part is Payload and Third part is Signature
     6. Structure of JWT :
-        Header : {
-                   "alg": "HS256",
-                   "typ": "JWT"
-                 }
-        Payload : {
-                    "userId": 101,
-                    "name": "Shikhil",
-                    "role": "USER",
-                    "iat": 1700000000,
-                    "exp": 1700003600
-                  }
-        Signature : Base64URLSafe(
-                        HMACSHA256(<header>,<payload>,<secret key>)
-                    )
+        1. JWT Components
+            Header = Type of Hashing Algorithm we will use for one way Hashing in Signature
+            Payload = It is a non-sensitive data that we send for JWT Token creation. And not send sensitive data like password
+            Signature = It is a Hashed (hashed according to algorithm we used in Header) version of [encodedHeader, encodedPayload, SecretKey]
+                        Secret Key in JWT : A secret key is a private string used to sign the JWT token. It ensures that token is not modified and trusted by the server
+                                            The secret key is stored securely on the server and is never shared with the client.
+                                            It must be kept completely private, because anyone with the secret key can generate fake valid tokens.
 
-        encodedHeader (Base64 Encoded) : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 (It determines the algorithm we are using)
-        encodedPayload (Base64 Encoded) : eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9 (Determines the data)
-        Signature (Hashing : Generated using HS256 + Secret Key) :
+            Header : {
+                       "alg": "HS256",
+                       "typ": "JWT"
+                     }
+            Payload : {
+                        "userId": 101,
+                        "name": "Shikhil",
+                        "role": "USER",
+                        "iat": 1700000000,  // Issued At
+                        "exp": 1700003600   // Expiry of Token
+                      }
+            Signature : Base64URLSafe(
+                            HMACSHA256(<header>,<payload>,<secret key>)
+                        )
+
+        2. Base64URLSafe Encoding of Header and Payload
+            encodedHeader (Base64URLSafe Encoded) : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 (It determines the algorithm we are using)
+            encodedPayload (Base64URLSafe Encoded) : eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9 (Determines the data)
+
+        3. Signature creation :
             Signature is used to determine there should not be any manipulation
-            Secret Key in JWT : A secret key is a private string used to sign the JWT token. It ensures that token is not modified and trusted by the server
-                                The secret key is stored securely on the server and is never shared with the client.
-                                It must be kept completely private, because anyone with the secret key can generate fake valid tokens.
-            Signature = Hash(Header + Payload, SecretKey)
+            Signature = Encoding(Hash(Header + Payload, SecretKey))
             here,
-                Signature = HMACSHA256(
-                                         encodedHeader + "." + encodedPayload,
-                                         SecretKey
-                                      )
+                Signature = Base64URLSafe(HMACSHA256(
+                                                     encodedHeader + "." + encodedPayload,
+                                                     SecretKey
+                                                    )
+                                         )
                 So:
+                    Base64URLSafe = Base64URLSafe ek encoding method hai jo data ko JWT me URL-safe format me convert karta hai.
                     HMACSHA256 = Algorithm use to generate signature
                     Header + Payload = data.
                     Secret key is used to generate a hashed signature.
                     Signature proves token is not changed
                     
+        4. JWT as output :
+            JWT = encodedHeader.encodedPayload.Signature
+                                                  |
+                                                  V
+                  Base64URLSafe(Hash(encodedHeader + encodedPayload, SecretKey))
+            JWT Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
 
-        JWT = encodedHeader.encodedPayload.Signature
-                                              |
-                                              V
-                            Hash(encodedHeader + encodedPayload, SecretKey)
-        JWT Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
+            If someone modifies the payload, the signature verification will fail, so the server will not accept the JWT.
+            NOTE : An attacker cannot generate a valid new signature without knowing the secret key.
 
-        Use in API Request :
-            Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
+        (Look Screenshot for more detailed understanding through visual)
+
+        5. Use in API Request
+            Use in API Request :
+                Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
+
+Authentication vs Authorization :
+    | Term           | Meaning                 |
+    | -------------- | ----------------------- |
+    | Authentication | Verify user identity    |
+    | Authorization  | Verify user permissions |
+
+JWT Token vs Sessions :
+    Sessions :
+        Server user ka data store karta hai
+        Client ke paas sirf JSESSIONID cookie hoti hai
+        Stateful hota hai
+        Multiple servers me scale karna hard hota hai (Redis/DB chahiye)
+    JWT Token :
+        Token client ke paas hota hai
+        Server session store nahi karta
+        Stateless hota hai
+        Easily scalable (har server token verify kar leta hai)
