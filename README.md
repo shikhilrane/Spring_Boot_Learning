@@ -1,14 +1,39 @@
 # 🚀 Spring Boot Backend Engineering Journey
 
-This repository documents my journey of mastering **Spring Boot and Backend Engineering** from fundamentals to advanced microservices architecture.
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/SpringBoot-3.x-brightgreen)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestration-blue)
+![Kafka](https://img.shields.io/badge/Kafka-EventStreaming-black)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-The course covers **enterprise backend development concepts**, including REST APIs, Security, Microservices, Distributed Systems, DevOps, and Cloud deployment.
+This repository documents my journey of mastering **Spring Boot and Backend Engineering** from fundamentals to advanced **microservices architecture**.
+
+The course covers **enterprise backend development concepts**, including:
+
+- REST APIs
+- Security
+- Microservices
+- Distributed Systems
+- DevOps
+- Cloud Deployment
+
+---
+
+# 📑 Table of Contents
+
+- Tech Stack
+- Course Modules
+- Projects Built
+- Architecture Covered
+- Tools Used
+- Goal
 
 ---
 
 # 🧑‍💻 Tech Stack
 
-### Backend
+## Backend
 - Java
 - Spring Framework
 - Spring Boot
@@ -18,20 +43,22 @@ The course covers **enterprise backend development concepts**, including REST AP
 - Spring Security
 - Spring Cloud
 
-### Database
+## Database
+- H2 (In-Memory Database)
 - MySQL
+- PostgreSQL
 - Redis
 
-### Messaging
+## Messaging
 - Apache Kafka
 
-### DevOps & Cloud
+## DevOps & Cloud
 - Docker
 - Kubernetes
 - AWS
 - CI/CD Pipelines
 
-### Testing
+## Testing
 - JUnit
 - Mockito
 - Integration Testing
@@ -99,10 +126,14 @@ The course covers **enterprise backend development concepts**, including REST AP
 
 ## Module 5 – Spring Security Fundamentals
 
-- Security Attacks
-  - CSRF
-  - XSS
-  - SQL Injection
+Security concepts covered:
+
+- CSRF
+- XSS
+- SQL Injection
+
+Topics:
+
 - Spring Security Architecture
 - Security Filter Chain
 - JWT Authentication
@@ -159,7 +190,7 @@ The course covers **enterprise backend development concepts**, including REST AP
 
 ---
 
-## Module 10 – Aspect Oriented Programming
+## Module 10 – Aspect Oriented Programming (AOP)
 
 - AOP Concepts
 - Pointcuts
@@ -254,13 +285,14 @@ The course covers **enterprise backend development concepts**, including REST AP
 - Task Scheduling
 - Async Tasks
 - Tomcat Threading Model
-- Image Upload Service (Cloudinary + GCS)
+- Image Upload Service (Cloudinary + Google Cloud Storage)
 
 ---
 
 # 🧠 Projects Built
 
-### Airbnb Backend System
+## Airbnb Backend System
+
 Features:
 
 - Hotel Management APIs
@@ -272,7 +304,7 @@ Features:
 
 ---
 
-### LinkedIn Microservices System
+## LinkedIn Microservices System
 
 Features:
 
@@ -297,6 +329,8 @@ Features:
 # 🛠 Tools Used
 
 - IntelliJ IDEA
+- MySQL
+- DBeaver
 - Postman
 - Docker
 - Kubernetes
@@ -307,10 +341,10 @@ Features:
 
 # 🎯 Goal
 
-To master **production-level backend engineering using Java & Spring Boot** and build scalable distributed systems.
+To master **production-level backend engineering using Java & Spring Boot** and build **scalable distributed systems**.
 
 ---
 
-# ⭐ If you found this helpful
+# ⭐ Support
 
-Give the repository a ⭐ on GitHub!
+If you found this repository helpful, consider giving it a **⭐ on GitHub**.
