@@ -22,12 +22,12 @@ The course covers **enterprise backend development concepts**, including:
 
 # 📑 Table of Contents
 
-- Tech Stack
-- Course Modules
-- Projects Built
-- Architecture Covered
-- Tools Used
-- Goal
+- [Tech Stack](#-tech-stack)
+- [Course Modules](#-course-modules)
+- [Projects Built](#-projects-built)
+- [Architecture Covered](#-architecture-covered)
+- [Tools Used](#-tools-used)
+- [Goal](#-goal)
 
 ---
 
