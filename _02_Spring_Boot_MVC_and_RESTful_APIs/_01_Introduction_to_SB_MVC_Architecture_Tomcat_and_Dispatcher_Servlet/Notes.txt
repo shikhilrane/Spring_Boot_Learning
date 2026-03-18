@@ -295,17 +295,28 @@ How does Web Server works :
 
 Flow of project -
     1. SpringApplication.run()
-    2. → IoC Container created
-    3. → Component Scanning (finds @Controller, @Service, etc.)
-    4. → DispatcherServlet is registered as a bean (via auto-configuration)
-    5. → Embedded web server starts (Tomcat, Jetty, etc.)
-    6. → Application is ready to receive requests
-    7. HTTP Request comes in
-    8. → DispatcherServlet handles it
-    9. → Routes to @Controller
-    10. → Calls Service
-    11. → Calls Repository
-    12. → Fetches from DB
-    13. → Response sent back
+    2. → Inside JVM → SpringBoot App = Tomcat WebServer + IoC
+    3. → IoC Container (ApplicationContext) create hota hai
+    4. → Component Scanning (@Controller, @Service, @Repository) (Because of @SpringBootApplication)
+    5. → Beans create hote hain (Because of @SpringBootApplication)
+    6. → Auto-configuration run hoti hai (Because of @SpringBootApplication)
+    7. → DispatcherServlet register hota hai IoC me, jo primary controller hota he, webserver se request yahi pe aati he
+    8. → Embedded web server start hota hai (Tomcat/Jetty)
+
+    → Application ready to receive requests
+
+    Request flow
+    HTTP Request aati hai
+     1. → Tomcat receive karta hai
+     2. → Spring Security Filter Chain
+     3. → DispatcherServlet handle karta hai
+     4. → HandlerMapping (AutoConfiguration se create hota he), DispatcherServlet ko konse relevant controller ke pass request bhejni he wo batata he
+     5. → HttpMessageConverter (Serialization = Java Object → JSON and Deserialization = JSON → Java Object) jese ki jackson
+     6. → HandlerAdapter : DispatcherServlet ko controller method run karne me help karta hai. (e.g. getUsers() jo controller me hoti he)
+     7. → Controller
+     8. → Service
+     9. → Repository
+    10. → Database
+    11. → Response client ko
 
     controller -> DTO -> service -> Entity -> Repository

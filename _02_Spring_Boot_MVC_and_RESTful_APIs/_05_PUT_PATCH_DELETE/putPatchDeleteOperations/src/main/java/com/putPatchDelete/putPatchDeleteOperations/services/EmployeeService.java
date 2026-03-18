@@ -6,6 +6,7 @@ import com.putPatchDelete.putPatchDeleteOperations.repositories.EmployeeReposito
 import org.modelmapper.ModelMapper;
 import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponseException;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -48,16 +49,21 @@ public class EmployeeService {
         return modelMapper.map(savedEmployeeEntity, EmployeeDto.class); // Convert the saved entity back to EmployeeDto to return it (e.g., for sending response)
     }
 
+    // Method to check if entity with given ID is present in DB or NOT
+    public boolean isExistByEmployeeID(Long id){    // Checks if an employee with the given ID exists in the repository
+        return employeeRepository.existsById(id);   // Returns true if an employee with the given ID exists, false otherwise
+    }
+
     // 4. Update Employee (PUT)
     public EmployeeDto updateEmployeeByID(Long id, EmployeeDto employeeDto) {
+        boolean existByEmployeeID = isExistByEmployeeID(id);
+        if (!existByEmployeeID) {
+            throw new RuntimeException("Employee with given ID NOT FOUND");
+        }
         EmployeeEntity employeeEntity = modelMapper.map(employeeDto, EmployeeEntity.class); // Convert DTO to Entity
         employeeEntity.setId(id);                                                   // Set the correct ID
         EmployeeEntity updatedEntity = employeeRepository.save(employeeEntity);     // Save the updated entity
         return modelMapper.map(updatedEntity, EmployeeDto.class);                   // Convert the updated entity back to DTO and return
-    }
-
-    public boolean isExistByEmployeeID(Long id){    // Checks if an employee with the given ID exists in the repository
-        return employeeRepository.existsById(id);   // Returns true if an employee with the given ID exists, false otherwise
     }
 
     // 5. Delete the Employee (DELETE)

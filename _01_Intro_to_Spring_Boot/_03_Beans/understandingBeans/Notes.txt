@@ -1,6 +1,14 @@
 Bean :
     A "Bean" is managed object that is instantiated, assembled, and managed by the Spring IoC container.
     Beans form the backbone of the Spring Application and are the core building blocks that are wired together to create the application.
+    @Component means is class ka bean banega jo IoC container manage karega, like
+        @Controller = @Component
+        @RestController = @Component + @ResponseBody (@ResponseBody tells Spring to write the return value of a method directly to the HTTP response body instead of resolving it as a view.)
+            @ResponseBody lagaya → "hello" browser me text/JSON ban ke aayega mean window pe print ho jaega
+            @ResponseBody nahi lagaya → Spring hello.html / hello.jsp view file dhundega
+        @Service = @Component
+        @Repository = @Component
+        @Configuration = @Component
 
 Java Bean Class :
     A serializable class with no-arguments constructor, often used to encapsulate data and adhere to JavaBeans conventions for easy integration with frameworks.
