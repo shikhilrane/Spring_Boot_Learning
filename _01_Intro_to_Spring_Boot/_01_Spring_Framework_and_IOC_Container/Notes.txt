@@ -5,7 +5,7 @@ Before Spring Framework ->
 Introduction to Spring Framework ->
     01. Open source Java Framework.
     02. With the help of Spring, we can develop Standalone application as well as Enterprise applications.
-    03. Released in 2003 but it was initial release under Apache 1.0 license.
+    03. Released in 2003, but it was initial release under Apache 1.0 license.
     04. 1st production release 1.0 was in 2004
     05. Developed by Rod Johnson
     06. Spring is a dependency injection framework to make Java application loosely coupled.

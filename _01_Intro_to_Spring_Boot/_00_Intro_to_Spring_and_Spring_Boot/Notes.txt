@@ -25,6 +25,3 @@ Web App Architecture ->
         2. Web Framework -> Obsolete now, and replace by Spring
         3. Database -> ORM Framework like Hibernate
     Spring contains all of these framework, So it is also called as Framework of Frameworks
-
-Spring is Modular framework ->
-    1. Spring Core : 
