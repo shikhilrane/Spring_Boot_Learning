@@ -28,7 +28,7 @@ Hibernate ORM Mapping :
                                                                             |
                                                                             V
                                                                 -------------------------
-                                                                |       Hibernate       |
+                                                                |       Hibernate       | (It is implementation of JPA rules)
                                                                 -------------------------
                                                                             ^
                                                                             |

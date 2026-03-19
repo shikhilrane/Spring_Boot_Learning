@@ -11,14 +11,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
+@Data                   // @Data = @Getter + @Setter + @ToString + @EqualsAndHashCode + @RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder                // @Builder (Lombok) object banane ka easy aur readable tarika deta hai.
 @Entity
 @Table(
         name = "product_table",     // Sets the table name in the database. (Optional. If not provided then it will use entity class name)
-//        catalog = "product_catalog",    // Specifies the database catalog (rarely used in real projects).
+//        catalog = "product_catalog",    // Specifies the database catalog (rarely used in real projects). Equals to DB name
 //        schema = "hr",     // Specifies the database schema where the table will be created.
         uniqueConstraints = {
                 @UniqueConstraint(name = "sku_unique", columnNames = {"sku"}),  // Every "sku" must be unique
@@ -42,9 +42,24 @@ public class Product {
     private BigDecimal price;
     private Integer quantity;
 
-    @CreationTimestamp
+    @CreationTimestamp  // Hibernate generates creation time on its own
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @UpdateTimestamp    // Hibernate generates updated time on its own
     private LocalDateTime updatedAt;
 }
+
+/*
+        Understanding catalog, schema, and table
+
+        ----------------------------------------------------------------------------
+        |                                                                          |
+        |     ---------------------------          ---------------------------     |
+        |     |                         |          |                         |     |
+        |     |     Table1, Table2      |          |      Table3, Table4     |     |
+        |     |                         |          |                         |     |
+        |     ---------------------------          ---------------------------     |
+        |               Schema1                               Schema2              |
+        ----------------------------------------------------------------------------
+                                        catalog/DB
+*/
