@@ -1,5 +1,6 @@
 package com.TransformApiResponse.TransformApiResponse.advices;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiError {
     private HttpStatus status;  // status will be returned in error message
     private String message;     // message will be returned in error message

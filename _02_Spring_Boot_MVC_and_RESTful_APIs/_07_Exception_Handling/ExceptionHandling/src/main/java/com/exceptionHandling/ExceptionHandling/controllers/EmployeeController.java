@@ -58,7 +58,12 @@ public class EmployeeController {
     // 4. Update Employee (PUT)
     @PutMapping(path = "/{employeeId}")
     public ResponseEntity<EmployeeDto> updateEmployeeByID(@RequestBody @Valid EmployeeDto employeeDto, @PathVariable (name = "employeeId") Long id){
-        return ResponseEntity.ok(employeeService.updateEmployeeByID(id, employeeDto)); // Calls the service method to update the employee and returns the updated result with 200 OK
+//        return ResponseEntity.ok(employeeService.updateEmployeeByID(id, employeeDto)); // Calls the service method to update the employee and returns the updated result with 200 OK
+        EmployeeDto updateEmployeeWithID = employeeService.updateEmployeeByID(id, employeeDto);
+        if (updateEmployeeWithID == null) {
+            throw new ResourceNotFoundExeption("Not found id " + id);
+        }
+        return ResponseEntity.ok(updateEmployeeWithID);
     }
 
     // 5. Delete the Employee (DELETE)
