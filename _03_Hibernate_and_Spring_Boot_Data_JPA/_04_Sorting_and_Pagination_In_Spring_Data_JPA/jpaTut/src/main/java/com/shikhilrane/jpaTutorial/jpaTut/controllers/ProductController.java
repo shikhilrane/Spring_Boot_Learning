@@ -40,7 +40,12 @@ public class ProductController {
         // return productRepository.findBy(Sort.by(sortBy));    // It will sort id in ascending order as we provided default value os id
         // return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy));   // It will sort in descending order
         // return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy, "price"));  // If default value (i.e. if ids are same) then sort them on basis of price
-        return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy, "price", "quantity")); // If default value (i.e. if ids are same) then sort them on basis of price and even if price is same then sort them on basis of quantity
+        // return productRepository.findBy(Sort.by(Sort.Direction.DESC, sortBy, "price", "quantity")); // If default value (i.e. if ids are same) then sort them on basis of price and even if price is same then sort them on basis of quantity
+                    // OR (Upper one is mostly used)
+        return productRepository.findBy(Sort.by(
+                Sort.Order.desc("price"),       // Sort in descending order of price
+                Sort.Order.asc("quantity")      // If sorting of according to price is same then it will sort them according to quantity in ascending order
+        ));
     }
     // If we want to sort wrt to title then pass, sortByClass?sortBy=title, so it will sort according to title
 
@@ -61,10 +66,24 @@ public class ProductController {
             @RequestParam(defaultValue = "") String title,  // If we pass, ?title=co, then it will return all the titles that contains co
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "0") Integer pageNumber){
-        return productRepository.findByTitleContainingIgnoringCase(
+        return productRepository.findByTitleContainingIgnoreCase(
                 title,
                 PageRequest.of(pageNumber, PAGE_SIZE, Sort.by(Sort.Direction.ASC, sortBy, "price", "quantity"))
         );
+        // http://localhost:8080/products/pageableOpt?title=co&sortBy=price&pageNumber=0 (title containing "co", sortBy "price, on pageNumber 0)
+    }
+
+    // For quantity greater than
+    @GetMapping("/pageableOptGrter")
+    public List<ProductEntity> getAllByPageableClassOptimisedGreaterThanQuantity(
+            @RequestParam(defaultValue = "0") Integer quantity,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "0") Integer pageNumber){
+        return productRepository.findByQuantityGreaterThan(
+                quantity,
+                PageRequest.of(pageNumber, PAGE_SIZE, Sort.by(Sort.Direction.ASC, sortBy, "price", "quantity"))
+        );
+        // http://localhost:8080/products/pageableOptGrter?quantity=50&sortBy=price&pageNumber=1 (quantity greater than 50 will be shown)
     }
 
 }

@@ -17,5 +17,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> findBy(Sort sort);
 
     // Paging
-    List<ProductEntity> findByTitleContainingIgnoringCase (String title, Pageable pageable);
+    List<ProductEntity> findByTitleContainingIgnoreCase (String title, Pageable pageable);  // for title containing any String
+    List<ProductEntity> findByQuantityGreaterThan(Integer quantity, Pageable pageable); // for quantity greater than given number
 }

@@ -103,4 +103,14 @@ class JpaTutApplicationTests {
         Optional<ProductEntity> pepsiDrink = productRepository.findByTitleAndPrice("Pepsi Drink", BigDecimal.valueOf(300));
         System.out.println(pepsiDrink);
     }
+
+    // Execution of queries according to rules
+    // 1. findBy (already defined)
+
+    // 2. readBy
+    @Test
+    void readByQuery(){
+        List<ProductEntity> sunfeastDarkFantasy = productRepository.readByTitle("Sunfeast Dark Fantasy");
+        System.out.println(sunfeastDarkFantasy);
+    }
 }

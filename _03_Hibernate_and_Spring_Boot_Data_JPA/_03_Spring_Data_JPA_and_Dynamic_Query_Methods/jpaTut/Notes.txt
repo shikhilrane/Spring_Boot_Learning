@@ -38,6 +38,7 @@ Spring Data JPA -
                  Then we need to create a method with same name in ProductRepository as well
                  So now, when we run that method from test, then all the entries of same title will be returned
 
+        5. Derived Queries :
             Rules for creating Query Methods :
                 List<ProductEntity> findByDateCreatedBetween(LocalDateTime startDate, LocalDateTime endDate);
                         ^              ^            ^                       ^
@@ -51,7 +52,7 @@ Spring Data JPA -
 
                    Rules of Method Names :
                       1. The name of query method must start with one of the following prefix : findBy, readBy, queryBy, and getBy
-                          Example : findByName, readByName, queryByName, getByName
+                          Example : findByName, readByName, queryByName, getByName, searchByName, streamBy, existBy, countBy, deleteBy, removeBy
                       2. If we want to limit the number of returned query results we can add First or Top keyword before first by word.
                           Example : findFirstByName, readFirst2ByName, findTop10ByName
                       3. If we want to select unique results, We have to add distinct keyword before the First by word
@@ -109,14 +110,51 @@ Spring Data JPA -
                             List<ProductEntity> byLike = productRepository.findByTitleContainingIgnoringCase("BiScuiT");
                             System.out.println(byLike);
                         }
-                   7.
-                            // JPQL
-                            // @Query("SELECT e from ProductEntity e where e.title=?1 and e.price=?2")
-                            @Query("SELECT e from ProductEntity e where e.title=:title and e.price=:price") // 2nd way of writing custom jpql queries
-                            Optional<ProductEntity> findByTitleAndPrice(String title, BigDecimal price);
-                     Implemented it in Test,
-                        @Test
-                        void findByTitleAndPrice(){
-                            Optional<ProductEntity> pepsiDrink = productRepository.findByTitleAndPrice("Pepsi Drink", BigDecimal.valueOf(300));
-                            System.out.println(pepsiDrink);
-                        }
+
+
+
+
+
+
+        6. JPQL
+            Rules to write JPQL
+
+            1. Use Entity class name instead of table name
+               Example: SELECT p FROM ProductEntity p
+
+            2. Use entity field names instead of database column names
+               Example: WHERE p.title = :title AND p.price = :price
+
+            3. Always define an alias for the entity
+               Example: SELECT p FROM ProductEntity p
+
+            4. Access fields using alias
+               Example: p.title, p.price, p.quantity
+
+            5. Parameters can be written in two ways
+                Positional Parameters
+                    Example: SELECT p FROM ProductEntity p WHERE p.title=?1 AND p.price=?2
+                Named Parameters (recommended)
+                    Example: SELECT p FROM ProductEntity p WHERE p.title=:title AND p.price=:price
+
+            6. SELECT clause returns entity objects
+               Example: SELECT p FROM ProductEntity p
+
+            7. JPQL supports aggregate functions
+               Example: SELECT COUNT(p) FROM ProductEntity p
+
+            8. Sorting can be applied using ORDER BY
+               Example: SELECT p FROM ProductEntity p ORDER BY p.price DESC
+
+
+
+                    // JPQL
+                    // @Query("SELECT e from ProductEntity e where e.title=?1 and e.price=?2")
+                    @Query("SELECT e from ProductEntity e where e.title=:title and e.price=:price") // 2nd way of writing custom jpql queries
+                    Optional<ProductEntity> findByTitleAndPrice(String title, BigDecimal price);
+             Implemented it in Test,
+                @Test
+                void findByTitleAndPrice(){
+                    Optional<ProductEntity> pepsiDrink = productRepository.findByTitleAndPrice("Pepsi Drink", BigDecimal.valueOf(300));
+                    System.out.println(pepsiDrink);
+                }
