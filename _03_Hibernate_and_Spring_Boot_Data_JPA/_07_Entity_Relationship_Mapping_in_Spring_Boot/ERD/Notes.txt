@@ -81,6 +81,18 @@ Entity Relationship :
 
 
     NOTES :
-        1. Relationship with FK is owning side and It has full participation (i.e. it is 'from Side')
-            But If in FK table @JoinColumn(nullable = true) then it becomes partial participation because it can be null i.e. can be process further without 'to Side'.
-        2. The side where is 0 in ER Diagram, means the other table can have value as 0 for the table.
+        Owing Side -> JoinColumns is defined (because it will contain the FK Constraint and make column with inverse side in its table)
+        Inverse Side -> mappedBy must be define to indicate that this is inverse side
+
+        1. In OneToOne ->
+            1. First know which side is more dependent to make owning side
+            2. Decide which side should contain FK of other table, and then make that entity owning side
+
+        2. In OneToMany or ManyToOne ->
+            1. Many is Owing side
+            2. in one's side, define many side's in List<> and assign a new ArrayList<>(); to it
+
+        3. In ManyToMany ->
+            1. First know which side is more dependent to make owning side
+            2. Decide which side should contain FK of other table, and then make that entity owning side
+            3. Owing side here create JoinTable instead of JoinColumn
