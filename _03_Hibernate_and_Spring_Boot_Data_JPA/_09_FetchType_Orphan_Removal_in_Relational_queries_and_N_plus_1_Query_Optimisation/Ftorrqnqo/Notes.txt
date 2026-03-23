@@ -1,6 +1,7 @@
 Orphan Removal : Remove Child from Parent if that Child is not needed By Parent
     1. Sometimes we want to remove the children when they become orphan, like when you removed the association from Parent to Child, then also child become orphan and to remove the child we have to use orphan removal.
     2. For that we have flag called 'orphanRemoval = true' by default it is false. which can put inside @One-To-Many and @One-To-One annotations only. Especially at Parent side.
+    3. orphanRemoval should be on One's side
 
     From our code :
         When a Patient want to stay in DB, but he wants to update Insurance to new Insurance or want to remove his Insurance. In these both cases Patient has to get rid of Insurance.
@@ -88,3 +89,18 @@ N+1 Queries : Use to reduce number of query calls made by JPA, by writing our ow
 
     When we have set fetch = FetchType.EAGER, Then JPA will make separate query for every separate Appointment and that will make our system slow
     So to Optimise this we use N+1 Query Optimisation by writing our custom logic in JPQL without being fully dependent on JPA
+
+
+
+
+Cheatsheet to apply rules :
+
+    Owning Side :
+        1. Many to Many : fetch = FetchType.LAZY
+        2. One to One : cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY
+        3. Many to One : fetch = FetchType.LAZY
+
+    Inverse Side :
+        1. Many to Many : fetch = FetchType.LAZY
+        2. One to One : fetch = FetchType.LAZY
+        3. One to Many : cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY

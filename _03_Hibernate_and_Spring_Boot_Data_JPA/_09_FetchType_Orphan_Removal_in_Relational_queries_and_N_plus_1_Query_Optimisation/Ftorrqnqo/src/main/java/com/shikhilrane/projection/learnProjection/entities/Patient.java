@@ -41,7 +41,7 @@ public class Patient {
     private Insurance insurance;    // Owning Side (this will work as Foreign Key in Patient table so it is a Owning side)
 
     // One-To-Many with Appointment
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // Inverse Side
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Inverse Side
 //    @ToString.Exclude
     private List<Appointment> appointments = new ArrayList<>();
 }

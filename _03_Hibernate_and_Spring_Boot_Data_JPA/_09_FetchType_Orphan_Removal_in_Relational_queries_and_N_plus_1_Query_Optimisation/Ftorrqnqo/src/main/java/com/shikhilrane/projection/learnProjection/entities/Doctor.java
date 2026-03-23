@@ -26,12 +26,12 @@ public class Doctor {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @OneToMany(mappedBy = "doctor")
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Appointment> appointments = new ArrayList<>();
 
-    @OneToOne(mappedBy = "headDoctor")
+    @OneToOne(mappedBy = "headDoctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Department department;
 
-    @ManyToMany(mappedBy = "doctors")
+    @ManyToMany(mappedBy = "doctors", fetch = FetchType.LAZY)
     private List<Department> departments = new ArrayList<>();
 }

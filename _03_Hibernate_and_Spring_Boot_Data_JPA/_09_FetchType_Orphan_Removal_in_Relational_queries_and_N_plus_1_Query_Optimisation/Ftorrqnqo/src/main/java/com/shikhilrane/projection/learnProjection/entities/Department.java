@@ -22,10 +22,10 @@ public class Department {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Doctor headDoctor;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Doctor> doctors = new ArrayList<>();
 }

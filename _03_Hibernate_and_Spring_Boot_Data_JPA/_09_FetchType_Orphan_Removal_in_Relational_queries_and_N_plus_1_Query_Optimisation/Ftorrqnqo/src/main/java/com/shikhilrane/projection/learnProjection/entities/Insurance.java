@@ -32,6 +32,6 @@ public class Insurance {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "insurance")   // As we have used mappedBy here, so in DB, insurance doesn't have column patient_id
+    @OneToOne(mappedBy = "insurance", fetch = FetchType.LAZY)   // As we have used mappedBy here, so in DB, insurance doesn't have column patient_id
     private Patient patient;    // Inverse side (Optional to add this)
 }

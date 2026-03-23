@@ -11,6 +11,7 @@ Transactional : Use for dirty checking / changes in method
         1. All operations happen in a single persistence context.
         2. Hibernate can do dirty checking.
         3. If any exception occurs, the whole method is rolled back.
+        4. @Transactional must be applied where that method makes changes in DB like create, update, delete, patch. And for findById and findAll we can use @Transactional(readOnly = true)
 
 Cascading : Whatever action you do on Parent, Hibernate automatically does the same on Child.
     CascadeType:
@@ -27,7 +28,7 @@ Cascading : Whatever action you do on Parent, Hibernate automatically does the s
         4. CascadeType.REFRESH = Refreshing parent refreshes child
         5. CascadeType.DETACH = Detaching parent detaches child from persistence context
         6. CascadeType.ALL = Includes all above (PERSIST, MERGE, REMOVE, REFRESH, DETACH)
-
+        NOTE : cascade should be on one's side
 
 Operations on Entities
     Operation 1 : Adding Insurance to Patient :-

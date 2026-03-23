@@ -24,7 +24,7 @@ public class Appointment {
     @Column(length = 500)
     private String reason;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)   // Owning side
     @ToString.Exclude
     @JsonIgnore     // tells Jackson to skip that field while converting an object to JSON, preventing recursion and unwanted data in API responses.
