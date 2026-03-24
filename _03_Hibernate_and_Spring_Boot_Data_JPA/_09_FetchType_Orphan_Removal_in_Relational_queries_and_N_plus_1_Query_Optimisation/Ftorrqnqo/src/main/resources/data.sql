@@ -19,3 +19,10 @@ VALUES
 ('Dr. Nikhil Bansal', 'Dermatology', 'nikhil.bansal@example.com'),
 ('Dr. Kavya Iyer', 'Gynecology', 'kavya.iyer@example.com'),
 ('Dr. Mohit Aggarwal', 'General Medicine', 'mohit.aggarwal@example.com');
+
+INSERT INTO department (name) VALUES
+('Cardiology'),
+('Neurology'),
+('Orthopedics'),
+('Pediatrics'),
+('Radiology');
