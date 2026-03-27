@@ -1,7 +1,6 @@
 package com.shikhilrane.understandingMapping.mapstruct.controllers;
 
 import com.shikhilrane.understandingMapping.mapstruct.dto.UserDto;
-import com.shikhilrane.understandingMapping.mapstruct.dto.UserResponseDto;
 import com.shikhilrane.understandingMapping.mapstruct.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,14 +27,6 @@ public class UserController {
         Optional<UserDto> gotuser = userService.getById(id);
         return gotuser
                 .map(gotuser1 -> ResponseEntity.ok(gotuser1))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping(path = "/fromUserResponseDto/{getById}")
-    public ResponseEntity<UserResponseDto> getUserrById(@PathVariable (name = "getById") Long id){
-        Optional<UserResponseDto> getData = userService.getUserById(id);
-        return getData
-                .map(getData1 -> ResponseEntity.ok(getData1))
                 .orElse(ResponseEntity.notFound().build());
     }
 }

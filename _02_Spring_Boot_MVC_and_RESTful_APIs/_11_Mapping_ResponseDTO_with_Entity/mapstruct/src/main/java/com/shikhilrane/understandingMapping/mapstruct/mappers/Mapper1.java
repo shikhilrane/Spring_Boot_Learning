@@ -8,22 +8,23 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import java.util.Optional;
-
-
 @Mapper(componentModel = "spring")
 public interface Mapper1 {
 
+    // 1.1 and 1.2
     @Mapping(source = "username", target = "name")
     @Mapping(source = "dateOfBirth", target = "dob")
     @Mapping(target = "password", ignore = true)
     @Mapping(source = "status", target = "status", defaultValue = "INACTIVE")
     UserResponseDto mapUserEntityToUserResponseDTO(User user);
 
+    // 2
     @BeanMapping(ignoreByDefault = true)
     @Mapping(source = "username", target = "name")
     UserResponseDto mapUsernameOnly(User user);
 
+
+    // 3
     @Mapping(source = "user.id", target = "id")
     @Mapping(source = "user.username", target = "name")
     @Mapping(target = "password", ignore = true)

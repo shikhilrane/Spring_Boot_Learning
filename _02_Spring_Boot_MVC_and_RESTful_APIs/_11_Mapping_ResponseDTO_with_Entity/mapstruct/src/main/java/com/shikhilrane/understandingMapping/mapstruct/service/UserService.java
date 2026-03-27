@@ -7,9 +7,6 @@ import java.util.Optional;
 
 public interface UserService {
 
-
-    Optional<UserResponseDto> getUserById(Long id);
-
     UserDto createUser(UserDto userDto);
 
     Optional<UserDto> getById(Long id);

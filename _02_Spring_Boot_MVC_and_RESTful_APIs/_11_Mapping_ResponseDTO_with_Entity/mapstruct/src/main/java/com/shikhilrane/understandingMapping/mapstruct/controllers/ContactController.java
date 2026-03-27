@@ -1,7 +1,6 @@
 package com.shikhilrane.understandingMapping.mapstruct.controllers;
 
 import com.shikhilrane.understandingMapping.mapstruct.dto.ContactDto;
-import com.shikhilrane.understandingMapping.mapstruct.repositories.ContactRepository;
 import com.shikhilrane.understandingMapping.mapstruct.service.ContactService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +13,7 @@ import java.util.Optional;
 @RequestMapping(path = "/contact")
 @RequiredArgsConstructor
 public class ContactController {
+
     private final ContactService contactService;
 
     @PostMapping(path = "/saveContact")
