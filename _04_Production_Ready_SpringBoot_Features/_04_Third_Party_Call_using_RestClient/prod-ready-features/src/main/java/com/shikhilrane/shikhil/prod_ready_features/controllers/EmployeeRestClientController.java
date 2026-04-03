@@ -34,7 +34,7 @@ public class EmployeeRestClientController {
     }
 
     // CREATE
-    @PostMapping("/getAllEmployees")
+    @PostMapping("/createEmployee")
     public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto employeeDto) {
         EmployeeDto saved = employeeClient.createEmployee(employeeDto);
         return ResponseEntity.ok(saved);

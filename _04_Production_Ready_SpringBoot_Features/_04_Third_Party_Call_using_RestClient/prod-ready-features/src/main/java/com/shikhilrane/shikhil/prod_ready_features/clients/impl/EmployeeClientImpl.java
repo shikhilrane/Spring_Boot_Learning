@@ -55,7 +55,7 @@ public class EmployeeClientImpl implements EmployeeClient {
                             status -> status.is5xxServerError(),
                             (req, res) -> { throw new RuntimeException("Server error while fetching employee"); }
                     )
-                    .toEntity(new ParameterizedTypeReference<APIResponse<EmployeeDto>>() {});   // map wrapper
+                    .toEntity(new ParameterizedTypeReference<>() {});   // map wrapper
 
             return Optional.ofNullable(response.getBody().getData());                                 // extract actual employee
         } catch (Exception e) {

@@ -20,7 +20,7 @@ public class RestClientConfig {
     public RestClient getEmployeeServiceRestClient(){
         return RestClient.builder()
                 .baseUrl(BASE_URL)
-                .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE) // We are expecting CONTENT_TYPE as APPLICATION_JSON_VALUE i.e. JSON format only
                 .build();
     }
 }
