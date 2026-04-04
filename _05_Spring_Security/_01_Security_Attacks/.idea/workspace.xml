@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7eed400b-d80e-4976-9e58-6e583e586b7e" name="Changes" comment="" />
+    <list default="true" id="7eed400b-d80e-4976-9e58-6e583e586b7e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../_04_Production_Ready_SpringBoot_Features/_05_Logging_in_Spring_Boot/prod-ready-features/src/test/java/com/shikhilrane/shikhil/prod_ready_features/ProdReadyFeaturesApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../_04_Production_Ready_SpringBoot_Features/_05_Logging_in_Spring_Boot/prod-ready-features/src/test/java/com/shikhilrane/shikhil/prod_ready_features/ProdReadyFeaturesApplicationTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../_04_Production_Ready_SpringBoot_Features/_06_Spring_Boot_Actuator/prod-ready-features/Notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../_04_Production_Ready_SpringBoot_Features/_06_Spring_Boot_Actuator/prod-ready-features/Notes.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,36 +21,36 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "shikhilrane"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;shikhilrane&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/shikhilrane/Spring_Boot_Learning.git",
-    "accountId": "cc3592a6-0115-4a01-a21d-e1e90f7806c2"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/shikhilrane/Spring_Boot_Learning.git&quot;,
+    &quot;accountId&quot;: &quot;cc3592a6-0115-4a01-a21d-e1e90f7806c2&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="3972JSOJ1KmYc0yjgMumIXPK0Sm" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/shikhilrane/Downloads/Programming/Git-remote-repos/Learnings/_13_Spring_Boot_CS/Spring_Boot_Learning/_05_Spring_Security/_01_Security_Attacks"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/shikhilrane/Downloads/Programming/Git-remote-repos/Learnings/_13_Spring_Boot_CS/Spring_Boot_Learning/_05_Spring_Security/_01_Security_Attacks&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="7eed400b-d80e-4976-9e58-6e583e586b7e" name="Changes" comment="" />

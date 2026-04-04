@@ -65,6 +65,6 @@ class ProdReadyFeaturesApplicationTests {
     public void postEmployee(){
         EmployeeDto employeeDto = new EmployeeDto(null,"Sumit","sumit@gmail.com",35,"ADMIN",34565,23.45, LocalDate.of(2020,11,11),true);
         EmployeeDto employee = employeeClient.createEmployee(employeeDto);
-        System.out.println(employeeDto);
+        System.out.println(employee);
     }
 }

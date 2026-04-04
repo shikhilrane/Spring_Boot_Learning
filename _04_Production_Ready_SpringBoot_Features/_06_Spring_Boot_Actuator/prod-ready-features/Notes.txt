@@ -9,14 +9,14 @@ Spring Boot Actuators :
     4. So to configure this situation we need to configure application.properties
         management.endpoints.web.exposure.include=*             // This will allow to every endpoints of actuator
 
-        management.info.env.enabled=true
-        info.app.author=Shikhil Rane
-        info.app.version=1.0.0
-        info.app.documentation=https://shikhilrane.com/docs
-        management.info.build.enabled=true
-        management.info.git.enabled=true
-        management.info.java.enabled=true
-        management.info.os.enabled=true                         // This will show info about author and all at /info endpoint
+        management.info.env.enabled=true                        # Exposes environment variables information in the /info endpoint
+        info.app.author=Shikhil Rane                            # Custom info property to show application author in /info endpoint
+        info.app.version=1.0.0                                  # Custom property to display application version in /info endpoint
+        info.app.documentation=https://shikhilrane.com/docs     # Provides documentation link of the application at /info endpoint
+        management.info.build.enabled=true                      # Shows build details (like artifact name, version, build time) in /info endpoint
+        management.info.git.enabled=true                        # Displays git information such as commit id, branch, and commit time in /info endpoint
+        management.info.java.enabled=true                       # Shows Java runtime information (version, vendor, etc.) in /info endpoint
+        management.info.os.enabled=true                         # Shows operating system details in the /info endpoint
 
         self            : Main actuator entry point
         beans           : Shows all Spring beans in the application
