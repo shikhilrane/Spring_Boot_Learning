@@ -10,5 +10,32 @@ Signup ->
     8. return then created user in form of UserDto, by mapping saved user with UserDto.class
     9. USER CREATED
 
+    FLOW : AuthController -> SignUpDto -> User Entity -> UserRepository -> Saved in DB -> returned as UserDto
+
 Login ->
-    1.
+    10. Created api in AuthController to Login user
+    11. It will take LoginDto (email, password) in @RequestBody as input and also passed HttpServletRequest and HttpServletResponse to save cookie in user's browser
+    12. It will return String because this api will return JWT Token
+    13. Authenticates user and generates a JWT token
+    14. Created Cookie with Cookie class with name "token" for given token
+    15. .setHttpOnly(true) makes the cookie inaccessible to JavaScript (security against XSS)
+    16. Then add cookie to the HTTP response so browser stores it
+    17. Create AuthenticationManager Bean in WebSecurityConfig, and use it here
+    18. In AuthServiceImpl, then use .authenticate() method from authenticationManager that takes, new UsernamePasswordAuthenticationToken() as parameter from entered dto and pass loginDto.getEmail(), loginDto.getPassword() to authenticate the user
+    19. When User found, then get the user details using .getPrincipal() method
+    20. Pass these details in .generateUserToken() from JwtService that we created earlier to create token
+    21. So now token will be created and it will returned as String
+    22. USER AUTHENTICATED AND LOGGED-IN
+
+    FLOW : AuthController -> LoginDto -> AuthenticationManager -> authenticate() -> UsernamePasswordAuthenticationToken() -> JwtService -> return token
+
+Creating Spring Security Environment :
+    1. Add Spring Security Dependencies
+    2. Create WebSecurityConfig class (all Spring Security Beans like PasswordEncoder Bean, AuthenticationManager Bean will be managed here)
+    3. Create implementation service interface for UserDetailsService
+    4. In Implementation of MyUserDetailsService class, Override method loadUserByUsername of UserDetailsService and use findByEmail() method from UserRepository (returns UserDetails)
+    5. Create JwtService Interface to create JWT Token, create JWT by using Jwts.builder()
+    6. Create AuthController to Signup and Login user
+    7. Create AuthService to authenticate user
+
+    In-short : Spring Security Dependencies -> WebSecurityConfig -> Implementation UserDetailsService -> JwtService -> AuthController -> AuthService

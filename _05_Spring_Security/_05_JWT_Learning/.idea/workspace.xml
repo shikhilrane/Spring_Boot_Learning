@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26d245fa-06ae-43f1-834c-46fa49d215c1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../_07_Sign_Up_and_Login_using_JWT/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/controllers/AuthController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../_07_Sign_Up_and_Login_using_JWT/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/dto/LoginDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../_07_Sign_Up_and_Login_using_JWT/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/dto/SignUpDtop.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../_07_Sign_Up_and_Login_using_JWT/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/dto/UserDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../_07_Sign_Up_and_Login_using_JWT/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/AuthService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../_07_Sign_Up_and_Login_using_JWT/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/Implementation/AuthServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="26d245fa-06ae-43f1-834c-46fa49d215c1" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
