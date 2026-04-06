@@ -92,7 +92,8 @@ Configuring our project to add our service to userdata that we got from DB :
             }
 
             1. .requestMatchers("/posts/getAllPosts").permitAll() : Can be accessible to anyone
-            2. .requestMatchers("/posts/*").hasRole("USER") : Can be accessible to only those who has role as "USER" . (* is used to target by id)
+            2. .requestMatchers("/posts/*").hasRole("USER") : *  → one path level (e.g. /posts/create) /posts/*
+                                                              ** → unlimited path levels (e.g. /posts/create/getAll) /posts/**
             3. .requestMatchers("/posts/createPost").hasAnyRole("ADMIN", "MANAGER") : Can be accessible to only those who has role as "ADMIN" or "MANAGER"
             4. Now instead of adding user from application.context file, we will use UserDetailsService directly in WebSecurityConfig file using UserDetails
             5. we have to user PasswordEncoder method that encodes our password while storing in memory

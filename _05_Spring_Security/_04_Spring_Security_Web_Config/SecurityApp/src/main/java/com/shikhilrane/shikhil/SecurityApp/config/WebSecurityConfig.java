@@ -23,7 +23,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/posts/getAllPosts").permitAll()
                         .requestMatchers("/posts/createPost").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/posts/*").hasRole("USER")
+                        .requestMatchers("/posts/*").hasRole("USER") // * → just one level (e.g./posts/create) and ** → unlimited levels (e.g./posts/create/getAll)
                         .anyRequest().authenticated())
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionConfig -> sessionConfig

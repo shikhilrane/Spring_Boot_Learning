@@ -100,3 +100,31 @@ Understanding JWT :
 
         Use in API Request :
             Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaGlraGlscmFuZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjE3MDAwMDM2MDB9.W5XyUuQ0G0xH9Gm1gDqkOe6n4oKzH8YzR2xPpQ0sR9U
+
+Configuring JWT in Project :
+    1. Add following JWT Dependencies in Project :
+                <!-- JWT API -->
+                <dependency>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt-api</artifactId>
+                    <version>0.12.6</version>
+                </dependency>
+                <!-- JWT Implementation -->
+                <dependency>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt-impl</artifactId>
+                    <version>0.12.6</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <!-- JWT JSON Parser -->
+                <dependency>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt-jackson</artifactId>
+                    <version>0.12.6</version>
+                    <scope>runtime</scope>
+
+    2.  Create Jwt Service in Service package.
+        In this service, there are two methods,
+            1. Create a Token -> refer JwtService for creating a token
+            2. Verify the Token -> refer JwtService for verifying a token
+            3. Tested this token in Test

@@ -5,7 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="26d245fa-06ae-43f1-834c-46fa49d215c1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../_04_Spring_Security_Web_Config/SecurityApp/Screenshot 2026-04-06 at 1.38.39 PM.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/Implementation/JwtServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/services/JwtService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_04_Spring_Security_Web_Config/SecurityApp/Notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../_04_Spring_Security_Web_Config/SecurityApp/Notes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_04_Spring_Security_Web_Config/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../_04_Spring_Security_Web_Config/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/config/WebSecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/Notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/Notes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/java/com/shikhilrane/shikhil/SecurityApp/entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/test/java/com/shikhilrane/shikhil/SecurityApp/SecurityAppApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../_06_JWT_Understanfing_Creation_and_Verification_of_JWT_Token/SecurityApp/src/test/java/com/shikhilrane/shikhil/SecurityApp/SecurityAppApplicationTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +55,7 @@
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
