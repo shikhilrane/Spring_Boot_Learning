@@ -1,0 +1,14 @@
+Signup ->
+    1. Created api in AuthController to Signup user
+    2. It will take SignUpDto (email, password, name) in @RequestBody as input
+    3. It will return UserDto (id, email, name)
+    4. In AuthServiceImpl, we check if any user with the given email exist, and if exist then throw BadCredentialsException()
+    5. If not exists, then map signUpDto with User.class (Mapping entered Signup DTO with User Entity)
+    6. Encode entered password to save it in DB
+        To Encode, Create PasswordEncoder Bean in WebSecurityConfig, and use it here
+    7. Save created user in UserRepository
+    8. return then created user in form of UserDto, by mapping saved user with UserDto.class
+    9. USER CREATED
+
+Login ->
+    1.
