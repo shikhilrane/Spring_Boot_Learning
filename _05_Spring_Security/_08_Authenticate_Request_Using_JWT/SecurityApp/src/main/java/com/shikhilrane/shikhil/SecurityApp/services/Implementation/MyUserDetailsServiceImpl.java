@@ -21,4 +21,10 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
                 .findByEmail(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User with entered email " + username + " not found"));
     }
+
+    public User getUserById(Long userId){
+        return userRepository
+                .findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with entered email " + userId + " not found"));
+    }
 }

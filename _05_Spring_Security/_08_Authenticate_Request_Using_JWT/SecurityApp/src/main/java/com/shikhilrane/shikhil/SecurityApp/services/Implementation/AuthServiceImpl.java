@@ -33,22 +33,22 @@ public class AuthServiceImpl implements AuthService {
     public UserDto signUp(SignUpDtop signUpDtop) {
         Optional<User> byEmail = userRepository.findByEmail(signUpDtop.getEmail());
         if (byEmail.isPresent()) {
-            throw new BadCredentialsException("User with given email " + signUpDtop.getEmail() + " is already exist");  // Check if user already exists with this email
+            throw new BadCredentialsException("User with given email " + signUpDtop.getEmail() + " is already exist");  // 4. Check if user already exists with this email
         }
 
-        User toBeCreatedUser = modelMapper.map(signUpDtop, User.class);                     // Convert signup DTO to User entity
-        toBeCreatedUser.setPassword(passwordEncoder.encode(toBeCreatedUser.getPassword())); // Encode password before saving
-        User saved = userRepository.save(toBeCreatedUser);                                  // Save user in database
-        return modelMapper.map(saved, UserDto.class);                                       // Convert saved user entity to UserDto
+        User toBeCreatedUser = modelMapper.map(signUpDtop, User.class);                     // 5. Convert signup DTO to User entity
+        toBeCreatedUser.setPassword(passwordEncoder.encode(toBeCreatedUser.getPassword())); // 6. Encode password before saving
+        User saved = userRepository.save(toBeCreatedUser);                                  // 7. Save user in database
+        return modelMapper.map(saved, UserDto.class);                                       // 8. Convert saved user entity to UserDto
     }
 
     @Override
     public String loginUser(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())    // Authenticate user with email and password
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())    // 18. Authenticate user with email and password from AM
         );
-        User user = (User) authentication.getPrincipal();   // Get authenticated user details
-        String token = jwtService.generateUserToken(user);  // Generate JWT token for the user
-        return token;                                       // Return generated token
+        User user = (User) authentication.getPrincipal();   // 19. Get authenticated user details
+        String token = jwtService.generateUserToken(user);  // 20. Generate JWT token for the user
+        return token;                                       // 21. Return generated token
     }
 }
