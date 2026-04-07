@@ -41,3 +41,5 @@ Exception Handling in Spring Security :
 
 
 NOTE : By default, It will throw error 403 forbidden, but it should not be 403 error but, it should be 401 UNAUTHORIZED
+
+I also added one more filter 'LoggingFilter'

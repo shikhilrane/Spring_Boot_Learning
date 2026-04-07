@@ -1,6 +1,7 @@
 package com.shikhilrane.shikhil.SecurityApp.config;
 
 import com.shikhilrane.shikhil.SecurityApp.filters.JwtRequestFilter;
+import com.shikhilrane.shikhil.SecurityApp.filters.LoggingFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
+    private final LoggingFilter loggingFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -33,6 +35,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/posts/getAllPosts", "auth/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrfConfig -> csrfConfig.disable())
+                .addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(sessionConfig -> sessionConfig
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
