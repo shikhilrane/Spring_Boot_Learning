@@ -1,0 +1,43 @@
+Exception Handling in Spring Security :
+    There are 3 types of exceptions in spring security :
+        1. AuthenticationException : It is a parent exception. It contains several exceptions, Use HttpStatus 401 - UnAuthorized to handle the response :
+            a. AccountExpiredException
+            b. BadCredentialException
+            c. CredentialExpiredException
+            d. AuthenticationCredentialsNotFoundException
+            e. SessionAuthenticationException
+
+            In GlobalExceptionHandler,
+                @ExceptionHandler(AuthenticationException.class)
+                public ResponseEntity<ApiError> handleAuthenticationException(AuthenticationException e){
+                    ApiError apiError = new ApiError(e.getLocalizedMessage(),HttpStatus.UNAUTHORIZED);
+                    return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+                }
+
+        2. AuthorizationException (We will see this in Next module where we see things related to Authorization)
+
+        3. JwtException : It is a parent exception. It contains several exceptions, Use HttpStatus 401 - UnAuthorized to handle the response :
+            a. ExpiredJwtException
+            b. MalformedJwtException
+            c. SignatureException
+            d. UnsupportedJwtException
+            e. IllegalArgumentException
+
+            We can't use these exceptions in GlobalExceptionHandler, Because GlobalExceptionHandler handles exceptions after DispatcherServlet
+            But JwtExceptions comes before crossing DispatcherServlet
+            So we have to handle JwtException in JwtRequestFilter with the help of HandlerExceptionResolver
+            By following,
+
+            @ExceptionHandler(JwtException.class)
+            public ResponseEntity<ApiError> handleJwt(JwtException e) {
+                ApiError apiError = new ApiError(e.getLocalizedMessage(),HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+            }
+
+            And
+
+            Using try...catch block in JwtRequestFilter
+
+
+
+NOTE : By default, It will throw error 403 forbidden, but it should not be 403 error but, it should be 401 UNAUTHORIZED
