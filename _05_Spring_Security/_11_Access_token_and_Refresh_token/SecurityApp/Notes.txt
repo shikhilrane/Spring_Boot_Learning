@@ -1,0 +1,52 @@
+1. Access Token :
+    1. It is a short-lived token (usually valid for a few minutes).
+    2. It is used to access protected APIs.
+    3. The client sends it in the Authorization header with each request.
+    4. Definition : Access Token is a short-lived JWT used to access protected resources or APIs.
+    5. Usually stored in memory (frontend variable/state) or sometimes browser storage.
+    6. Because, Access tokens are short-lived, so even if compromised, the damage window is small.
+    7. Sent with every request in the Authorization header.
+
+2. Refresh Token
+    1. It is a long-lived token (valid for days or weeks).
+    2. When the Access Token expires, it is used to generate a new Access Token.
+    3. It helps the user stay logged in without logging in again.
+    4. Definition : Refresh Token is a long-lived token used to generate a new Access Token when the old one expires.
+    5. Usually stored in a secure HTTP-only cookie or secure storage.
+    6. Refresh tokens are long-lived, so they must be stored more securely.
+    7. It should not be easily accessible by JavaScript to prevent XSS attacks.
+
+Flow :
+    User logs in → server returns Access Token + Refresh Token.
+    Client uses Access Token to call APIs.
+    When Access Token expires → client sends Refresh Token to get a new Access Token.
+
+Code wise :
+    1. Create a method in JwtService to create refresh token
+    2. Keep that token like access token but don't pass claims, and it should be for longer duration
+    3. In AuthService, Add refresh token with access token in login method
+    4. Create LoginResponseDto and pass id, accessToken and refreshToken in it
+    5. Return that LoginResponseDto and from AuthController instead of String for login also return LoginResponseDto from AuthService
+    6. Create one more API in AuthController as "/refresh" with @PostMapping.
+        Return type will be LoginResponseDto and don't pass anything as parameter because we will get here refreshToken from cookie directly
+        Pass HttpServletRequest in parameter
+        HttpServletRequest will give array of cookies that it holds
+        Use Arrays.stream() to filter cookies and find the cookie whose name is "refreshToken".
+        Once the refreshToken cookie is found, get its value using getValue().
+        If refreshToken cookie is not found, throw AuthenticationServiceException.
+        Pass the extracted refreshToken to authService.refreshToken() to validate it and generate a new Access Token (and possibly new Refresh Token).
+        Return LoginResponseDto containing the new Access Token in the response body.
+    7. In AuthServiceImpl, implement this method,
+        This method takes the refresh token, extracts the userId from it, fetches the user from the database, generates a new access token, and returns the new access token along with the refresh token.
+    8. In application.properties = env.deploy=production
+       In AuthController = @Value("${env.deploy}")
+                           private String deployEnv;
+                           cookie.setSecure("production".equals(deployEnv));
+       If the environment is production, the cookie will be sent only over HTTPS for better security.
+       If it is not production (like dev/local), the secure flag will be false so it can still work on HTTP.
+
+    Run the Project :
+        Make a login request, and we will get 2 tokens, i.e. access token and refresh token
+        When we go in Cookies tab, 'refreshToken' will be there that we have saved earlier in AuthController
+        Also when we click on Cookies (just below Send button), we can see refresh token there, type 'localhost' in type a domain name
+        Then go to the '/refresh' api, when we hit send button it will return us the access token and refresh token and we tries to tamper the refresh token then it will shows the error
