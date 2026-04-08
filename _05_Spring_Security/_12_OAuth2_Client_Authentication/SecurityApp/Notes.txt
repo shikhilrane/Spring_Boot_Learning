@@ -1,0 +1,26 @@
+OAuth2 ->
+    1. OAuth2 is a system that lets an application access a user’s data from another service without asking for the user’s password.
+    2. When you click “Login with Google”, the app uses OAuth2 to get your basic Google info without knowing your Google password.
+
+    3. Add dependency to enable OAuth2 in our app :
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+    4. Go to google cloud console : https://console.cloud.google.com/
+        Create project there ("Spring Boot Security Project" that we have created there)
+        Go to Dashboard -> APIs & Services -> Credentials -> Create Credentials -> OAuth Client ID -> Configure Consent Screen
+        Create Client ID : Copy Client ID and Client Secret from there
+    5. Create .yml file for configurations to configure oauth2
+        spring:
+          security:
+            oauth2:
+              client:
+                registration:
+                  google:
+                    client-id: 216016237793-200hnonotutvmtrc6cb4m86afkaa6ij3.apps.googleusercontent.com
+                    client-secret: // client secret goes here
+    6. Go to WebSecurityConfig and add,
+        .oauth2Login(oauth2Config -> oauth2Config
+                .failureUrl("/login?error=true")
+        )
