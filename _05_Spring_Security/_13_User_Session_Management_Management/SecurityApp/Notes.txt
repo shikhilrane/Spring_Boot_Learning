@@ -1,0 +1,84 @@
+User Session Management :
+    1. User session management with JWT means controlling how many times a user can log in (for example from different devices).
+    2. The system saves refresh tokens in the database when a user logs in, so it can know which sessions are active.
+    3. It helps limit logins, like allowing only 1 or 2 active sessions per user.
+    4. It improves security, because if someone logs in too many times, the system can block the login or remove old sessions.
+
+Flow by Code :
+    1. Create SessionService
+    2. Create Session entity to store number of sessions for one user and also create SessionRepository
+    3. Implement SessionServiceImpl to handle session creation, validation, and logout.
+    4. When a user logs in, generate accessToken and refreshToken.
+    5. Call generateNewSession() to store the refresh token as a new session in the database.
+    6. If the session limit is reached, delete the least recently used session and create a new one.
+    7. When /refresh API is called, validate the session using validateSession().
+    8. If the session exists, update lastUsedAt and generate a new access token.
+    9. When /logout API is called, delete the session using the refresh token.
+
+    In Postman,
+        Create user
+        Login user 2 time with same credentials, and we can see there are two sessions for the user in DB
+        Create 3rd session by login, now 1st session would get deleted because it will have reached the maximum limit
+
+FLOWS :
+    1. session + JWT system
+        User Login
+             ↓
+        AuthServiceImpl.loginUser()
+             ↓
+        Generate accessToken + refreshToken
+             ↓
+        SessionService.generateNewSession()
+             ↓
+        SessionRepository.save()
+             ↓
+        Session stored in DB
+        (userId + refreshToken + lastUsedAt)
+
+    2. Refresh Token Flow
+        Client calls /refresh
+               ↓
+        AuthServiceImpl.refreshToken()
+               ↓
+        SessionService.validateSession()
+               ↓
+        SessionRepository.findByRefreshToken()
+               ↓
+        Session exists ?
+             ↓        ↓
+           YES       NO
+            ↓         ↓
+        Update      Throw
+        lastUsedAt  Exception
+            ↓
+        Generate new accessToken
+            ↓
+        Send to client
+
+    3. Logout Flow
+        Client calls /logout
+               ↓
+        AuthController
+               ↓
+        SessionService.logout()
+               ↓
+        SessionRepository.findByRefreshToken()
+               ↓
+        Delete session
+               ↓
+        User logged out
+
+    4. Session Limit Flow (Max 2)
+        User Login
+             ↓
+        Fetch existing sessions
+             ↓
+        Sessions = 2 ?
+           ↓        ↓
+          YES       NO
+           ↓         ↓
+        Delete      Create
+        oldest      new session
+        session
+              ↓
+        Save new session
