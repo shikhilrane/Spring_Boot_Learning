@@ -1,5 +1,7 @@
 OAuth2 ->
+
     1. OAuth2 is a system that lets an application access a user’s data from another service without asking for the user’s password.
+
     2. When you click “Login with Google”, the app uses OAuth2 to get your basic Google info without knowing your Google password.
 
     3. Add dependency to enable OAuth2 in our app :
@@ -7,10 +9,12 @@ OAuth2 ->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
+
     4. Go to google cloud console : https://console.cloud.google.com/
         Create project there ("Spring Boot Security Project" that we have created there)
         Go to Dashboard -> APIs & Services -> Credentials -> Create Credentials -> OAuth Client ID -> Configure Consent Screen
         Create Client ID : Copy Client ID and Client Secret from there
+
     5. Create .yml file for configurations to configure oauth2
         spring:
           security:
@@ -20,7 +24,72 @@ OAuth2 ->
                   google:
                     client-id: 216016237793-200hnonotutvmtrc6cb4m86afkaa6ij3.apps.googleusercontent.com
                     client-secret: // client secret goes here
+
     6. Go to WebSecurityConfig and add,
         .oauth2Login(oauth2Config -> oauth2Config
                 .failureUrl("/login?error=true")
         )
+        This is to handle failure
+
+    7. To handle success :
+        7.1
+        Create OAuth2SuccessHandler class and extends it with SimpleUrlAuthenticationSuccessHandler
+        Override this method there,
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
+            {
+               OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
+               DefaultOAuth2User oAuth2User = (DefaultOAuth2User) token.getPrincipal();
+
+               log.info(oAuth2User.getAttribute("email"));
+            }
+        Also add, .successHandler(oAuth2SuccessHandler) in WebSecurityConfig file
+        Now, when we run the project and login using OAuth2 using any google account, we will get email id of user
+
+        7.2
+        Now, it gets the user's email from Google and checks if that user exists in the database. If not, it creates and saves a new user.
+        Then create refresh and access tokens
+        Then store the refreshToken in cookie
+        Then Create the url and access the AccessToken and redirect user to the frontend to /home.html
+        Now, also add "/home.html" in requestMatchers in WebSecurityConfig
+
+
+        WebSecurityConfig -> SecurityFilterChain -> OAuth2LoginAuthenticationFilter -> Google Login Page -> OAuth2SuccessHandler -> MyUserDetailsServiceImpl -> UserRepository(findByEmail) -> OAuth2SuccessHandler -> JwtService(generateAccessToken / generateRefreshToken) -> Cookie added in Response -> Redirect → /home.html?token=accessToken
+
+Flow of Program :
+    Client (Browser)
+          ↓
+    GET /oauth2/authorization/google
+          ↓
+    WebSecurityConfig
+    (SecurityFilterChain me oauth2Login enabled)
+          ↓
+    Spring OAuth2 Internal Filters
+    (OAuth2LoginAuthenticationFilter etc.)
+          ↓
+    Google Login Page
+          ↓
+    GET /login/oauth2/code/google
+          ↓
+    Spring OAuth2 Authentication Complete
+          ↓
+    OAuth2SuccessHandler
+    (com.shikhilrane.shikhil.SecurityApp.handlers)
+          ↓
+    MyUserDetailsServiceImpl
+    (getUserByEmail → check user in DB)
+          ↓
+    UserRepository
+    (findByEmail / save user)
+          ↓
+    Back to OAuth2SuccessHandler
+          ↓
+    JwtService
+    (generateAccessToken / generateRefreshToken)
+          ↓
+    Cookie added in Response
+    (refreshToken)
+          ↓
+    Redirect → /home.html?token=accessToken
+          ↓
+    Client (Browser)

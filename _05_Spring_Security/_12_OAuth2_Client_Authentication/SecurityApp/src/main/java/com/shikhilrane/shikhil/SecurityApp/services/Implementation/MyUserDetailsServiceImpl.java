@@ -30,4 +30,16 @@ public class MyUserDetailsServiceImpl implements MyUserDetailsService {
                 .findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with entered email " + userId + " not found"));
     }
+
+    // This method us for to get email id of user for OAuth2 in OAuth2SuccessHandler
+    public User getUserByEmail(String email){
+        return userRepository
+                .findByEmail(email)
+                .orElse(null);
+    }
+
+    @Override
+    public User save(User newUser) {
+        return userRepository.save(newUser);
+    }
 }

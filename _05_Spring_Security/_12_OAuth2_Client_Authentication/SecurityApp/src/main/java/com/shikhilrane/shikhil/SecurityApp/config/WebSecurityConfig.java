@@ -2,6 +2,7 @@ package com.shikhilrane.shikhil.SecurityApp.config;
 
 import com.shikhilrane.shikhil.SecurityApp.filters.JwtRequestFilter;
 import com.shikhilrane.shikhil.SecurityApp.filters.LoggingFilter;
+import com.shikhilrane.shikhil.SecurityApp.handlers.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,18 +28,20 @@ public class WebSecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
     private final LoggingFilter loggingFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/posts/getAllPosts", "auth/**").permitAll()
+                        .requestMatchers("/posts/getAllPosts", "auth/**", "/home.html").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrfConfig -> csrfConfig.disable())
                 .addFilterBefore(loggingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2Config -> oauth2Config
                         .failureUrl("/login?error=true")
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .sessionManagement(sessionConfig -> sessionConfig
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

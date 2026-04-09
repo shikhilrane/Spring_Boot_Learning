@@ -1,0 +1,52 @@
+Authentication ends here
+Authorization will starts from next module
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+SET GOOGLE OAUTH CLIENT ID & SECRET USING ENVIRONMENT VARIABLES (MAC - ZSH)
+
+STEP 1 — Open terminal
+
+STEP 2 — Open .zshrc file
+    Run this command : ls -a ~
+    open .zshrc
+
+STEP 3 — Go to the bottom of the file and add these lines
+    export GOOGLE_CLIENT_ID_SpringBoot_OAuth=your_google_client_id
+    export GOOGLE_CLIENT_SECRET_SpringBoot_OAuth=your_google_client_secret
+    Example:
+        export GOOGLE_CLIENT_ID_SpringBoot_OAuth=123456789012-abcxyz.apps.googleusercontent.com
+        export GOOGLE_CLIENT_SECRET_SpringBoot_OAuth=GOCSPX-xxxxxxxxxxxxxxxx
+
+STEP 4 — Reload the .zshrc file
+    Run this command anywhere in terminal : source ~/.zshrc
+
+STEP 5 — Verify environment variables
+    Run these commands:
+        echo $GOOGLE_CLIENT_ID_SpringBoot_OAuth
+        echo $GOOGLE_CLIENT_SECRET_SpringBoot_OAuth
+    If values print correctly → environment variables are set successfully.
+
+STEP 6 — Use variables in Spring Boot application.yml
+    spring:
+        security:
+            oauth2:
+                client:
+                    registration:
+                        google:
+                            client-id: ${GOOGLE_CLIENT_ID_SpringBoot_OAuth}
+                            client-secret: ${GOOGLE_CLIENT_SECRET_SpringBoot_OAuth}
+                            scope:
+                            - email
+                            - profile
+
+STEP 7 — Restart Spring Boot application
+    cd Spring_Boot_Learning/_05_Spring_Security/_12_OAuth2_Client_Authentication/SecurityApp
+    ./mvnw spring-boot:run
+    OR
+    run from Intellij
+
+Now Spring Boot will read the client-id and client-secret from environment variables instead of hardcoding them in the project.

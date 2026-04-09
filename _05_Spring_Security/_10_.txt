@@ -1,2 +1,0 @@
-Authentication ends here
-Authorization will starts from next module
