@@ -1,0 +1,30 @@
+Granular Authorization with Authority :
+    1. Permissions that Role can contain
+    2. Permissions are way to give fine or granular level over the application where user has different-different micro-permissions attached to their roles
+    3. Role vs Authority :
+        Role : Role represents high-level, permissions that are typically associated with group of users
+               Example : "USER", "ADMIN", "MANAGER", etc.
+        Authority : Authority represents fine grained access rights within an application
+                    Role = Category
+                    Authority = Permission for that category
+                    Example : Different authorities can be defined to allow users to "CREATE", "UPDATE" and "DELETE" a particular resource
+                              POST_CREATE, POST_UPDATE, POST_DELETE,
+                              BLOG_CREATE, BLOG_UPDATE, BLOG_DELETE
+    4. Authority has 2 parts :
+        1. Roles
+        2. Permissions
+
+    5. Code flow :
+        1. Create Enum with name Permissions
+        2. In User entity, Create List<Permission> permissions
+            In .getAuthorities() in GrantedAuthorities, add permission using forEach() that returns new SimpleGrantedAuthority()
+        3. Add private List<Permission> permissions; in SignUpDto
+        4. Add .requestMatchers() for Permission in WebSecurityConfig
+            .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyAuthority(Permission.POST_CREATE.name())  // User ke paas POST_CREATE permission hona chahiye
+            .requestMatchers(HttpMethod.GET, "/posts/**").hasAuthority(Permission.POST_VIEW.name())        // User ke paas POST_VIEW permission hona chahiye
+            .requestMatchers(HttpMethod.PUT, "/posts/**").hasAuthority(Permission.POST_UPDATE.name())      // User ke paas POST_UPDATE permission hona chahiye
+            .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAuthority(Permission.POST_DELETE.name())   // User ke paas POST_DELETE permission hona chahiye
+        5. We can have hardcoded value for roles and permission mapping so that we dont have to repeat our code again and again
+            Here we will define, one role can have this much permissions. So we don't have to assign permissions again and again
+            Create Role_Permission class in utils class and make private static final Map<Roles, List<Permission>> and map every role with permission/s
+            Create getAuthoritiesForRole() method that return List<SimpleGrantedAuthority> and assign permission for user role there instead of in User class
