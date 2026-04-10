@@ -1,0 +1,45 @@
+Authorization :
+    1. Authorization is a process of determining whether an authenticated user has the necessary permissions to access a particular resource or perform an action. It controls what an authenticated user can or cannot do.
+    2. Basically,
+        Who are you?     -> Authentication
+        What can you do? -> Authorization
+    3. We are going to attach some roles to authenticated user and according to those roles user can perform different types of operations
+
+Code Flow :
+    1. Create an enums package in entities and create Role enum in it and add USER, CREATOR and ADMIN
+    2. In User entity,
+        create,
+            // private Role role;          -> This would only store 'one role for one user'
+            private List<Role> roles;   -> This would store 'multiple role for one user'
+        Apply @Enumerated annotation to it and give (EnumType.STRING or EnumType.ORDINAL)
+            means,
+                STRING = actual value of enum will be given
+                ORDINAL = Index of the enum value will be given
+        Apply @ElementCollection(fetch = FetchType.EAGER)
+            Because we want to fetch users soon as we fetch users
+    3. We will put roles for user in AuthController of "/signup" api (i.e. put the roles during signup process)
+        1st situation :
+            But putting roles in "/signup" process is not ideal in Production Ready Application,  And if we pass roles during sign up process then user can decide roles for himself and he can become ADMIN and that is not ideal.
+            If we want to onboard new CREATOR then only ADMIN can onboard new CREATOR or when we want to onboard new ADMIN only then we will provide ADMIN role.
+            Like When ADMIN wants to board CREATOR, we will create new controller for it and ADMIN will hit that api to board the CREATOR.
+        2nd situation :
+            But for testing purposes we will pass the roles in SignUpDto, so that we can put the roles as soon as we are logging in,
+            Pass private Set<Role> roles; in SignUpDto
+            Role -> AuthController -> /signup -> AuthService -> signUp
+    4. Now Run the project, and Signup the user with passing roles in arrays
+        Check the DB, we will have user in user table and there will be one more table as user_roles and in that table all the roles assigned to the particular user will be displayed
+    5. As of now we are just assigning roles to the users
+        Now we have to assign what they can access, by using WebSecurityConfig
+        But before that, in User entity, we have to use Overridden method getAuthorities(). This method returns Collection of GrantedAuthority interface.
+        GrantedAuthority interface has the implementation class SimpleGrantedAuthority, that we have to return from here by using ""ROLE_" + roles.stream()"
+        Also we have to give roles in generateAccessToken method of JwtServiceImpl like .claim("roles", user.getRoles().toString())
+        Also we have to assign user.getAuthorities() in JwtRequestFilter
+        In WebSecurityConfig, define public routes with .permitAll()
+                              define only ADMIN routes with .hasRole() (.requestMatchers("/posts/**").hasRole(Role.ADMIN.name()))
+        1.
+        for .requestMatchers("/posts/**").hasRole(Role.ADMIN.name())
+        When we run the program atp, and tries to get access GET/posts/1, we will get html for OAuth2 because it won't find anything with jwt so it will redirect to OAuth
+        Once we put valid credentials to /signup with roles then we need to /login and then check if we can access routes of /post. If user is ADMIN then he can or else he couldn't
+        2.
+        for .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()    // Permit all the GET request coming to /posts
+            .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyRole(Role.ADMIN.name(), Role.CREATOR.name())   // Permit only ADMIN or CREATOR to /posts

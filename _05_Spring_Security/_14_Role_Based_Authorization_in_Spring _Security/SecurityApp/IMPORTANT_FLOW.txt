@@ -1,0 +1,178 @@
+
+                                                    ===============================================
+                                                    SECURITY APP – SPRING SECURITY + JWT FLOW NOTES
+                                                    ===============================================
+
+
+    1. SIGNUP FLOW (User Registration)
+    ----------------------------------
+        Flow :
+                Client
+                  ↓
+                AuthController
+                  ↓
+                AuthService
+                  ↓
+                AuthServiceImpl
+                  ↓
+                UserRepository
+                  ↓
+                Database
+
+        File to File Explanation:
+            1. AuthController
+                /signup API receives SignUpDto from the client.
+            2. AuthService
+                Controller calls the AuthService interface method.
+            3. AuthServiceImpl
+                - Encodes the password
+                - Creates the User entity
+            4. UserRepository
+                save(user) method stores the user in the database.
+            5. Database
+                User is permanently stored.
+
+
+
+    2. LOGIN FLOW (JWT Token Generation)
+    ------------------------------------
+        Flow :
+                Client
+                  ↓
+                AuthController
+                  ↓
+                AuthService
+                  ↓
+                AuthServiceImpl
+                  ↓
+                AuthenticationManager
+                  ↓
+                MyUserDetailsService
+                  ↓
+                JwtService
+                  ↓
+                Response (Access Token + Refresh Token)
+
+        File to File Explanation:
+            1. AuthController
+                /login API is called by the client.
+            2. AuthService
+                loginUser() method is called.
+            3. AuthServiceImpl
+                Authenticates the user.
+            4. AuthenticationManager
+                Handles authentication using Spring Security.
+            5. MyUserDetailsService
+                loadUserByUsername() loads user details from the database.
+            6. JwtService
+                Generates:
+                - Access Token
+                - Refresh Token
+            7. Response
+                Access Token → returned in the response body
+                Refresh Token → stored in the browser cookie
+
+
+
+    3. REFRESH TOKEN FLOW
+    ---------------------
+        Flow:
+            Client
+              ↓
+            AuthController
+              ↓
+            Cookie (refreshToken)
+              ↓
+            AuthService
+              ↓
+            AuthServiceImpl
+              ↓
+            JwtService
+              ↓
+            New Access Token
+
+        File to File Explanation:
+            1. AuthController
+                /refresh API is called.
+            2. HttpServletRequest
+                getCookies() reads cookies sent by the browser.
+            3. Extract refreshToken
+                Refresh token is extracted from the cookies.
+            4. AuthService
+                refreshToken() method is called.
+            5. AuthServiceImpl
+                - Extracts userId from refresh token
+                - Loads the user from the database
+            6. JwtService
+                generateAccessToken() creates a new access token.
+            7. Response
+                Returns a new Access Token to the client.
+
+
+
+    4. PROTECTED API FLOW (JWT VALIDATION)
+    --------------------------------------
+        Example API: /posts/{getUserById}
+
+        Flow:
+            Client Request
+              ↓
+            Security Filter Chain
+              ↓
+            LoggingFilter
+              ↓
+            JwtRequestFilter
+              ↓
+            JwtService
+              ↓
+            SecurityContext
+              ↓
+            Controller
+              ↓
+            Service
+              ↓
+            Repository
+              ↓
+            Database
+
+
+        File to File Explanation:
+            1. WebSecurityConfig
+                Defines SecurityFilterChain configuration.
+            2. LoggingFilter
+                Logs incoming requests.
+            3. JwtRequestFilter
+                Steps performed:
+                    1. Extract JWT token
+                    2. Validate the token
+                    3. Load user details
+                    4. Set authentication in SecurityContext
+            4. JwtService
+                validateToken()
+                getUserIdFromToken()
+            5. MyUserDetailsService
+                Loads user information from the database.
+            6. SecurityContextHolder
+                Stores authenticated user details.
+            7. PostController
+                Handles the API request.
+            8. PostService
+                Contains business logic.
+            9. PostRepository
+                Interacts with the database.
+
+
+
+    REAL WORLD REQUEST LIFECYCLE
+    ----------------------------
+        Login
+          ↓
+        Access Token + Refresh Token generated
+          ↓
+        Client sends Access Token with API request
+          ↓
+        JwtRequestFilter validates the token
+          ↓
+        SecurityContext stores authentication
+          ↓
+        Controller executes the requested API
