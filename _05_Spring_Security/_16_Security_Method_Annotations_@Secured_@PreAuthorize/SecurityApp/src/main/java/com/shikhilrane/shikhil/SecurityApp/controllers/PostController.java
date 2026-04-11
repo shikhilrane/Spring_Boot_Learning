@@ -5,6 +5,8 @@ import com.shikhilrane.shikhil.SecurityApp.exceptions.ResourceNotFoundException;
 import com.shikhilrane.shikhil.SecurityApp.services.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,8 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/{getPostById}")
+//    @PreAuthorize("hasAnyRole('USER', 'ADMIN') OR hasAuthority('POST_VIEW')")
+    @PreAuthorize("@postSecurity.isOwnerOfPost(#id)") // get the bean postSecurity
     public ResponseEntity<PostDto> getbyId(@PathVariable(name = "getPostById") Long id){
         Optional<PostDto> postById = postService.getPostById(id);
         return postById
@@ -26,6 +30,7 @@ public class PostController {
     }
 
     @GetMapping("/getAllPosts")
+    @Secured("ROLE_USER, ROLE_ADMIN")
     public ResponseEntity<List<PostDto>> getAll(){
         List<PostDto> allPosts = postService.getAllPosts();
         return ResponseEntity.ok(allPosts);

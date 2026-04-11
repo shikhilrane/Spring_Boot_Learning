@@ -1,30 +1,39 @@
-Granular Authorization with Authority :
-    1. Permissions that Role can contain
-    2. Permissions are way to give fine or granular level over the application where user has different-different micro-permissions attached to their roles
-    3. Role vs Authority :
-        Role : Role represents high-level, permissions that are typically associated with group of users
-               Example : "USER", "ADMIN", "MANAGER", etc.
-        Authority : Authority represents fine grained access rights within an application
-                    Role = Category
-                    Authority = Permission for that category
-                    Example : Different authorities can be defined to allow users to "CREATE", "UPDATE" and "DELETE" a particular resource
-                              POST_CREATE, POST_UPDATE, POST_DELETE,
-                              BLOG_CREATE, BLOG_UPDATE, BLOG_DELETE
-    4. Authority has 2 parts :
-        1. Roles
-        2. Permissions
+Security Method Annotations :
+    1. As of now, we write multiple numbers of .requestMatchers() in the WebSecurityConfig file to secure different endpoints.
+    2. If the application grows, adding many .requestMatchers() makes the configuration messy and difficult to manage.
+    3. To solve this problem, Spring Security provides Security Method Annotations.
+    4. These annotations allow us to apply security directly on methods (Controller or Service methods) instead of writing all rules in WebSecurityConfig.
+    5. Types of Security Method Annotations :
+        @Secured        :   Allows a method to run only if the user has a specific role.
+        @PreAuthorize   :   Checks authorization conditions before the method executes.
+        @PostAuthorize  :   Checks authorization conditions after the method executes.
+        @PreFilter      :   Filters input data before the method runs based on a condition.
+        @PostFilter     :   Filters the returned data after the method runs based on a condition.
 
-    5. Code flow :
-        1. Create Enum with name Permissions
-        2. In User entity, Create List<Permission> permissions
-            In .getAuthorities() in GrantedAuthorities, add permission using forEach() that returns new SimpleGrantedAuthority()
-        3. Add private List<Permission> permissions; in SignUpDto
-        4. Add .requestMatchers() for Permission in WebSecurityConfig
-            .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyAuthority(Permission.POST_CREATE.name())  // User ke paas POST_CREATE permission hona chahiye
-            .requestMatchers(HttpMethod.GET, "/posts/**").hasAuthority(Permission.POST_VIEW.name())        // User ke paas POST_VIEW permission hona chahiye
-            .requestMatchers(HttpMethod.PUT, "/posts/**").hasAuthority(Permission.POST_UPDATE.name())      // User ke paas POST_UPDATE permission hona chahiye
-            .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAuthority(Permission.POST_DELETE.name())   // User ke paas POST_DELETE permission hona chahiye
-        5. We can have hardcoded value for roles and permission mapping so that we dont have to repeat our code again and again
-            Here we will define, one role can have this much permissions. So we don't have to assign permissions again and again
-            Create Role_Permission class in utils class and make private static final Map<Roles, List<Permission>> and map every role with permission/s
-            Create getAuthoritiesForRole() method that return List<SimpleGrantedAuthority> and assign permission for user role there instead of in User class
+Code Flow :
+    1. Add @EnableMethodSecurity(securedEnabled = true) annotation in WebSecurity class ((securedEnabled = true) must be true if we want to use @Secured annotations)
+    2. Commented GET routes so as of now everyone can access GET routes
+    3. Now ATP, if we send GET request to /getById and /getAllPosts then we will get access of it
+    4. Add @Secured("ROLE_USER"), in the PostController for /getAllPosts api
+    5. Now ATP, User with ROLE as USER only allowed to access /getAllPosts api from PostController
+        If user without ROLE as USER will allowed to access /getAllPosts api from PostController, so in that case page will be redirect to OAUTH2 page
+        So we need to handle the AccessDeniedException.class exception which is thrown by SpringSecurity in GlobalExceptionHandler,
+        and use HttpStatus.FORBIDDEN because user is logged in but his access is denied to go /getAllPosts api
+        Now if we try to access with role as ADMIN then we will get forbidden error
+    6. Now, we added "ROLE_ADMIN" in Secured annotation so now user with role admin can even access it
+    7. Now, we will customise this api with @PreAuthorize annotation
+        add @PreAuthorize("hasAnyRole('USER', 'ADMIN')") to /{getPostById}
+        So, now any user with role as USER or ADMIN will be allowed to go /{getPostById} and user with role as CREATOR will be get denied
+    8. Now, add authority
+        @PreAuthorize("hasAnyRole('USER', 'ADMIN') OR hasAuthority('POST_VIEW')") -> user with any role between 'USER' or 'ADMIN' or having authority POST_VIEW can access this api
+        @PreAuthorize("hasAnyRole('USER', 'ADMIN') AND hasAuthority('POST_VIEW')") -> user with any role between 'USER' or 'ADMIN' and having authority POST_VIEW can access this api
+        We can use OR or AND here
+    9. We can go one step further and also call another method from another service
+        Create PostSecurity method in utils
+        This PostSecurity is the class that is responsible for security all the posts means only post who has been created by this particular user should be allowed
+        Create method, boolean isOwnerOfPost(Long postId){}
+        Create @ManyToOne mapping in PostEntity for User means one user can have many post
+        and also pass private UserDto author; in PostDto class
+        In PostServiceImpl, in createNewPost, by taking authentication info of current logged in user from SecurityContextHolder and setting current post author to that user
+        In PostSecurity, in isOwnerOfPost(), get the user details from SSC then get post by id from postService, then check id the of the user who created the post is same as the logged-in user's id
+        Now run the program

@@ -8,6 +8,7 @@ import com.shikhilrane.shikhil.SecurityApp.services.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +44,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto createNewPost(PostDto inputPost) {
-        PostEntity postEntity = modelMapper.map(inputPost, PostEntity.class);
-        PostEntity save = postRepository.save(postEntity);
-        return modelMapper.map(save, PostDto.class);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();  // Taking authentication info of current logged-in user from SSC
+        PostEntity postEntity = modelMapper.map(inputPost, PostEntity.class);       // Convert PostDto object into PostEntity object
+        postEntity.setAuthor(user);                                                 // Set the logged-in user as the author of the post
+        PostEntity save = postRepository.save(postEntity);                          // Save the post into the database
+        return modelMapper.map(save, PostDto.class);                                // Convert saved entity back to PostDto and return it
     }
 
 }

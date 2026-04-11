@@ -23,4 +23,7 @@ public class PostEntity {
 
     @Column(nullable = false)
     private String description;
+
+    @ManyToOne
+    private User author;
 }
