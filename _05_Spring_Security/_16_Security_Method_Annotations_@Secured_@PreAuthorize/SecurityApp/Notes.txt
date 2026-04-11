@@ -28,5 +28,3 @@ Granular Authorization with Authority :
             Here we will define, one role can have this much permissions. So we don't have to assign permissions again and again
             Create Role_Permission class in utils class and make private static final Map<Roles, List<Permission>> and map every role with permission/s
             Create getAuthoritiesForRole() method that return List<SimpleGrantedAuthority> and assign permission for user role there instead of in User class
-        6. Go to User Entity, don't save List<Permission> in DB
-           In getAuthorities() create authorities of HashSet<> and run loop on it to add user's permissions in authorities
