@@ -1,0 +1,60 @@
+Testing :
+    1. Testing in Spring Boot helps make sure the application works correctly before it is released to production.
+    2. It checks whether different parts like controllers, services, repositories, and configurations function properly.
+    3. Spring Boot supports testing using tools such as JUnit, Mockito, and its built-in testing utilities.
+    4. Why Testing is Important : In backend systems (like the ones you’re building while learning web development), testing helps to:
+        1. Detect bugs early
+        2. Ensure code reliability
+        3. Prevent breaking existing features
+        4. Improve maintainability
+        5. Enable safe refactoring
+    5. Importance of Testing :
+        1. Identifies bugs early and saves money
+        2. Mitigates deployment risks and ensures system stability
+        3. Increases productivity and speed up development
+        4. Promotes confidence among developers and builds trust
+    6. Project Structure for Tests :
+         src
+            ├── main
+            │    └── java
+            │         └── com.example.app
+            └── test
+                 └── java
+                      └── com.example.app
+                           ├── controller
+                           ├── service
+                           └── repository
+
+Before understanding testing we need to understand SDLC :
+            |--->       Maintenance  ->  Requirement Analysis     ----v
+        Deployment |------------------------------------------------| v
+            ^      |    SDLC (Software Development Life Cycle)      | Defining
+        Testing    |------------------------------------------------| v
+            ^--     <---     Coding  <-  Designing      <-------------
+
+            1. Requirement Analysis -
+                This part is done by top level management or business people or product managers etc. who gathers requirements and what kind of features do we want to make and is it worth it to feature build this feature or not.
+                They do it with certain kind of numbers and metrics to get on conclusion
+            2. Defining -
+                Now they are sure what kind of features they are going to build according to requirements
+            3. Designing -
+                Once definitions are set, we go to designers like UI/UX designers and another one is Engineer who design technical document, schema, DBs and System Design and other stuff
+            4. Coding -
+                Once everything decided on paper then we start actual coding
+            5. Testing -
+                Testers or Software engineers do testings
+            6. Deployment -
+                Once everything done with testing of all the features in our project then comes deployment part
+            7. Maintenance -
+                When our code go to production, then our code is bound to get a bug in code and fix that bug in maintenance and also maintain the code
+
+Test writing approaches :
+    1. Test-Driven Development (TDD) -
+        1. Write a failing test
+        2. Write the minimum  code to pass the test and
+        3. Refactor the code for better design
+    2. Behaviour-Driven Development (BDD) (Extension of TDD) -
+        1. Define behaviour in human-readable sentences
+        2. Writes scenarios to meet the behaviour
+        3. Implement code to pass the scenarios
+    There are also Test-After Development and Simultaneous Development
