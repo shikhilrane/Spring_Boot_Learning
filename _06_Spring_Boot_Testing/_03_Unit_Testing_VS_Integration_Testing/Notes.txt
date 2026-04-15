@@ -1,0 +1,68 @@
+Unit Testing vs Integration Testing :
+    1. Unit Testing :
+        1. When we test individual components such as the controller, service, or repository then we call it as Unit Testing
+        2. A unit test covers a single "unit", where a unit commonly is a single class, but can also be a cluster of cohesive classes that is tested in combination.
+            • Focus: Individual components, such as methods in a service class.
+            • Tools: JUnit, Mockito
+            • Example: Testing a service method that performs a calculation or business logic
+        3. Example :
+            class EmployeeServiceTest {                                                         // Unit Test class for EmployeeService
+                @Mock                                                                           // Creates a mock (fake) object of EmployeeRepository
+                private EmployeeRepository employeeRepository;                                  // Fake repository used for testing
+                @InjectMocks                                                                    // Injects the mock repository into the service
+                private EmployeeServiceImpl employeeService;                                    // Service class that we want to test
+                @Test                                                                           // Marks this method as a test case
+                void testGetEmployeeById() {                                                    // Test method to check getEmployeeById()
+                    Employee employee = new Employee(1L, "John Doe", "john.doe@example.com");   // Creates sample employee data
+                    when(employeeRepository.findById(1L))                                       // When repository method findById(1L) is called
+                            .thenReturn(Optional.of(employee));                                 // return the sample employee wrapped in Optional
+                    EmployeeDto result = employeeService.getEmployeeById(1L);                   // Calls the service method we are testing
+                    assertThat(result.getName()).isEqualTo("John Doe");                         // Checks that the name returned is correct
+                    assertThat(result.getEmail()).isEqualTo("john.doe@example.com");            // Checks that the email returned is correct
+                }
+            }
+
+    2. Integration Testing :
+        1. When we test multiple components together (for example controller, service, and repository working together), it is called integration testing.
+        2. A test that covers multiple layers. This might cover the interaction between a business service and the persistence layer, for instance.
+            • Focus: Interaction between multiple components, such as repositories, services, and controllers.
+            • Tools: Spring Test, @SpringBootTest.
+            • Example: Testing the interaction between a service and a repository.
+        3. Example :
+            @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)             // starts the full Spring Boot application on a random port for testing
+            class EmployeeControllerIntegrationTest {
+                @Autowired                                                                          // injects TestRestTemplate so we can send HTTP requests to the application
+                private TestRestTemplate restTemplate;
+                @Test                                                                               // marks this method as a test case
+                void testGetEmployeeById() {
+                    ResponseEntity<EmployeeDto> response =
+                            restTemplate.getForEntity("/employees/1", EmployeeDto.class);           // sends a GET request to /employees/1 and expects EmployeeDto in response
+                    assertThat(response.getStatusCodeValue()).isEqualTo(200);                       // checks that the HTTP response status is 200 (success)
+                    assertThat(response.getBody().getName()).isEqualTo("John Doe");                 // checks that the returned employee name is "John Doe"
+                    assertThat(response.getBody().getEmail()).isEqualTo("john.doe@example.com");    // checks that the returned email is correct
+                }
+            }
+
+    3. By diagram :
+                                HTTP Request
+                                     |
+                                     v
+            +---------------------------------------------------------------+
+            |                                                               |
+            |   +--------------+     +--------------+     +--------------+  |
+            |   |  Controller  |     |   Service    |     |  Repository  |  |
+            |   |              |     |              |     |              |  |
+            |   |              |     |              |     |              |  |
+            |   +--------------+     +--------------+     +--------------+  |
+            |       Unit Testing        Unit Testing        Unit Testing    |
+            |                                                               |
+            +---------------------------------------------------------------+
+                                   Integration Testing
+
+    4. Key Testing Annotations in Spring Boot
+       • @SpringBootTest: Used to create an application context and load the full application for integration tests. Useful in Integration Testing.
+       • @DataJpaTest: Used to test JPA repositories, configuring an in-memory database for the test. Useful in Unit Testing Service Layer and Persistence Layer.
+       • @TestConfiguration: Used to define extra beans or configurations for tests.
+       • @WebMvcTest: Used for testing Spring MVC controllers. It initializes only the web layer and not the entire context. Useful in Unit Testing Controller layer.
+       • @AutoConfigureTestDatabase: Used to replace the actual database with an embedded database during tests.
+        NOTE :- We will see all these annotations in practical sense
