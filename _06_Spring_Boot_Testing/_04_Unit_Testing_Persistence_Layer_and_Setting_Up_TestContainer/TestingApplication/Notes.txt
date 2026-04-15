@@ -1,0 +1,29 @@
+Testing of Persistence Layer -
+    1. Persistence Layer consist of Entity and Repository
+    2. So, we are going to write test code for Repository
+    3. We will write test codes for Repository Methods created by us or JPQL to check working fine or not (like we have findByEmail() in EmployeeRepository)
+    4. We can write many test cases for single method (findByEmail() can have 5 test cases if we want)
+    5. To create test for repository, press 'cmd+shift+T' then create test, then repositories folder will be created in test folder as per prompt box
+    6. Way to write valid test case name (Test method ka naam clear hona chahiye taaki pata chale kya test ho raha hai aur expected result kya hai) :
+        test with method name _ when condition _ then return
+        e.g. - testFindByEmail_whenEmailIsValid_thenReturnEmployee
+    7. Autowire repository that we want to test (Jis repository ko test karna hai usko Spring se inject karte hain.)
+        e.g. @Autowired             private EmployeeRepository employeeRepository;
+    8. We have to add Component  so we will add @SpringBootTest but now our test will take more time to execute because it will travel the whole project (@SpringBootTest pura Spring context start karta hai isliye test slow ho jata hai kyunki poori application load hoti hai.)
+    9. First method will take more time and another methods after that will use cached Spring Context so they will take less time
+        (
+          ab first test run hota hai to Spring poora Application Context load karta hai,
+          isliye first test slow hota hai.
+          Uske baad jo next test methods run hote hain,
+          wo already loaded Spring Context (cache) ko reuse karte hain.
+          Is wajah se baaki test methods fast execute hote hain
+          kyunki Spring ko dobara poora project load nahi karna padta.
+        )
+    10.
+        1. As we run the program, it will use our postgresql db but we want it to use H2 database (Jab test run hota hai to by default Spring Boot same database use karta hai jo application.properties me configured hota hai (yaha PostgreSQL). Lekin testing ke liye hum lightweight in-memory database (H2) use karna chahte hain taki test fast run ho aur real database affect na ho.)
+        2. So we have to configure it by giving @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY), this will replace real DB with autoconfigured DB (Ye annotation Spring ko bolta hai ki real database configuration ko replace karke test ke liye auto-configured database use karo. Iska matlab PostgreSQL ki jagah automatically H2 database use hoga jab test run hoga.)
+        3. because it will we gave scope of H2 db as test in pom.xml file (H2 dependency pom.xml me test scope me add ki gayi hai isliye wo sirf testing ke time use hoti hai, production me nahi.)
+        4. We can also use MySQL or PostgreSQL DB for testing purposes (Agar chahe to testing ke liye real databases (MySQL/PostgreSQL) bhi use kar sakte hain, lekin H2 usually faster aur simple hota hai.)
+    11.
+        1. Add @DataJpaTest instead of @SpringBootTest, this will only scan within repository level and also use test db according to scope from pom.xml (Repository testing ke liye @SpringBootTest ki jagah @DataJpaTest use karte hain. Ye sirf JPA related components (Entity, Repository) ko load karta hai, poori application context load nahi karta. Agar H2 database dependency pom.xml me test scope me di hai toh testing ke time automatically wahi test database use hoga.)
+        2. Separate transaction context, like after execution of every method it's transaction is rolled back (Har test method apne alag transaction me run hota hai. Jab test method complete ho jata hai to uska transaction automatically rollback ho jata hai. Isse database me koi permanent change nahi hota aur next test clean state se start hota hai.)
