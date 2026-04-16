@@ -1,0 +1,53 @@
+Mockito -
+    1. Mockito is already present in spring-boot-starter-test test dependency
+       (Isliye Mockito ko alag se dependency add karne ki zarurat nahi hoti.)
+    2. As we are learning unit testing as of now, we should independently test service layer, but to test service, we want support of related repository as well and we should not use actual repository for that in unit testing
+       (Unit testing me hum service layer ko alag se test karte hain. Service ko data fetch ya save karne ke liye repository ki zarurat padti hai. unit testing me database involve nahi hona chahiye.)
+    3. For that, we will use Mockito library to mock repository layer
+       (Mockito repository ka fake object create karta hai jo real database call nahi karta.)
+    4. This class is all about Mockito and Mocking we will see service layer in separate class
+    5. Mockito -
+        1. Mockito is useful for testing components in isolation without relying on their actual implementation or external dependencies. Like everywhere employeeRepository is used, we want to mock there
+           ((Mockito ka use karke hum kisi component ko independently test kar sakte hain bina uske real dependencies use kiye. Jaise service layer me employeeRepository ko real database se connect karne ki jagah mock kar dete hain.))
+        2. Mockito can be used for :
+            Mocking : Creating mock objects to simulate the behaviour of real objects.
+                      (Mocking ka matlab real object ka fake version banana jo testing ke liye use hota hai.)
+            Stubbing : Defining the behaviour of mock objects when specific methods are called.
+                       (Stubbing me hum define karte hain ki mock object ka method call hone par kya return karega.)
+            Verification : Checking if certain methods were called on mock objects.
+                           (Verification se check karte hain ki koi particular method mock object par call hua hai ya nahi.)
+    3. Mockito Methods -
+        1. Creating Mock :
+            with @Mock Annotation
+                (Isme @Mock annotation use karke kisi dependency ka mock object create karte hain.)
+            with Mockito.mock(Classname)
+                (Isme Mockito.mock() method use karke manually mock object create kiya jata hai.)
+
+        2. Stubbing Mock :
+            when (T methodCall) : Specifies a method call to be stubbed
+                (Is method se define karte hain ki mock object ka kaunsa method call hone wala hai.)
+            thenReturn(T value) : Sets a return value for a stubbed method call
+                (Ye define karta hai ki jab wo method call ho to kya value return honi chahiye.)
+            thenThrow(Throwable... throwables) : Throws an exception when a stubbed method call is made
+                (Isse hum define kar sakte hain ki method call hone par exception throw ho.)
+
+Steps :
+    Create test for related service by pressing cmd + shift + T
+    Include or exclude test according to your need
+    1. Enable Mockito support in JUnit 5 so that @Mock and @InjectMocks annotations work.
+    2. Import TestContainerConfiguration class so that PostgreSQL test container is used during testing.
+    3. Use @AutoConfigureTestDatabase(replace = NONE) so Spring does not replace database with in-memory DB.
+    4. Create an instance of EmployeeServiceImpl and inject mocked dependencies using @InjectMocks.
+    5. Create a mock object of EmployeeRepository using @Mock.
+    6. Create a test method for the service method.
+    7. Setup mock objects according to Employee entity.
+        7.1 @BeforeEach runs before every test case.
+        7.2 Create mock Employee object using builder pattern.
+        7.3 Convert Employee entity to EmployeeDto using ModelMapper.
+        7.4 Declare mock Employee object.
+        7.5 Declare mock EmployeeDto object.
+        7.6 Create mock ModelMapper so real mapping logic is not executed.
+    8. Follow AAA pattern (Arrange, Act, Assert)
+        8.1 Arrange – Prepare test input and stub repository behaviour.
+        8.2 Act – Call the service method being tested.
+        8.3 Assert – Verify that the returned result is correct.
