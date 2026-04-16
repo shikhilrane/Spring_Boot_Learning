@@ -27,3 +27,72 @@ Testing of Persistence Layer -
     11.
         1. Add @DataJpaTest instead of @SpringBootTest, this will only scan within repository level and also use test db according to scope from pom.xml (Repository testing ke liye @SpringBootTest ki jagah @DataJpaTest use karte hain. Ye sirf JPA related components (Entity, Repository) ko load karta hai, poori application context load nahi karta. Agar H2 database dependency pom.xml me test scope me di hai toh testing ke time automatically wahi test database use hoga.)
         2. Separate transaction context, like after execution of every method it's transaction is rolled back (Har test method apne alag transaction me run hota hai. Jab test method complete ho jata hai to uska transaction automatically rollback ho jata hai. Isse database me koi permanent change nahi hota aur next test clean state se start hota hai.)
+    12.
+        1. While writing test cases we generally follow AAA pattern (Arrange, Act, Assert).
+           (Ye ek standard pattern hai jo test case ko clear aur structured banata hai.)
+        2. Arrange (Given) – Prepare the test data.
+           (Is step me hum test ke liye required data create karte hain, jaise Employee object banana.)
+        3. For example we create an Employee object using @BeforeEach so that it can be reused in every test case.
+           (Har test method ke pehle ek Employee object create ho jata hai jo test ke liye use hota hai.)
+        4. Then we save that employee in the test database using repository.
+           (employeeRepository.save(employee) use karke employee ko test database me store karte hain.)
+        5. Act (When) – Call the repository method that we want to test.
+           (Is step me actual method call karte hain jaise findByEmail().)
+        6. For example we call employeeRepository.findByEmail(employee.getEmail()).
+           (Ye method database me email ke basis par employee search karta hai.)
+        7. Assert (Then) – Verify the result returned by the method.
+           (Is step me check karte hain ki jo result mila hai wo expected hai ya nahi.)
+        8. For example we check that the returned list is not null, not empty and email matches the expected value.
+           (Jaise assertThat(list).isNotNull(), isNotEmpty() aur email equal hai ya nahi check karte hain.)
+    13.
+        1. Arrange – Create an email that is not present in the database.
+           (Test ke liye ek aisa email define karte hain jo database me exist nahi karta.)
+        2. Act – Call the repository method findByEmail() using that email.
+           (Is email ko use karke findByEmail() method call karte hain.)
+        3. Assert – Check that the returned list is not null.
+           (Verify karte hain ki method se jo result aaya hai wo null nahi hai.)
+        4. Assert – Check that the returned list is empty.
+           (Kyuki database me us email ka koi employee nahi hai, isliye empty list return honi chahiye.)
+
+    14.
+        1. We use InMemoryDatabase for small projects but for real-time behaviour we use real databases like MySQL or PostgreSQL.
+           (Chhote projects ya fast testing ke liye H2 jaise in-memory DB use hota hai, lekin real behaviour check karne ke liye actual DB use karte hain.)
+        2. Because H2 DB is very simple and it does not have all the functionalities of real databases.
+           (H2 me kuch advanced database features nahi hote, isliye kabhi-kabhi behaviour different ho sakta hai.)
+        3. Testing on real databases helps ensure that our application will work properly in production.
+           (Real DB par testing karne se confirm hota hai ki application production environment me bhi sahi kaam karegi.)
+        4. There two ways to set this up :
+            A.
+                4.1 We can create a separate testing database in production (hosted somewhere) and use it with Spring profiles.
+                    (Is approach me ek alag testing DB hota hai jo sirf testing ke liye use hota hai.)
+                4.2 But maintaining a separate hosted DB can be overkill.
+                    (Iske liye alag database maintain karna padta hai jo complex ho sakta hai.)
+            B.
+                4.3 Instead, we can use a Docker container of the real database (like MySQL/PostgreSQL).
+                    (Docker image se ek temporary database create karke testing kar sakte hain.)
+                4.4 This database behaves like a real database and is automatically created and destroyed during tests.
+                    (Ye real DB jaisa hi behave karta hai aur test ke baad automatically remove ho jata hai.)
+                4.5 We can do this by using TestContainer
+                    (TestContainers ek library hai jo Docker containers ko automatically start aur stop karne me help karti hai during testing.)
+                    a. Download the docker and run the app and keep it as it is
+                    b. Then configure our app to use TestContainers, go to https://testcontainers.com/guides/ and search springboot and go to the "Getting started with Testcontainers in a Java Spring Boot Project", and copy testcontainers, junit-jupiter and postgresql dependencies OR just go to "https://start.spring.io/" and add testcontainers and postgresql and copy testcontainers, junit-jupiter and postgresql dependencies from its pom.xml
+                    c. Configure the test container in TestContainerConfiguration file -
+                              @TestConfiguration
+                              public class TestContainerConfiguration {
+                                  @Bean
+                                  @ServiceConnection
+                                  PostgreSQLContainer<?> postgresContainer() {
+                                      return new PostgreSQLContainer<>(DockerImageName.parse("postgres:latest"));
+                                  }
+                              }
+                    d. Import the docker TestContainerConfiguration file in our test file
+
+Steps :
+    1. press 'cmd+shift+T' then create test for that repository
+    2. Autowire the repository in test file
+    3. Give @DataJpaTest to set it for persistence level testing
+    4. Configure the database for testing (either using H2 with @AutoConfigureTestDatabase or using TestContainers with Docker)
+    5. Take reference of entity class
+    6. Setup the employee with builder pattern with @BeforeEach
+    7. Arrange, Act and Assert the test
+    8. For real production-like testing we can use TestContainers which runs a real database (MySQL/PostgreSQL) inside a Docker container.
