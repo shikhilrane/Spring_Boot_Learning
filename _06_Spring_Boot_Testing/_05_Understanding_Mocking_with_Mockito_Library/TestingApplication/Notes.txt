@@ -20,43 +20,62 @@ Mockito -
         1. Creating Mock :
             with @Mock Annotation
                 (Isme @Mock annotation use karke kisi dependency ka mock object create karte hain.)
+                Example:
+                    @Mock
+                    private EmployeeRepository employeeRepository;
             with Mockito.mock(Classname)
                 (Isme Mockito.mock() method use karke manually mock object create kiya jata hai.)
+                Example : EmployeeRepository employeeRepository = Mockito.mock(EmployeeRepository.class);
         2. Stubbing Mock :
             when (T methodCall) : Specifies a method call to be stubbed
-                (Is method se define karte hain ki mock object ka kaunsa method call hone wala hai.)
+                                  (Is method se define karte hain ki mock object ka kaunsa method call hone wala hai.)
             thenReturn(T value) : Sets a return value for a stubbed method call
-                (Ye define karta hai ki jab wo method call ho to kya value return honi chahiye.)
+                                  (Ye define karta hai ki jab wo method call ho to kya value return honi chahiye.)
+                                  Example : Mockito.when(employeeRepository.findById(1L)).thenReturn(Optional.of(employee));
             thenThrow(Throwable... throwables) : Throws an exception when a stubbed method call is made
-                (Isse hum define kar sakte hain ki method call hone par exception throw ho.)
+                                                 (Isse hum define kar sakte hain ki method call hone par exception throw ho.)
+                                                 Example : Mockito.when(employeeRepository.findById(1L)).thenThrow(new RuntimeException("Employee not found"));
         3. Verifying Methods :
                 verify(T mock) : Verifies that a method was called on a mock
                                  (Ye check karta hai ki mock object ka koi particular method call hua hai ya nahi.)
+                                 Example : verify(employeeRepository).findById(1L);
                 verify(T mock, VerificationMode mode) : Verifies that a method was called with a specific verification mode
                                                         (Isme hum define karte hain ki method kitni baar call hua hai ya kaise call hua hai.)
-            VerificationMode modes:
-                1. times(int wantedNumberOfInvocations) : Verifies the exact number of invocations.
-                                                          (Check karta hai ki method exact kitni baar call hua hai.)
-                2. never() : Verifies that a method was never called.
-                             (Verify karta hai ki method ek baar bhi call nahi hua.)
-                3. atLeastOnce() : Verifies that a method was called at least once.
-                                   (Verify karta hai ki method kam se kam ek baar call hua hai.)
-                4. atLeast(int minNumberOfInvocations) : at least called x times
-                                                         (Verify karta hai ki method kam se kam x baar call hua hai.)
-                5. atMost(int maxNumberOfInvocations) : at most called x times
-                                                        (Verify karta hai ki method maximum x baar tak hi call hua hai.)
-                6. only() : Verifies that no other method was called on the mock.
-                            (Verify karta hai ki mock object par sirf wahi method call hua hai aur koi aur method call nahi hua.)
+                                                        Example : verify(employeeRepository, times(1)).findById(1L);
+                                                    VerificationMode modes:
+                                                        1. times(int wantedNumberOfInvocations) : Verifies the exact number of invocations.
+                                                                                                  (Check karta hai ki method exact kitni baar call hua hai.)
+                                                                                                  Example : verify(employeeRepository, times(1)).findById(1L);
+
+                                                        2. never() : Verifies that a method was never called.
+                                                                     (Verify karta hai ki method ek baar bhi call nahi hua.)
+                                                                     Example : verify(employeeRepository, never()).deleteById(1L);
+                                                        3. atLeastOnce() : Verifies that a method was called at least once.
+                                                                           (Verify karta hai ki method kam se kam ek baar call hua hai.)
+                                                                           Example : verify(employeeRepository, atLeastOnce()).findById(1L);
+                                                        4. atLeast(int minNumberOfInvocations) : at least called x times
+                                                                                                 (Verify karta hai ki method kam se kam x baar call hua hai.)
+                                                                                                 Example : verify(employeeRepository, atLeast(2)).findById(1L);
+                                                        5. atMost(int maxNumberOfInvocations) : at most called x times
+                                                                                                (Verify karta hai ki method maximum x baar tak hi call hua hai.)
+                                                                                                Example : verify(employeeRepository, atMost(3)).findById(1L);
+                                                        6. only() : Verifies that no other method was called on the mock.
+                                                                    (Verify karta hai ki mock object par sirf wahi method call hua hai aur koi aur method call nahi hua.)
+                                                                    Example : verify(employeeRepository, only()).findById(1L);
         4. Argument Captor:
             It allows you to capture arguments for further assertions or validation, making it useful when you want to inspect arguments that were passed to a method call.
             ArgumentCaptor : Used to capture the arguments passed to a mocked method so that we can verify or assert them later.
                              (ArgumentCaptor ka use karke hum dekh sakte hain ki mock method ko kaun-sa object ya value pass hui thi.)
             ArgumentCaptor.forClass(ClassName.class) : Creates an ArgumentCaptor for a specific class type.
                                                        (Ye method kisi particular class ke object ko capture karne ke liye ArgumentCaptor banata hai.)
+                                                       Example : ArgumentCaptor<Employee> employeeCaptor = ArgumentCaptor.forClass(Employee.class);
             capture() : Captures the argument passed to the mocked method.
                         (Ye method mock method ko pass hui value ko capture karta hai.)
+                        Example : verify(employeeRepository).save(employeeCaptor.capture());
             getValue() : Returns the captured argument so that we can perform assertions on it.
                          (Ye captured argument ko return karta hai jisse hum us par assertions kar sakte hain.)
+                         Example : Employee capturedEmployee = employeeCaptor.getValue();
+                                   assertThat(capturedEmployee.getEmail()).isEqualTo("test@gmail.com");
 
 
 
