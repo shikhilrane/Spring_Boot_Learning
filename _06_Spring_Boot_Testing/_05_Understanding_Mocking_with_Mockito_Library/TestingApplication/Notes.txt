@@ -22,7 +22,6 @@ Mockito -
                 (Isme @Mock annotation use karke kisi dependency ka mock object create karte hain.)
             with Mockito.mock(Classname)
                 (Isme Mockito.mock() method use karke manually mock object create kiya jata hai.)
-
         2. Stubbing Mock :
             when (T methodCall) : Specifies a method call to be stubbed
                 (Is method se define karte hain ki mock object ka kaunsa method call hone wala hai.)
@@ -30,6 +29,36 @@ Mockito -
                 (Ye define karta hai ki jab wo method call ho to kya value return honi chahiye.)
             thenThrow(Throwable... throwables) : Throws an exception when a stubbed method call is made
                 (Isse hum define kar sakte hain ki method call hone par exception throw ho.)
+        3. Verifying Methods :
+                verify(T mock) : Verifies that a method was called on a mock
+                                 (Ye check karta hai ki mock object ka koi particular method call hua hai ya nahi.)
+                verify(T mock, VerificationMode mode) : Verifies that a method was called with a specific verification mode
+                                                        (Isme hum define karte hain ki method kitni baar call hua hai ya kaise call hua hai.)
+            VerificationMode modes:
+                1. times(int wantedNumberOfInvocations) : Verifies the exact number of invocations.
+                                                          (Check karta hai ki method exact kitni baar call hua hai.)
+                2. never() : Verifies that a method was never called.
+                             (Verify karta hai ki method ek baar bhi call nahi hua.)
+                3. atLeastOnce() : Verifies that a method was called at least once.
+                                   (Verify karta hai ki method kam se kam ek baar call hua hai.)
+                4. atLeast(int minNumberOfInvocations) : at least called x times
+                                                         (Verify karta hai ki method kam se kam x baar call hua hai.)
+                5. atMost(int maxNumberOfInvocations) : at most called x times
+                                                        (Verify karta hai ki method maximum x baar tak hi call hua hai.)
+                6. only() : Verifies that no other method was called on the mock.
+                            (Verify karta hai ki mock object par sirf wahi method call hua hai aur koi aur method call nahi hua.)
+        4. Argument Captor:
+            It allows you to capture arguments for further assertions or validation, making it useful when you want to inspect arguments that were passed to a method call.
+            ArgumentCaptor : Used to capture the arguments passed to a mocked method so that we can verify or assert them later.
+                             (ArgumentCaptor ka use karke hum dekh sakte hain ki mock method ko kaun-sa object ya value pass hui thi.)
+            ArgumentCaptor.forClass(ClassName.class) : Creates an ArgumentCaptor for a specific class type.
+                                                       (Ye method kisi particular class ke object ko capture karne ke liye ArgumentCaptor banata hai.)
+            capture() : Captures the argument passed to the mocked method.
+                        (Ye method mock method ko pass hui value ko capture karta hai.)
+            getValue() : Returns the captured argument so that we can perform assertions on it.
+                         (Ye captured argument ko return karta hai jisse hum us par assertions kar sakte hain.)
+
+
 
 Steps :
     Create test for related service by pressing cmd + shift + T
@@ -51,3 +80,10 @@ Steps :
         8.1 Arrange – Prepare test input and stub repository behaviour.
         8.2 Act – Call the service method being tested.
         8.3 Assert – Verify that the returned result is correct.
+    9. Test creating a new employee and capture saved entity using ArgumentCaptor.
+        9.1 Arrange – Stub repository behaviour for create operation.
+            (findByEmail() ko stub karte hain taaki empty list return ho aur save() ko stub karte hain taaki mockEmployee return ho jab new employee save ho.)
+        9.2 Act – Call the service method createNewEmployee().
+            (Service method ko call karte hain jo internally email check karta hai aur phir repository.save() ko call karta hai.)
+        9.3 Assert – Verify the returned EmployeeDto and captured saved entity.
+            (Returned DTO null nahi hai aur email match karta hai ya nahi check karte hain. ArgumentCaptor ka use karke verify karte hain ki repository.save() ko kaunsa Employee object pass hua tha.)

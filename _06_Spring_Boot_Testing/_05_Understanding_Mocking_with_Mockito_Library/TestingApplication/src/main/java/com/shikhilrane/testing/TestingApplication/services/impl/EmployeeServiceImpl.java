@@ -35,8 +35,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto createNewEmployee(EmployeeDto employeeDto) {
         log.info("Creating new employee with email: {}", employeeDto.getEmail());
-        List<Employee> existingEmployees =
-                employeeRepository.findByEmail(employeeDto.getEmail());
+        List<Employee> existingEmployees = employeeRepository.findByEmail(employeeDto.getEmail());
         if (!existingEmployees.isEmpty()) {
             log.error("Employee already exists with email: {}", employeeDto.getEmail());
             throw new RuntimeException(
