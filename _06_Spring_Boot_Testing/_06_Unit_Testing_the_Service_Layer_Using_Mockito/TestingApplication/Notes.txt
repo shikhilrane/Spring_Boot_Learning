@@ -1,0 +1,55 @@
+    10. Test getEmployeeById when employee is not present (exception case).
+        10.1 Arrange – Stub repository behaviour for failure case.
+            (findById() ko stub karte hain taaki Optional.empty() return ho, jiska matlab hai ki given id ka employee database me exist nahi karta.)
+        10.2 Act + Assert – Call the service method and expect an exception.
+            (Service method getEmployeeById() call karte hain aur verify karte hain ki ResourceNotFoundException throw ho.)
+        10.3 Verify – Check that repository method was called.
+            (verify() ka use karke confirm karte hain ki employeeRepository.findById(id) method test execution ke dauran call hua tha.)
+
+    11. Test createNewEmployee when employee with same email already exists.
+        11.1 Arrange – Stub repository behaviour for existing employee.
+            (findByEmail() ko stub karte hain taaki ek existing employee return ho, jiska matlab hai ki given email se employee already database me exist karta hai.)
+        11.2 Act + Assert – Call the service method and expect an exception.
+            (Service method createNewEmployee() call karte hain aur verify karte hain ki RuntimeException throw ho jab same email ka employee already exist karta ho.)
+        11.3 Verify – Check repository interactions.
+            (verify() ka use karke confirm karte hain ki employeeRepository.findByEmail(email) call hua hai aur verify(never()) se check karte hain ki save() method call nahi hua, kyunki employee already exist karta hai.)
+
+    12. Test updateEmployee when employee is present (success case).
+        12.1 Arrange – Stub repository behaviour and prepare updated data.
+            (findById() ko stub karte hain taaki existing employee return ho. Phir DTO me updated values set karte hain jaise name aur salary. Uske baad DTO ko Employee entity me map karke save() method ko stub karte hain taaki updated employee return ho.)
+        12.2 Act – Call the service method updateEmployee().
+            (Service method updateEmployee(id, employeeDto) call karte hain jo internally existing employee fetch karta hai aur updated data save karta hai.)
+        12.3 Assert – Verify the returned updated employee and repository interactions.
+            (Verify karte hain ki returned EmployeeDto updated DTO ke equal hai. Saath hi verify karte hain ki repository.findById(id) aur repository.save() methods test execution ke dauran call hue hain.)
+
+    13. Test updateEmployee when employee id is not found.
+        13.1 Arrange – Stub repository behaviour for failure case.
+            (findById() ko stub karte hain taaki Optional.empty() return ho, jiska matlab hai ki given id ka employee database me exist nahi karta.)
+        13.2 Act + Assert – Call the service method and expect an exception.
+            (Service method updateEmployee(id, employeeDto) call karte hain aur verify karte hain ki ResourceNotFoundException throw ho.)
+        13.3 Verify – Check repository interactions.
+            (verify() ka use karke confirm karte hain ki employeeRepository.findById(id) call hua hai aur verify(never()) se check karte hain ki save() method call nahi hua, kyunki employee exist nahi karta.)
+
+    14. Test updateEmployee when attempting to update employee email.
+        14.1 Arrange – Stub repository behaviour and modify DTO email.
+            (findById() ko stub karte hain taaki existing employee return ho. Phir DTO me email change karte hain taaki simulate ho ki user email update karne ki attempt kar raha hai.)
+        14.2 Act + Assert – Call the service method and expect an exception.
+            (Service method updateEmployee(id, employeeDto) call karte hain aur verify karte hain ki RuntimeException throw ho kyunki email update allowed nahi hai.)
+        14.3 Verify – Check repository interactions.
+            (verify() ka use karke confirm karte hain ki employeeRepository.findById(id) call hua hai aur verify(never()) se check karte hain ki save() method call nahi hua, kyunki email update rule violate hua hai.)
+
+    15. Test deleteEmployee when employee exists (success case).
+        15.1 Arrange – Stub repository behaviour for delete operation.
+            (existsById() ko stub karte hain taaki true return ho, jiska matlab hai ki given id ka employee database me exist karta hai.)
+        15.2 Act + Assert – Call the service method and verify no exception is thrown.
+            (Service method deleteEmployee(id) call karte hain aur check karte hain ki koi exception throw nahi hota.)
+        15.3 Verify – Check repository interactions.
+            (verify() ka use karke confirm karte hain ki employeeRepository.deleteById(id) method test execution ke dauran call hua hai.)
+
+    16. Test deleteEmployee when employee with given id does not exist (exception case).
+        16.1 Arrange – Stub repository behaviour for failure case.
+            (existsById() ko stub karte hain taaki false return ho, jiska matlab hai ki given id ka employee database me exist nahi karta.)
+        16.2 Act + Assert – Call the service method and expect an exception.
+            (Service method deleteEmployee(id) call karte hain aur verify karte hain ki ResourceNotFoundException throw ho jab employee database me present na ho.)
+        16.3 Verify – Check repository interactions.
+            (verify() ka use karke confirm karte hain ki employeeRepository.existsById(id) method call hua hai aur verify(never()) se check karte hain ki deleteById() method call nahi hua kyunki employee exist hi nahi karta.)
