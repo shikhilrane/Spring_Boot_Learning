@@ -1,0 +1,23 @@
+Integration Testing :
+    01. Testing a whole application in one flow
+    02. We haven't tested controller layer because unit testing of controller layer doesn't make any sense as it doesn't have any logical part to execute
+    03. But we will test controller, service and repository together in Integration Testing
+    04. Many issues, such as configuration errors, missing data, or incorrect business logic, only surface when component interact with each other
+    05. Integration testing serve as a safeguard when changes are made to the codebase.
+    06. They help ensure that new changes do not break the existing functionality, making regression testing more effective.
+    07. In Integration testing, we want an api call and we are testing on data from that api call
+    08. To do that we use library called WebTestClient which provides a fluent API and support making real HTTP requests to your application
+    09. Although, WebTestClient is primarily associated with WebFlux Applications, it can be also used with Spring MVC applications when set up correctly
+    10. Use the @AutoConfigureWebTestClient to autoconfigure the WebTestClient
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <scope>test</scope>
+            </dependency>
+    11. We are not going to mock anything in Integration testing
+
+Steps :
+    1. Add dependency in pom.xml
+    2. Create Test for Controller only, as we already have tests for service and repository layer
+    3. Press "cmd+shift+T" on controller that we want to test and use IT after the name of test to denote that this is for Integration Testing.
+    4. Use @SpringBootTest annotation in controller test
