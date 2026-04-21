@@ -20,5 +20,19 @@ Steps :
     1. Add dependency in pom.xml
     2. Create Test for Controller only, as we already have tests for service and repository layer
     3. Press "cmd+shift+T" on controller that we want to test and use IT after the name of test to denote that this is for Integration Testing.
-    4. Use @SpringBootTest annotation in controller test as we want to do Integration Testing
-    5.
+    4. Create an AbstractIntegrationTest class.
+       This class contains common configuration required for integration testing such as:
+       - WebTestClient configuration
+       - Loading full Spring Boot application context
+       - Starting PostgreSQL Testcontainer
+       - Common test objects like testEmployee and testEmployeeDto.
+    5. In AbstractIntegrationTest:
+      - Autowire WebTestClient so it can be used to call API endpoints.
+      - Create sample test data (testEmployee and testEmployeeDto) which will be reused in tests.
+    6. Extend EmployeeControllerTestIT from AbstractIntegrationTest.
+       This allows the controller test class to reuse WebTestClient, configuration, and test data.
+    7. Autowire EmployeeRepository inside EmployeeControllerTestIT.
+       This is used to directly save or delete employee data in the database before calling the APIs.
+    8. Now write integration tests in EmployeeControllerTestIT
+       to test the full flow:
+       Controller → Service → Repository → Database.
