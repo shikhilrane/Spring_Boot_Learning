@@ -50,6 +50,7 @@ Steps :
        (Isse controller test class ko WebTestClient, configuration aur test data automatically mil jayega.)
     7. Autowire EmployeeRepository inside EmployeeControllerTestIT
        (Iska use database me test data save ya delete karne ke liye karte hain before API call.)
+       Note : @BeforeEach database cleanup AbstractIntegrationTest me nahi dala gaya hai kyuki AbstractIntegrationTest sirf common configuration ke liye hoti hai, jabki database cleanup test-specific behaviour hai.
     8. Now write integration tests in EmployeeControllerTestIT to test the full flow:
        Controller → Service → Repository → Database
        (Yaha hum real API call karte hain aur verify karte hain ki poora application flow sahi kaam kar raha hai.)
