@@ -15,18 +15,18 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 public class AbstractIntegrationTest {
 
     @Autowired
-    WebTestClient webTestClient;
+    WebTestClient webTestClient;    // Used to send HTTP requests (GET, POST, PUT, DELETE) to the API endpoints during integration tests
 
-    Employee testEmployee = Employee.builder()
+    Employee testEmployee = Employee.builder()  // Sample Employee entity used as test data to save or use in database during integration tests
             .id(1L)
-                .email("shikhil@gmail.com")
-                .name("Shikhil")
-                .salary(200L)
-                .build();
-    EmployeeDto testEmployeeDto = EmployeeDto.builder()
+            .email("shikhil@gmail.com")
+            .name("Shikhil")
+            .salary(200L)
+            .build();
+    EmployeeDto testEmployeeDto = EmployeeDto.builder() // Sample EmployeeDto used as request body while calling API endpoints in integration tests
             .id(1L)
-                .email("shikhil@gmail.com")
-                .name("Shikhil")
-                .salary(200L)
-                .build();
+            .email("shikhil@gmail.com")
+            .name("Shikhil")
+            .salary(200L)
+            .build();
 }
