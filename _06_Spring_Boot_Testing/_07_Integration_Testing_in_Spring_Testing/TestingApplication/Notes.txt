@@ -20,4 +20,5 @@ Steps :
     1. Add dependency in pom.xml
     2. Create Test for Controller only, as we already have tests for service and repository layer
     3. Press "cmd+shift+T" on controller that we want to test and use IT after the name of test to denote that this is for Integration Testing.
-    4. Use @SpringBootTest annotation in controller test
+    4. Use @SpringBootTest annotation in controller test as we want to do Integration Testing
+    5.
