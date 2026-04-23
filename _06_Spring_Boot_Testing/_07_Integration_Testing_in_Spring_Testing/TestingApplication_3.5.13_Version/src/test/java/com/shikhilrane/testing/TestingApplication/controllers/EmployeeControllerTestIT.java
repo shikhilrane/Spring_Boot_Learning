@@ -5,8 +5,6 @@ import com.shikhilrane.testing.TestingApplication.repositories.EmployeeRepositor
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,7 +21,7 @@ class EmployeeControllerTestIT extends AbstractIntegrationTest {
     void testGetEmployeeById_success() {
         Employee savedEmployee = employeeRepository.save(testEmployee);
         webTestClient.get()
-                .uri("/employees/{id}", savedEmployee.getId())
+                .uri("/employees/getSingleEmployee/{id}", savedEmployee.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()

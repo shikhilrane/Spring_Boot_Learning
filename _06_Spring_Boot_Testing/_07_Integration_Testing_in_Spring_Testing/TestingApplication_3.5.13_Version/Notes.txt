@@ -54,5 +54,3 @@ Steps :
     8. Now write integration tests in EmployeeControllerTestIT to test the full flow:
        Controller → Service → Repository → Database
        (Yaha hum real API call karte hain aur verify karte hain ki poora application flow sahi kaam kar raha hai.)
-
-As of now, @AutoConfigureWeTestClient is not working with SpringBoot 4.x.x, so we moved to other project with SpringBoot 3.5.13, So refer, TestingApplication_3.5.13_Version
