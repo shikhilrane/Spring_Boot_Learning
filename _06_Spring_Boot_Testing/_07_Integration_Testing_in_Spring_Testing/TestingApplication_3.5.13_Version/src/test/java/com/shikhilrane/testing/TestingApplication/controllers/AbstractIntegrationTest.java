@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "100000") // Automatically configures WebTestClient for integration testing and sets a maximum wait time of 100000 ms for API responses so the test does not fail if the response takes longer
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // Loads the full Spring Boot application context and starts the server on a random port for integration testing
 @Import(TestContainerConfiguration.class) // Imports TestContainerConfiguration so that the PostgreSQL Testcontainer is started and used during tests
 public class AbstractIntegrationTest {

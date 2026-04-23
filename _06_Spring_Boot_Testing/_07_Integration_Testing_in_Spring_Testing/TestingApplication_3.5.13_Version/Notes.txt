@@ -54,3 +54,12 @@ Steps :
     8. Now write integration tests in EmployeeControllerTestIT to test the full flow:
        Controller → Service → Repository → Database
        (Yaha hum real API call karte hain aur verify karte hain ki poora application flow sahi kaam kar raha hai.)
+    9. Test getEmployeeById when employee exists (success case)
+       9.1 Save a test employee in the database before calling the API.
+           (employeeRepository.save(testEmployee) ka use karke database me ek employee save karte hain taaki API ke paas fetch karne ke liye data ho.)
+       9.2 Send a GET request using WebTestClient to the API endpoint with the employee id.
+           (webTestClient.get().uri("/employees/getSingleEmployee/{id}", savedEmployee.getId()) ka use karke API call karte hain.)
+       9.3 Execute the request and verify the response.
+           (exchange() se request execute hoti hai aur verify karte hain ki response status 200 OK hai.)
+       9.4 Validate the response body returned by the API.
+           (jsonPath("$.id") aur jsonPath("$.email") ka use karke check karte hain ki response me aaya id aur email database me saved employee ke data se match karta hai.)

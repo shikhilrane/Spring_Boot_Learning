@@ -17,15 +17,16 @@ class EmployeeControllerTestIT extends AbstractIntegrationTest {
         employeeRepository.deleteAll();
     }
 
+    // 1. Test to getEmployeeById, when success
     @Test
     void testGetEmployeeById_success() {
-        Employee savedEmployee = employeeRepository.save(testEmployee);
-        webTestClient.get()
-                .uri("/employees/getSingleEmployee/{id}", savedEmployee.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody()
-                .jsonPath("$.id").isEqualTo(savedEmployee.getId())
-                .jsonPath("$.email").isEqualTo(savedEmployee.getEmail());
+        Employee savedEmployee = employeeRepository.save(testEmployee);                 // First we save a test employee in the database so that the API has data to fetch
+        webTestClient.get()                                                             // Send a GET request using WebTestClient
+                .uri("/employees/getSingleEmployee/{id}", savedEmployee.getId())   // Call the API endpoint with the saved employee id
+                .exchange()                                                             // Execute the HTTP request
+                .expectStatus().isOk()                                                  // Verify that the API response status is 200 OK
+                .expectBody()                                                           // Start validating the response body returned by the API
+                .jsonPath("$.id").isEqualTo(savedEmployee.getId())           // Check that the id returned in the response matches the saved employee id
+                .jsonPath("$.email").isEqualTo(savedEmployee.getEmail());    // Check that the email returned in the response matches the saved employee email
     }
 }
