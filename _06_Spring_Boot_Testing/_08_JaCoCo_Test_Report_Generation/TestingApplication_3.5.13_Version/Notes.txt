@@ -1,0 +1,166 @@
+Integration Testing :
+    01. Testing a whole application in one flow
+        (Isme hum poori application ko ek flow me test karte hain jaise Controller → Service → Repository → Database.)
+    02. We haven't tested controller layer because unit testing of controller layer doesn't make any sense as it doesn't have any logical part to execute
+        (Controller me usually koi heavy business logic nahi hota, isliye uski unit testing ka zyada benefit nahi hota.)
+    03. But we will test controller, service and repository together in Integration Testing
+        (Integration testing me hum controller, service aur repository ko ek saath test karte hain.)
+    04. Many issues, such as configuration errors, missing data, or incorrect business logic, only surface when components interact with each other
+        (Bahut se errors tabhi pata chalte hain jab different components ek saath kaam karte hain.)
+    05. Integration testing serve as a safeguard when changes are made to the codebase
+        (Jab code me changes kiye jaate hain tab integration tests ensure karte hain ki application break na ho.)
+    06. They help ensure that new changes do not break the existing functionality, making regression testing more effective
+        (Ye check karte hain ki naye changes se purani functionality affect na ho.)
+    07. In Integration testing, we want an api call and we are testing on data from that api call
+        (Isme hum real API call karte hain aur uske response aur data ko test karte hain.)
+    08. To do that we use library called WebTestClient which provides a fluent API and support making real HTTP requests to your application
+        (WebTestClient ka use karke hum GET, POST, PUT, DELETE jaise HTTP requests bhejte hain.)
+    09. Although, WebTestClient is primarily associated with WebFlux Applications, it can be also used with Spring MVC applications when set up correctly
+        (Normally WebFlux me use hota hai, lekin proper configuration ke saath Spring MVC me bhi use ho sakta hai.)
+    10. Use the @AutoConfigureWebTestClient to autoconfigure the WebTestClient
+        (Ye annotation automatically WebTestClient ko configure karta hai taaki hum API calls test kar sakein.)
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <scope>test</scope>
+            </dependency>
+    11. We are not going to mock anything in Integration testing
+        (Integration testing me mocks use nahi karte, sab real components use hote hain)
+    12. WebTestClient Testing Methods
+        Common WebTestClient Response Methods :
+            • exchange() : API request ko execute karta hai aur WebTestClient.ResponseSpec return karta hai
+                (Matlab request server ko bhej di jati hai aur response ko verify karne ke liye object milta hai)
+            • expectStatus() : API response ka HTTP status code check karta hai
+                (Jaise 200 OK, 201 CREATED, 404 NOT FOUND etc.)
+            • expectBody() : API se jo response body aati hai usko verify karne ke liye use hota hai
+                (Iske baad hum response ke andar ke fields check kar sakte hain)
+            • expectHeader() : Response ke HTTP headers ko verify karne ke liye use hota hai
+                (Jaise content-type, authorization header etc.)
+            • .jsonPath("$.id").isNotEmpty()
+                (Check karta hai ki response me id field empty nahi hai)
+            • .jsonPath("$.name").isEqualTo("Jane Doe")
+                (Check karta hai ki response me name field "Jane Doe" ke equal hai)
+            • .jsonPath("$.email").isEqualTo("jane.doe@example.com")
+                (Check karta hai ki response me email field given value ke equal hai)
+
+Steps :
+    1. Add required dependencies in pom.xml for testing and Testcontainers
+       (WebTestClient aur Testcontainers use karne ke liye required dependencies add karte hain.)
+    2. Create Test for Controller only, as we already have tests for service and repository layer
+       (Service aur repository ki unit testing already ho chuki hai, isliye integration testing me controller ko test karenge.)
+    3. Press "cmd+shift+T" on controller that we want to test and use IT after the name of test to denote that this is for Integration Testing
+       (Example: EmployeeControllerTestIT jaha IT ka matlab Integration Test hota hai.)
+    4. Create an AbstractIntegrationTest class
+       (Is class me integration testing ke liye common configuration rakhenge.)
+       This class contains common configuration required for integration testing such as:
+       - WebTestClient configuration
+       - Loading full Spring Boot application context
+       - Starting PostgreSQL Testcontainer
+       - Common test objects like testEmployee and testEmployeeDto
+    5. In AbstractIntegrationTest :
+       - Autowire WebTestClient so it can be used to call API endpoints
+         (Isse hum API endpoints ko test karne ke liye HTTP requests bhej sakte hain.)
+       - Create sample test data (testEmployee and testEmployeeDto) which will be reused in tests
+         (Ye common test data hai jo har integration test me reuse hoga.)
+    6. Extend EmployeeControllerTestIT from AbstractIntegrationTest
+       (Isse controller test class ko WebTestClient, configuration aur test data automatically mil jayega.)
+    7. Autowire EmployeeRepository inside EmployeeControllerTestIT
+       (Iska use database me test data save ya delete karne ke liye karte hain before API call.)
+       Note : @BeforeEach database cleanup AbstractIntegrationTest me nahi dala gaya hai kyuki AbstractIntegrationTest sirf common configuration ke liye hoti hai, jabki database cleanup test-specific behaviour hai.
+    8. Now write integration tests in EmployeeControllerTestIT to test the full flow:
+       Controller → Service → Repository → Database
+       (Yaha hum real API call karte hain aur verify karte hain ki poora application flow sahi kaam kar raha hai.)
+
+    Methods in Integration Testing :
+    1. Test getEmployeeById when employee exists (success case)
+       1.1 Save a test employee in the database before calling the API.
+           (employeeRepository.save(testEmployee) ka use karke database me ek employee save karte hain taaki API ke paas fetch karne ke liye data ho.)
+       1.2 Send a GET request using WebTestClient to the API endpoint with the employee id.
+           (webTestClient.get().uri("/employees/getSingleEmployee/{id}", savedEmployee.getId()) ka use karke API call karte hain.)
+       1.3 Execute the request and verify the response.
+           (exchange() se request execute hoti hai aur verify karte hain ki response status 200 OK hai.)
+       1.4 Validate the response body returned by the API
+           (Yaha response directly JSON format me milta hai isliye hume serialization aur deserialization karne ki zarurat nahi hoti.)
+           (jsonPath("$.id") aur jsonPath("$.email") ka use karke verify karte hain ki API response me jo id aur email aaye hain wo database me saved employee ke data se match karte hain.)
+    2. Test getEmployeeById when employee does not exist (failure case)
+        2.1 Send GET request to the API with an id that is not present in the database
+            (Yaha hum aisa id pass karte hain jo database me exist nahi karta.)
+        2.2 Execute the API request using WebTestClient
+            (WebTestClient request ko server par bhejta hai aur response receive karta hai.)
+        2.3 Verify the response status
+            (Check karte hain ki API 404 NOT FOUND status return kare jab employee database me present na ho.)
+    3. Test createNewEmployee when employee does not exist (success case)
+        3.1 Send POST request to create a new employee
+            (WebTestClient ka use karke create employee API ko call karte hain.)
+        3.2 Send EmployeeDto as request body
+            (Employee create karne ke liye required data request body me bhejte hain.)
+        3.3 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        3.4 Verify the response status
+            (Check karte hain ki API 201 CREATED status return kare jab employee successfully create ho jaye.)
+        3.5 Validate the response body returned by the API
+            (jsonPath("$.name") aur jsonPath("$.email") ka use karke verify karte hain ki response me aaya data
+            request body me bheje gaye employee data se match karta hai.)
+    4. Test createNewEmployee when employee already exists (failure case)
+        4.1 Save an employee in the database
+            (Pehle database me ek employee save kar dete hain taaki same email already exist kare.)
+        4.2 Send POST request to create employee with the same email
+            (WebTestClient ka use karke create employee API ko same email ke saath call karte hain.)
+        4.3 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        4.4 Verify the response status
+            (Check karte hain ki API 5xx SERVER ERROR return kare jab same email wala employee already database me present ho.)
+    5. Test updateEmployee when employee exists (success case)
+        5.1 Save an employee in the database
+            (Pehle database me ek employee save karte hain taaki update karne ke liye existing employee ho.)
+        5.2 Modify employee data in EmployeeDto
+            (DTO me name aur salary change karte hain taaki update request simulate ho.)
+        5.3 Send PUT request to update employee
+            (WebTestClient ka use karke update employee API ko call karte hain.)
+        5.4 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        5.5 Verify the response status
+            (Check karte hain ki API 200 OK status return kare jab employee successfully update ho jaye.)
+        5.6 Validate the response body returned by the API
+            (jsonPath("$.name") aur jsonPath("$.salary") ka use karke verify karte hain ki response me updated values
+            request me bheje gaye updated data se match karti hain.)
+    6.1. Test updateEmployee when employee does not exist (failure case)
+        6.1.1 Send PUT request with an id that does not exist in the database
+            (Yaha hum aisa employee id pass karte hain jo database me present nahi hai.)
+        6.1.2 Send EmployeeDto as request body
+            (Update request ke liye employee ka data request body me bhejte hain.)
+        6.1.3 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        6.1.4 Verify the response status
+            (Check karte hain ki API 404 NOT FOUND status return kare jab employee database me exist na karta ho.)
+    6.2. Test updateEmployee when attempting to update employee email (failure case)
+        6.2.1 Save an employee in the database
+            (Pehle database me ek employee save karte hain taaki existing employee ho.)
+        6.2.2 Modify EmployeeDto and change the email
+            (DTO me email change karte hain taaki simulate ho ki user email update karne ki attempt kar raha hai.)
+        6.2.3 Send PUT request to update employee
+            (WebTestClient ka use karke update employee API ko call karte hain.)
+        6.2.4 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        6.2.5 Verify the response status
+            (Check karte hain ki API 5xx SERVER ERROR return kare jab email update allowed na ho.)
+    7. Test deleteEmployee when employee exists (success case)
+        7.1 Save an employee in the database
+            (Pehle database me ek employee save karte hain taaki delete karne ke liye employee exist kare.)
+        7.2 Send DELETE request to delete the employee
+            (WebTestClient ka use karke delete employee API ko call karte hain.)
+        7.3 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        7.4 Verify the response status
+            (Check karte hain ki API 204 NO CONTENT return kare jab employee successfully delete ho jaye.)
+        7.5 Call DELETE API again with the same employee id
+            (Dobara same id se delete API call karte hain.)
+        7.6 Verify the response status
+            (Check karte hain ki API 404 NOT FOUND return kare kyunki employee already delete ho chuka hai.)
+    8. Test deleteEmployee when employee does not exist (failure case)
+        8.1 Send DELETE request with an id that does not exist in the database
+            (Yaha hum aisa employee id pass karte hain jo database me present nahi hai.)
+        8.2 Execute the API request
+            (WebTestClient request ko server par bhejta hai.)
+        8.3 Verify the response status
+            (Check karte hain ki API 404 NOT FOUND status return kare jab employee database me exist na karta ho.)
