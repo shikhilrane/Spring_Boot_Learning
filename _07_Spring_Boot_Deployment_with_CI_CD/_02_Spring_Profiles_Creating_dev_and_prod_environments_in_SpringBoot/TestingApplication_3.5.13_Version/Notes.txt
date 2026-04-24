@@ -22,4 +22,9 @@ Spring Profiles :
        (Spring me @Profile annotation use karke specific profile ke liye beans load kar sakte hain.)
 
 Steps to use Profiles:
-    1.
+    1. Create Service "DataService" to control which data should be returned based on active profile
+       (Ek service interface banate hain jo decide karegi ki kaunsa data return hoga depending on active profile.)
+    2. Create "DataServiceImplDev" that will return Dev related data implement classes for "DataService"
+       (Ek implementation class banayenge jo Dev environment ke liye data return karegi.)
+    3. Create "DataServiceImplProd" that will return Prod related data implement classes for "DataService"
+       (Ek implementation class banayenge jo Production environment ke liye data return karegi.)
