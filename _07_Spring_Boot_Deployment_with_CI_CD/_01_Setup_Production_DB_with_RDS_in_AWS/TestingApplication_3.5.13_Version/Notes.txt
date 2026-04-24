@@ -1,58 +1,104 @@
 AWS (Amazon Web Services) –
     AWS is a cloud platform that provides computing resources like servers, storage, and databases over the internet.
+    (Matlab internet ke through servers, storage aur database jaise resources milte hain bina physical server kharide.)
     1. AWS stands for Amazon Web Services.
+       (AWS ka full form Amazon Web Services hai.)
     2. It is a cloud computing platform provided by Amazon.
+       (Ye Amazon ka cloud platform hai jaha se online computing resources milte hain.)
     3. AWS allows users to use servers, storage, databases, and other services through the internet.
+       (Isme users internet ke through servers, storage, database aur dusre services use kar sakte hain.)
     4. Instead of buying physical servers, companies can rent resources from AWS.
+       (Companies ko apna physical server kharidne ki zarurat nahi hoti, wo AWS se rent par le sakti hain.)
     5. AWS follows a pay-as-you-go model (you pay only for what you use).
+       (Jitna resource use karoge utna hi paise dene padte hain.)
 
-Why AWS is used -
+    Why AWS is used -
     1. To host websites and applications
+       (Websites aur applications ko internet par run karne ke liye.)
     2. To store data securely
+       (Data ko secure tarike se store karne ke liye.)
     3. To run servers and databases
+       (Servers aur databases ko run karne ke liye.)
     4. To scale applications easily when traffic increases
+       (Agar users ya traffic badh jaye to application ko easily scale kiya ja sakta hai.)
 
-Services in AWS :
+    Services in AWS :
     1. On Console Home page of AWS, there are services menu > All Services
+       (AWS console ke home page par services menu hota hai jaha sab AWS services listed hoti hain.)
     2. All the AWS services listed out there but, we don't need to learn all of it
-    3. We should know major services that are used widely like EC2, RDS, Load Balancers, Elastic Beanstalk and codepipeline
+       (Waha bahut saari services hoti hain lekin sab seekhna zaruri nahi hota.)
+    3. We should know major services that are used widely like EC2, RDS, Load Balancers, Elastic Beanstalk and CodePipeline
+       (Hume mainly wahi services seekhni chahiye jo zyada use hoti hain.)
     4. We will setup RDS (Relational Database Service) in this project
+       (Is project me hum RDS use karke database setup karenge.)
 
 Steps setup Production Database with RDS (Relational Database Service) in AWS :
     1. We can even do this in EC2, but then we have to deal with a lot of stuff manually like connectivity, availability, snapshots, proxies, and a lot of other things that are related to DBs
+       (EC2 me bhi database bana sakte hain lekin usme bahut saari cheeze manually manage karni padti hain.)
     2. RDS is used to create own database servers, and we will create PostgreSQL data server (we can configure which kind of DB we want to add with simple buttons)
+       (RDS ek managed service hai jisse easily database server create kar sakte hain.)
     3. Search RDS and go to it
+       (AWS console me RDS search karke open kare.)
     4. Choose 'Create with Full Configuration'
+       (Database ko manual configuration ke sath create kare.)
     5. Choose 'PostgreSQL'
+       (Database engine ke roop me PostgreSQL select kare.)
     6. Choose a database creation method 'Full Configuration'
+       (Database ko full configuration ke sath create kare.)
     7. Choose latest engine version
+       (PostgreSQL ka latest version choose kare.)
     8. DB instance identifier 'postgres-spring' (Unique name of database instance used in AWS to identify database)
+       (Ye AWS me database instance ka unique naam hota hai.)
     9. Master username 'root' (main admin user of db, this user will have full access of DB)
+       (Ye database ka main admin user hota hai jiske paas full access hota hai.)
     10. Credential Management > Master Password (It will decide, how will be credentials will store and manage)
+        (Yaha database ka password set kiya jata hai.)
     11. Instance configuration > db.t3.micro (Selecting the hardware resources for the database instance, such as CPU power, RAM, and instance type.)
+        (Yaha database server ke hardware resources jaise CPU aur RAM choose karte hain.)
     12. Storage > keep it 20 (Storage means the amount of disk space allocated to store the database data.)
+        (Ye database ke liye disk storage hota hai jaha data store hoga.)
     13. Connectivity > Don’t connect to an EC2 compute resource (Connectivity defines how the database instance connects to applications and networks.)
+        (Yaha define hota hai ki database kis network ya application se connect hoga.)
     14. Virtual private cloud (VPC) > Default VPC (A VPC is a private network inside AWS where you can launch and manage cloud resources securely.)
+        (VPC AWS ka private network hota hai jisme resources run karte hain.)
     15. DB subnet group > Default
+        (Subnet group network ka part hota hai jaha database run karega.)
     16. Public access > Yes (but in production we keep it as NO), if, :
             Yes - Database can be accessed from the public internet (if security group allows it). (Database accessible from the internet)
+            (Iska matlab database internet se access ho sakta hai.)
             No - Database can be accessed only from resources inside the VPC like Amazon EC2. (Database accessible only within the VPC network)
+            (Iska matlab database sirf AWS ke internal network se access hoga.)
     17. VPC security group (firewall) (A VPC security group is a virtual firewall that controls inbound and outbound traffic to AWS resources.)
             Create new > postgres-spring-sg
+        (Ye firewall ki tarah kaam karta hai jo decide karta hai kaun database access kar sakta hai.)
     18. Availability Zone > No Preference (An Availability Zone is a separate physical data center within an AWS region.)
-    19. Additional configuration > Database options > Initial database name > postres (Initial database name is the name of the first database that AWS creates inside the RDS instance during setup.)
+        (AWS region ke andar alag-alag data centers hote hain jise availability zones bolte hain.)
+    19. Additional configuration > Database options > Initial database name > postgres (Initial database name is the name of the first database that AWS creates inside the RDS instance during setup.)
+        (Ye database ka initial naam hota hai jo RDS create hone ke time ban jata hai.)
     20. keep else as it is and submit it
+        (Baaki sab default rehne de aur database create kar de.)
     21. It will take time to create db then go to db
+        (Database create hone me thoda time lagega.)
     22. Connectivity & security > Security group rules > Define Inbound and Outbound Rules (Defines, How TCP IP request should connect to my DB Instance)
             Inbound Rule :
                 > Edit inbound rules - Behaviour of Inbound requests can be control here > choose MyIP (It will only allow with to choose connect my IP to connect)
+                                                                                           (Iska matlab sirf meri current IP se database connect ho payega.)
     23. Connect from DBeaver - Create new db > PostgreSQL > paste, Host link, DB name as postgres, username as root and password > Test Connection... > Finish
         New DB will be created there, we can edit the name of DB in DBeaver
+        (Isse DBeaver se AWS database connect ho jayega.)
     24. Connect code to this db
-        Go to application.properties > put valid spring.datasource.url, spring.datasource.username and spring.datasource.password
-        Run the application
-        In log we can see that, our application is connected to "Added connection org.postgresql.jdbc.PgConnection@20820df0"
-        Now when we check the DB we will have table of name "employee" (Db table as per entities)
-        We can use postman to check if we can create and get employee and that will get reflected in this DB
+        1. Go to application.properties
+            spring.datasource.url
+            spring.datasource.username
+            spring.datasource.password
+            (Yaha AWS database ka connection configure karte hain.)
+        2. Run the application
+        3. In log we can see that, our application is connected to "Added connection org.postgresql.jdbc.PgConnection@20820df0"
+           (Logs me dikhega : Added connection org.postgresql.jdbc.PgConnection)
+           (Iska matlab application database se successfully connect ho gaya.)
+        4. Now when we check the DB we will have table of name "employee" (Db table as per entities)
+           (Ab database me "employee" table create ho jayega, Jo entity class se auto generate hota hai.)
+        5. We can use postman to check if we can create and get employee and that will get reflected in this DB
+           (Postman se API test kar sakte hain. Create aur get employee data directly AWS database me store hoga.)
 
 NOTE : No one else can access to this DB as we set in inbound as MyIp and we will change that behaviour in Security group later on
