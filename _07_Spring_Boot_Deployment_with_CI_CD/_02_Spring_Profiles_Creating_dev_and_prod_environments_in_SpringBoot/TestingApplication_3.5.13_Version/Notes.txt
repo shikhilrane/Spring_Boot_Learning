@@ -1,0 +1,25 @@
+Spring Profiles :
+    1. When it comes to test and deploy our application there could be multiple environment that we could test and deploy on like development, testing, staging and production
+       (Application ko test aur deploy karte waqt alag-alag environments use hote hain jaise development, testing, staging aur production.)
+    2. To create all those environments in springboot we have something called profiles
+       (Spring Boot me in environments ko manage karne ke liye "profiles" ka concept hota hai.)
+    3. Every enterprise application has many environments like,
+        1. Dev - Developer will use Dev environment
+                 (Dev environment developers coding aur local testing ke liye use karte hain.)
+        2. Test - Testers will use Test environment
+                 (Test environment me testers application ko test karte hain.)
+        3. Stage - Staging people like people inside company product manager for how the product progressing so far and once everyone is satisfied they take app to production
+                   (Staging environment production jaisa hota hai jaha company ke log final verification karte hain.)
+        4. prod - Anyone on internet can access our application
+                  (Production environment me real users internet se application access karte hain.)
+    4. We can create multiple profiles as many profile as we want and all those can be done by Spring Profiles
+       (Spring Profiles ki help se jitne chahe utne environments bana sakte hain.)
+    5. Each environment requires setting that is specific to them. These environments host specific configurations called Profiles.
+       (Har environment ki alag configuration hoti hai aur un configurations ko profiles ke through manage kiya jata hai.)
+        Example : inside Dev i want to set up Dev Database only or Dev Configurations and i could have multiple configuration file and i can say that these configurations should be loaded in Dev environment only and also we can say that these configuration file can be loaded in Prod environment
+         (Dev environment me Dev database aur Dev configs load honge aur agar chahe toh Prod me production configs load honge.)
+    6. Use the @profile annotations to load beans specific to a profile
+       (Spring me @Profile annotation use karke specific profile ke liye beans load kar sakte hain.)
+
+Steps to use Profiles:
+    1.
