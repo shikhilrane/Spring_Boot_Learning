@@ -1,0 +1,92 @@
+Spring Profiles :
+    1. When it comes to test and deploy our application there could be multiple environment that we could test and deploy on like development, testing, staging and production
+       (Application ko test aur deploy karte waqt alag-alag environments use hote hain jaise development, testing, staging aur production.)
+    2. To create all those environments in springboot we have something called profiles
+       (Spring Boot me in environments ko manage karne ke liye "profiles" ka concept hota hai.)
+    3. Every enterprise application has many environments like,
+        1. Dev - Developer will use Dev environment
+                 (Dev environment developers coding aur local testing ke liye use karte hain.)
+        2. Test - Testers will use Test environment
+                 (Test environment me testers application ko test karte hain.)
+        3. Stage - Staging people like people inside company product manager for how the product progressing so far and once everyone is satisfied they take app to production
+                   (Staging environment production jaisa hota hai jaha company ke log final verification karte hain.)
+        4. prod - Anyone on internet can access our application
+                  (Production environment me real users internet se application access karte hain.)
+    4. We can create multiple profiles as many profile as we want and all those can be done by Spring Profiles
+       (Spring Profiles ki help se jitne chahe utne environments bana sakte hain.)
+    5. Each environment requires setting that is specific to them. These environments host specific configurations called Profiles.
+       (Har environment ki alag configuration hoti hai aur un configurations ko profiles ke through manage kiya jata hai.)
+        Example : inside Dev i want to set up Dev Database only or Dev Configurations and i could have multiple configuration file and i can say that these configurations should be loaded in Dev environment only and also we can say that these configuration file can be loaded in Prod environment
+         (Dev environment me Dev database aur Dev configs load honge aur agar chahe toh Prod me production configs load honge.)
+    6. Use the @profile annotations to load beans specific to a profile
+       (Spring me @Profile annotation use karke specific profile ke liye beans load kar sakte hain.)
+
+Steps to use Profiles:
+    1. Create Service "DataService" to control which data should be returned based on active profile
+       (Ek service interface banate hain jo decide karegi ki kaunsa data return hoga depending on active profile.)
+    2. Create "DataServiceImplDev" that will return Dev related data implement classes for "DataService"
+       (Ek implementation class banayenge jo Dev environment ke liye data return karegi.)
+    3. Create "DataServiceImplProd" that will return Prod related data implement classes for "DataService"
+       (Ek implementation class banayenge jo Production environment ke liye data return karegi.)
+    4. Now if we want to use "DataService" in our application we will use it in main project file
+       (ab agar DataService use karna hai to usse main Spring Boot file me use karenge)
+    5. In Main File, implement the main with CommandLineRunner and Override the run method
+       (main class me CommandLineRunner implement karte hain taaki application start hone ke baad run() method execute ho)
+        5.1. Create the instance of DataService like, private final DataService dataService; and if we tries to print dataService.getData() it won't because it will get two beans
+             (DataService ka object inject karenge, lekin 2 implementations hone ki wajah se Spring ko samajh nahi aayega kaunsa bean use kare)
+        5.2. Means we are working to execute profile here and we have set any active profile yet, so we are falling back to our default profile. (We can see that in logs too)
+             (yaha profile concept use ho raha hai aur agar koi profile set nahi hai to Spring default profile pe fall back karta hai, jo logs me dikhta hai)
+        5.3. Give a @Profile("") annotation to every service service class that we want to set as profile
+             (har service class pe @Profile lagate hain taaki wo specific environment me hi load ho)
+    6. To set the profile,
+        Method 1 : via Maven : ./mvnw spring-boot:run -Dspring-boot.run.profiles=profile_name
+                               Breakdown -
+                                    ./mvnw spring-boot:run = use to run whole application
+                                    ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev = use to run whole application with dev profile
+                                    ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod = use to run whole application with prod profile
+                               Press "control + C" to exit
+        Method 2 : via Environment variables : SPRING_PROFILES_ACTIVE=profile_name ./mvnw spring-boot:run
+                                               Breakdown -
+                                                    SPRING_PROFILES_ACTIVE=profile_name = use to set profile in environment variable
+                                                    SPRING_PROFILES_ACTIVE=prod ./mvnw spring-boot:run = use to set profile as prod in environment variable and run the app
+                                                    SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run = use to set profile as dev in environment variable and run the app
+        Method 3 : via JAR Files : java -Dsrping.profiles.active=profile_name -jar target/<jar file>.jar
+                                   1. Currently we don't have jar file in target folder
+                                        To create jar file, run : ./mvnw package -DskipTests (To create .jar file and skip the testing files)
+                                                                                             (ye command jar file banati hai aur tests skip kar deti hai)
+                                   2. run the command :
+                                        java -Dspring.profiles.active=prod -jar target/TestingApplication-0.0.1-SNAPSHOT.jar (use prod profile with application jar)
+                                        java -Dspring.profiles.active=dev -jar target/TestingApplication-0.0.1-SNAPSHOT.jar (use dev profile with application jar)
+    7. Profiles can be use to load different types of properties file :
+        1. Create variable in application.properties as "my.variable=global"
+           (global property jo sab profiles ke liye default hogi)
+        2. Create same properties file with same configurations as application-dev.properties and give variables as "my.variable=dev"
+           (dev environment ke liye separate properties file)
+        3. Create same properties file with same configurations as application-prod.properties and give variables as "my.variable=prod"
+           (prod environment ke liye separate properties file)
+        4. In main file,
+                    @Value("${my.variable}")
+                    private String myVariable;
+                    And then print the myVariable
+                    (active profile ke according value print hogi)
+        5. There are 2 ways to run the application environment :
+            1. From the terminal -
+               ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+                                    OR
+               ./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
+            2. From Environment Variables -
+                1. Go to "edit configuration" for running the application
+                2. Add new configuration > Application
+                3. Name : TestingApplication (Name of the app)
+                4. Main class : com.shikhilrane.testing.TestingApplication.TestingApplication (Location of main file)
+                5. Environment variables : SPRING_PROFILES_ACTIVE=dev or SPRING_PROFILES_ACTIVE=prod
+                   (yaha environment variable me profile set karte hain)
+            Now whatever configuration we give to variables, then those configuration file will get loaded according to profile of given user
+            (jo profile set hogi uske according properties file load hogi)
+        6. We can even set different-different database to different-different application.properties files like,
+            1. Now if we change the DB configurations as different database like localhost db in  application-dev.properties file, then for profile as "dev", whatever data we will store, will go to "jdbc:postgresql://localhost:5432/postgres"
+               (dev profile ka data dev database me store hoga)
+            2. and data for "prod" will go to other db
+               (prod profile ka data production database me store hoga)
+            3. If we check it using Postman and DBeaver, then data will get stored in different dbs
+               (API call karne par data alag-alag databases me store hota dikhega)
