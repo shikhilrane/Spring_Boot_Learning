@@ -1,0 +1,53 @@
+1. Download "Platform Independent Zip" H2 database from https://h2database.com/html/download.html
+2. Install and moved it to our specific folder (In my case, Users > shikhilrane)
+3. Open : Users > shikhilrane > h2 > bin, this path in terminal
+4. Run, java -jar h2-2.4.240.jar
+5. It will open console window in browser, put username as "sa" and password blank
+
+Now configure this db in DBeaver
+
+Now we can configure h2 database in our project
+
+Configure H2 Database in Spring Boot
+    1. Add H2 dependency in pom.xml:
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    2. Enable H2 console in application.properties:
+        spring.h2.console.enabled=true
+        spring.h2.console.path=/h2-console
+        (so the console url would be : http://localhost:8080/h2-console)
+    3. Setup datasource :
+        spring.datasource.url=jdbc:h2:file:{database url}
+        spring.datasource.driver-class-name=org.h2.Driver
+        spring.datasource.username=sa
+        spring.datasource.password=
+        spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+Difference between File Database and in-memory Database
+1. File Database :
+    A File database stores data on the disk. The data remains saved even after the application stops.
+    (Matlab data computer ki storage me save hota hai aur delete nahi hota jab app band ho jaye)
+    example - jdbc:h2:file:/Users/shikhilrane/h2/h2dbs
+    Configuration :
+        spring.h2.console.enabled=true
+        spring.h2.console.path=/h2-console
+        spring.datasource.url=jdbc:h2:file:/Users/shikhilrane/h2/h2dbs
+        spring.datasource.driver-class-name=org.h2.Driver
+        spring.datasource.username=sa
+        spring.datasource.password=
+        spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+2. In-Memory Database :
+    An In-Memory database runs in RAM. When the application stops, all the data is removed.
+    (Matlab data temporary hota hai aur app band hote hi delete ho jata hai)
+    example - jdbc:h2:mem:testdb
+    Configuration :
+        spring.h2.console.enabled=true
+        spring.h2.console.path=/h2-console
+        spring.datasource.url=jdbc:h2:mem:testdb
+        spring.datasource.driver-class-name=org.h2.Driver
+        spring.datasource.username=sa
+        spring.datasource.password=
+        spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
