@@ -1,0 +1,177 @@
+Elastic Beanstalk :
+    1. It is an AWS service used to deploy and run applications
+       (ye AWS ki service hai jo application ko cloud pe deploy aur run karne ke liye use hoti hai)
+    2. Developers only need to upload the code
+       (developer ko sirf code upload karna hota hai)
+    3. AWS automatically creates and manages servers for the application
+       (AWS automatically server setup aur manage kar deta hai)
+    4. It automatically handles load balancing, scaling and monitoring
+       (ye automatically load balancing, scaling aur monitoring handle karta hai)
+    5. It supports multiple programming languages like Java, Python, Node.js, .NET etc
+       (ye multiple programming languages support karta hai jaise Java, Python, Node.js, .NET)
+    6. It makes application deployment easy without managing infrastructure
+       (infrastructure manage kiye bina application deploy karna easy ho jata hai)
+    7. It helps applications scale automatically when traffic increases
+       (jab users badhte hain to application automatically scale ho jati hai)
+    8. It internally uses AWS services to run the application (application run karne ke liye AWS ki multiple services use hoti hain)
+       • EC2 – for running servers
+               (server run karne ke liye)
+       • RDS – for database
+               (database ke liye)
+       • S3 – for storing application files
+              (application files store karne ke liye)
+       • Load Balancer – for distributing traffic
+                         (traffic ko distribute karne ke liye)
+       • Auto Scaling – for increasing or decreasing servers automatically
+                        (servers ko automatically increase ya decrease karne ke liye)
+
+Steps :
+    1. Search for Elastic BeanStock in AWS
+       (AWS console me Elastic Beanstalk search karo)
+    2. Create application
+    3. Application Information > Application name ("employee-service")
+       (naya application create karo)
+    4. Environment information >
+        Environment name ("Employee-service-envt")
+        Domain ("Employee-service-envt.ap-south-1.elasticbeanstalk.com") then check the availability
+        (environment ka naam aur domain set karo aur domain available hai ya nahi check karo)
+    5. Platform
+        Choose a Platform (Java)
+        Select java version according to our application (21)
+        (platform Java select karo aur application ke according Java version choose karo)
+    6. Application code
+        Sample application
+    7. Presets
+        Single instance (free tier eligible)
+    Next
+    8. Configure service access
+        Service role (Create role for this with IAM)
+        EC2 instance profile (Create role for this with IAM)
+        (IAM roles create karke service access configure karo)
+    Next
+    9. Instance settings > VPC (Select Default VPC that is created for us)
+       (default VPC select karo jo AWS ne automatically create ki hoti hai)
+    10. Public IP address = Yes
+        (public internet se access karne ke liye public IP enable karo)
+    11. Instance subnets = Select all
+        (available sabhi subnets select karo)
+    12. Database - Its recommended to not configure Database here because in any case we want to delete BeanStalk environment then this db will get deleted as well
+                   So create the database separately and attach the db by yourself
+                   (Beanstalk ke andar DB create karna recommended nahi hai kyunki environment delete hone par DB bhi delete ho sakta hai, isliye DB alag create karo)
+    Next
+    13. Instances :
+        Root volume (boot device) = default
+        Capacity :
+            Auto scaling group :
+                Environment type : Load Balanced
+                Min instances : 1 instances
+                Max instances : 4 instances
+            Instance types :
+                t3.micro
+            Scaling triggers :
+                Metric : CPUUtilization
+                Unit : 1
+            Unit : Percentage
+            Upper threshold : 80
+            Lower threshold : 40
+        Processes : here health check will be done at '/' but in our application '/' route will be directed to error page so we have to fic this in our code
+        (health check '/' endpoint par hota hai isliye code me uska controller banana padega)
+    Next
+    14. Monitoring :
+        Health reporting :
+            System : Basic
+            (basic health monitoring enable karo)
+        Rolling updates and deployments :
+            Application deployments :
+                Deployment policy : Rolling
+                Batch size type : Fixed
+                (rolling deployment se servers gradually update hote hain)
+        Platform software :
+            Environment properties :
+                Add environment property :
+                    Name = PORT and Value = 8080
+                    (application ke liye environment variable set karte hain)
+    Next
+    15. Review and submit and wait for almost 5 mins
+    (configuration review karke environment create hone ka wait karo)
+
+In Code :
+    1. Create a controller to handle requests at '/'
+       (root endpoint handle karne ke liye controller create karo)
+    2. Create 'HealthCheckController'
+       (health check endpoint banane ke liye controller create karo)
+    3. Define Environment variables :
+        In application-prod.properties,
+            We are directly passing url, username and password as it is and we should not pass it like this in production, only admins should know this
+                spring.datasource.url=jdbc:postgresql://${DB_HOST_URL}:5432/${DB_NAME}
+                spring.datasource.username=${DB_USERNAME}
+                spring.datasource.password=${DB_PASSWORD}
+            (production me credentials direct hardcode nahi karte, environment variables use karte hain)
+    4. Make sure you are using correct version of Java according to Elastic BeanStalk
+        go to pom.xml check which version we have chose in beanstalk (21), so make here 21 as well
+        Go to Settings > Build, Execution, Deployment > Compiler > Java Compiler > Make it 21 here as well
+        Project Structure > Select relevant JDK i.e. 21
+        (Beanstalk aur project dono me same Java version hona chahiye)
+    5. Remove one bean (removed @Profile("dev")) and also from main file as well
+       (conflicting bean avoid karne ke liye ek bean remove karo)
+    6. maven clean and package
+    7. Add values for,
+        DB_HOST_URL
+        DB_NAME
+        DB_USERNAME
+        DB_PASSWORD
+        that we write in application-prod.properties
+        In environment variable
+        (ye sab values environment variables me add karni hoti hain)
+    8. Run the project to check if its working or not
+       (locally project run karke check karo)
+    9. We need to change Edit inbound rules > Source > change to My IP, because it works according to our IP location
+       (RDS security group me apna IP allow karna hota hai)
+
+Put the all environment variables in Elastic BeanStalk Environment
+    1. Go to Elastic Beanstalk > Environments > Employee-service-envt
+       (Beanstalk environment open karo)
+    2. Click on Domain and check if our environment is running or not (if welcome message displayed then our created environment will be considered as working)
+       (domain open karke environment working hai ya nahi check karo)
+    3. Go to Configuration > Updates, monitoring, and logging > Edit > Scroll down to bottom > Environment properties > Add environment property
+        DB_HOST_URL
+        DB_NAME
+        DB_USERNAME
+        DB_PASSWORD
+        SPRING_PROFILES_ACTIVE
+       (environment variables add karo)
+    4. Apply and then our environment will be restart and it will take some time to finish the restart process
+       (apply karne ke baad environment restart hota hai)
+    5. Click on Domain and check if our environment is running or not with our entered
+       (domain hit karke verify karo)
+    Our environment with all the given environment variable will be run
+
+Upload our code to this environment
+    1. Upload the .jar file from resources > .jar file
+       (build hui jar file upload karo)
+    2. Go to EC2 > Instances(Running) >
+            Check the column 'Security group name' and copy the name
+       (EC2 instance ka security group name copy karo)
+    3. Go to Aurora and RDS > Databases > select our db > go to inbound rules > Edit inbound rules > Add rules >
+            Type : Postgres
+            Source : select the security group that we have copied from EC2
+            save rule
+       (RDS me EC2 ko access allow karo)
+    4. Go to our environment > Actions > Restart app server(s)
+       (Beanstalk me app server restart karo)
+    It will take time to reflect changes
+    Health of the app will turn to 'OK'
+    (kuch time baad environment health green ho jayegi)
+
+Checking the domain
+    1. Click on the domain, it will show OK according to HealthCheckController controller
+       (domain open karne par OK response milega)
+    2. http://employee-service-envt.ap-south-1.elasticbeanstalk.com/employees/getSingleEmployee/1 : if we hit this url then employee with id 1 will be shown
+       (API endpoint hit karke data verify kar sakte hain)
+
+As of now if we make changes in our code then we have to,
+    clean, package and create jar again and then reupload the jar in our environment
+    (har code change ke baad jar rebuild aur upload karna padega)
+
+So to overcome this issue we will use codepipeline in next lecture
+(is problem ko solve karne ke liye next step me CI/CD pipeline use karenge)
