@@ -12,54 +12,166 @@ Maven ->
     5. It provides a structured way to manage Java Projects by defining project structure, dependencies and build configurations using a declarative XML-based format(pom.xml)
     6. Developers use Maven to specify project's metadata, dependencies, plugins, repositories and other related configurations
     7. Spring and its various modules are managed as dependencies in maven projects. Developers specify the Spring dependencies in the pom.xml and maven handles the rest.
-
     8. Maven commands
-    Project Build & Compilation ->
-        | Command                | Description                                          |
-        | ---------------------- | ---------------------------------------------------- |
-        | `./mvnw clean`         | Deletes the `target/` directory (cleans the project) |
-        | `./mvnw compile`       | Compiles source code of the project                  |
-        | `./mvnw test-compile`  | Compiles test source code                            |
-        | `./mvnw clean compile` | Cleans and compiles the project                      |
+        1. ./mvnw clean
+           Deletes previous build files from the target folder
+           (target folder se purane build files delete karta hai)
 
-    Testing ->
-        | Command         | Description                                          |
-        | --------------- | ---------------------------------------------------- |
-        | `./mvnw test`   | Runs unit tests                                      |
-        | `./mvnw verify` | Verifies the project (runs integration tests if any) |
+        2. ./mvnw validate
+           Checks if the project structure and pom.xml are correct
+           (project structure aur pom.xml sahi hai ya nahi check karta hai)
 
-    Packaging ->
-        | Command          | Description                                                |
-        | ---------------- | ---------------------------------------------------------- |
-        | `./mvnw package` | Packages the compiled code (e.g., into a `.jar` or `.war`) |
-        | `./mvnw install` | Installs the package to your local `.m2` repository        |
-        | `./mvnw deploy`  | Deploys the package to a remote repository (for release)   |
+        3. ./mvnw compile
+           Compiles the source code into .class files
+           (java source code ko compile karke .class files banata hai)
 
-    Running Applications ->
-    For Spring Boot or similar projects:
-        | Command                  | Description                          |
-        | ------------------------ | ------------------------------------ |
-        | `./mvnw spring-boot:run` | Runs a Spring Boot application       |
-        | `./mvnw exec:java`       | Executes a Java class (needs config) |
+        4. ./mvnw test
+           Runs unit tests using frameworks like JUnit
+           (JUnit jaise frameworks ka use karke unit tests run karta hai)
 
-    Dependency Management ->
-        | Command                     | Description               |
-        | --------------------------- | ------------------------- |
-        | `./mvnw dependency:resolve` | Downloads dependencies    |
-        | `./mvnw dependency:tree`    | Shows the dependency tree |
-        | `./mvnw dependency:list`    | Lists all dependencies    |
+        5. ./mvnw package
+           Creates the final deployable file (.jar / .war)
+           (final deployable file banata hai jaise jar ya war)
 
-    Project Info ->
-        | Command                          | Description                                       |
-        | -------------------------------- | ------------------------------------------------- |
-        | `./mvnw help:effective-pom`      | Shows the effective POM with all inherited config |
-        | `./mvnw help:effective-settings` | Shows effective settings.xml                      |
-        | `./mvnw validate`                | Validates the project structure and config        |
+        6. ./mvnw verify
+           Runs additional checks on the packaged application
+           (packaged application par extra checks run karta hai)
 
-    Cleaning and Rebuilding ->
-        | Command                | Description                                |
-        | ---------------------- | ------------------------------------------ |
-        | `./mvnw clean install` | Common full rebuild: clean, build, install |
-        | `./mvnw clean verify`  | Clean and run tests/integration checks     |
-        | `./mvnw clean package` | Clean and package project                  |
+        7. ./mvnw install
+           Installs the built artifact into the local Maven repository (.m2 folder)
+           (jar ko local maven repository me install karta hai)
 
+        8. ./mvnw deploy
+           Uploads the artifact to a remote repository
+           (artifact ko remote repository me upload karta hai jaise Nexus ya Artifactory)
+
+        9. ./mvnw clean install
+           Cleans the project and installs the artifact into the local repository
+           (project clean karke jar ko local repository me install karta hai)
+
+        10. ./mvnw clean package
+            Cleans previous build and creates a new jar file
+            (purane build delete karke nayi jar file banata hai)
+
+        11. ./mvnw package -DskipTests
+            Builds the jar file without running tests
+            (tests run kiye bina jar build karta hai)
+
+        12. ./mvnw spring-boot:run
+            Runs the Spring Boot application directly
+            (spring boot application ko directly run karta hai)
+
+        13. ./mvnw dependency:tree
+            Shows the dependency hierarchy of the project
+            (project ki dependency tree show karta hai)
+
+        14. ./mvnw dependency:resolve
+            Downloads and resolves project dependencies
+            (project ki dependencies download aur resolve karta hai)
+
+        15. ./mvnw help:effective-pom
+            Shows the final merged pom.xml after inheritance
+            (final merged pom.xml show karta hai)
+
+        16. ./mvnw help:dependencies
+            Displays all dependencies used in the project
+            (project me use ho rahi sab dependencies show karta hai)
+
+
+
+Maven Lifecycle :
+
+    Maven lifecycle defines the steps required to build and deploy a project
+    (maven lifecycle wo steps define karta hai jisse project build aur deploy hota hai)
+
+    Lifecycle Flow :
+        clean → validate → compile → test → package → verify → install → deploy
+
+    1. clean :
+        Deletes previous build files from the target folder
+        (target folder se purane build files delete karta hai)
+
+        Command :
+            ./mvnw clean
+
+    2. validate :
+        Checks if the project structure and pom.xml are correct
+        (project structure aur pom.xml sahi hai ya nahi check karta hai)
+
+    3. compile :
+        Converts .java files into .class files
+        (java code ko compile karke .class files banata hai)
+
+        Command :
+            ./mvnw compile
+
+    4. test :
+        Runs unit tests using frameworks like JUnit
+        (JUnit jaise frameworks se unit tests run karta hai)
+
+        Command :
+            ./mvnw test
+
+    5. package :
+        Creates the final deployable file (.jar / .war)
+        (final deployable file banata hai jaise jar ya war)
+
+        Command :
+            ./mvnw package
+
+        Output Example :
+            target/app.jar
+            (target folder me jar file create hoti hai)
+
+    6. verify :
+        Runs additional checks on the packaged application
+        (packaged application par additional checks run karta hai)
+
+    7. install :
+        Installs the jar file into local Maven repository (.m2 folder)
+        (jar file ko local maven repository me store karta hai)
+
+        Command :
+            ./mvnw install
+
+    8. deploy :
+        Uploads the artifact to a remote repository
+        (artifact ko remote repository me upload karta hai)
+
+        Example :
+            Nexus
+            Artifactory
+            Maven Central
+
+
+Most used Maven Commands :
+
+    ./mvnw clean package
+        (project clean karke jar build karta hai)
+
+    ./mvnw clean install
+        (project build karke jar ko local maven repository me install karta hai)
+
+    ./mvnw spring-boot:run
+        (spring boot application directly run karta hai)
+
+    ./mvnw package -DskipTests
+        (tests skip karke jar build karta hai)
+
+
+Simple Build Flow :
+        Source Code
+            ↓
+        Compile
+            ↓
+        Test
+            ↓
+        Package (Jar/WAR)
+            ↓
+        Deploy
+
+
+Spring Boot Deployment Flow :
+
+    Code → mvnw clean package → jar file → deploy to server
+    (code ko jar me convert karke server par deploy karte hain)

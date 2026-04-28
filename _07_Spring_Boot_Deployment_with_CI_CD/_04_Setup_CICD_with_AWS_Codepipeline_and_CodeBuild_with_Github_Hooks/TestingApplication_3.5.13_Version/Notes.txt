@@ -24,4 +24,3 @@ AWS Code Pipeline :
 
 Steps :
     1. Search for 'Codepipeline' and click on 'Create pipeline'
-    
