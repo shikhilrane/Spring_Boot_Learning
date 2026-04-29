@@ -1,0 +1,105 @@
+Flyway for DB Migration :
+    1. If we make changes like adding tables, schemas or renaming columns in JPA, those changes should also update the database.
+        (Agar hum JPA me table add kare, schema add kare ya column rename kare to database me bhi wahi changes update hone chahiye)
+    2. To manage these database changes in versions and apply them in a proper and predictable way, we use Flyway.
+        (In database changes ko version me manage karne aur proper tarike se apply karne ke liye Flyway use karte hain)
+    3. As of now we are using 'spring.jpa.hibernate.ddl-auto=update' in our production environment as well
+       (Abhi hum production environment me bhi 'spring.jpa.hibernate.ddl-auto=update' use kar rahe hain)
+    4. 'update' should be used only in development environment
+       ('update' sirf development environment me use karna chahiye)
+    5. We can use 'update' in production but it is recommended to use 'validate', because 'update' may cause serious data loss
+       (Production me 'update' use kar sakte hain lekin recommended 'validate' hai, kyunki 'update' kabhi kabhi data loss kar sakta hai)
+    6. Example :
+        6.1. With 'update', we changed 'name' to 'fullName' in EmployeeEntity then
+             (Agar 'update' use karte hue EmployeeEntity me 'name' ko 'fullName' kar diya)
+        6.2. 'name' column will not get renamed because hibernate doesn't do that
+             (Hibernate existing column rename nahi karta)
+        6.3. Instead, hibernate will create new column with name 'fullName' in EmployeeEntity
+             (Hibernate naya column 'fullName' create kar dega)
+        6.4. Now, we will have 2 columns 'name' and 'fullName'
+             (Ab database me 2 columns ho jayenge 'name' aur 'fullName')
+                previous employees will be in 'name'
+                 (Pehle wale employees ka data 'name' column me rahega)
+                next employees will be in 'fullName'
+                 (Naye employees ka data 'fullName' column me store hoga)
+        6.5. Suppose in codebase we are using 'fullName' to fetch employee, then employee with 'name' (i.e. previous employees), they won't be get fetched, so it will results in data inconsistency
+             (Agar code me 'fullName' se employee fetch kar rahe hain to purane employees jo 'name' me hain wo fetch nahi honge. Isse data inconsistency ho jayegi)
+        6.6. Also, if we are renaming or dropping some entities, then our entire production DB would also get dropped because you are updating your DB as soon as you are making changes in db
+             (Agar entities rename ya drop kar di to production DB bhi galat tarike se modify ho sakta hai. Kyunki Hibernate automatically DB me changes apply kar deta hai)
+    7. Hibernate.ddl-auto=update in Production :
+       7.1. Unpredictable Schema Changes :
+                Renaming a column in an entity class may result in the creation of a new column in the database rather than renaming the existing one, leading to potential data loss or inconsistency.
+                (Agar entity class me column ka naam change karte ho, to Hibernate purane column ko rename nahi karta. Wo naya column create kar deta hai, jisse data loss ya inconsistency ho sakti hai.)
+       7.2. Data Loss Risk :
+                Removing an entity might cause Hibernate to drop the column or table, which could remove important production data.
+                (Agar entity hata di to Hibernate column ya table drop kar sakta hai, jisse production ka important data delete ho sakta hai.)
+       7.3. Lack of Control and Irreversible :
+                Hibernate automatically applies schema changes without giving full control, and some changes cannot be easily reversed.
+                (Hibernate automatically database me changes karta hai, developer ke paas full control nahi hota aur kuch changes baad me easily reverse bhi nahi ho pate.)
+    8. Spring Boot + Flyway
+        Why use Flyway:
+        8.1. Flyway offers structured database schema management and version control.
+             (Flyway database schema ko properly manage karta hai aur database changes ka version control maintain karta hai.)
+        8.2. It automates migration script execution and maintains a version history for seamless migrations across environments.
+             (Flyway migration scripts ko automatically run karta hai aur dev, test, prod environments ke liye version history maintain karta hai.)
+        8.3. Integration with Spring Boot streamlines deployment, allowing developers to focus on feature development rather than migration management.
+             (Spring Boot ke saath integration deployment ko easy bana deta hai, jisse developers migration manage karne ke bajay features develop karne par focus kar sakte hain.)
+        8.4. With Flyway, we make changes in entity and db are not upto date with those changes then this will give an exception during build process and that is something we want because if we made some changes in entities then db should also reflect those changes
+             (Agar hum entity classes me changes karte hain aur database un changes ke according update nahi hai, to Flyway build process ke time exception throw karega. Ye actually achha hai kyunki agar entity me changes hue hain to database me bhi wohi changes reflect hone chahiye.)
+
+
+Steps :
+    1. In application.properties, change 'update' to 'validate'
+    2. Add Flyway Dependencies :
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+    3. Add following command in application-prod.properties
+            3.1. spring.flyway.baseline-on-migrate=true : Used, when we previously have data with 'update' and now we are migrating to Flyway
+                    (Jab pehle project Hibernate ddl-auto=update par chal raha ho aur ab Flyway par migrate kar rahe ho tab is property ka use karte hain)
+                    1. To understand this, create dev and prod db in postgres localhost db
+                       (Samajhne ke liye postgres localhost me dev aur prod naam ke 2 databases create karo)
+                    2. Add one more configuration for prod file
+                            DB_HOST_URL=localhost
+                            DB_NAME=prod
+                            DB_PASSWORD=Shikhil@4
+                            DB_USERNAME=postgres
+                            SPRING_PROFILES_ACTIVE=prod
+                       (Prod environment ke liye alag configuration add karte hain jisse application prod database se connect kare)
+                    3. Run the project (comment spring.flyway.baseline-on-migrate=true for now)
+                       (Abhi baseline-on-migrate property ko comment karke project run karo)
+                    4. we will get an error : Schema-validation: missing table [employee]
+                       (Error isliye aayega kyuki database me abhi employee table exist nahi hai aur Hibernate validation fail ho jayega)
+                       (NOTE : If we set it to update then that error would not be there)
+                       (Agar ddl-auto=update hota to Hibernate automatically table create kar deta)
+                    To make this working
+                    5. Go to resources folder create folder db/migration and create .sql file V1__initialize_db.sql and add query for it using JPA Buddy
+                       (resources ke andar db/migration folder banao aur V1__initialize_db.sql file create karke usme table create karne ki SQL query add karo)
+                    6. Run the project
+                       (Project run karte hi Flyway migration script execute karega aur database me tables create ho jayenge)
+
+           3.2. Using Flyway in a newly created project:
+                   1. When we are starting a new project and using Flyway from the beginning,
+                      we do not need spring.flyway.baseline-on-migrate=true.
+                      (Agar project naya hai aur start se hi Flyway use kar rahe hain to baseline-on-migrate ki zarurat nahi hoti.)
+                   2. Create migration folder:
+                           resources/db/migration
+                      (Yaha Flyway ki saari migration SQL files rakhi jaati hain.)
+                   3. Create first migration file:
+                           V1__initialize_db.sql
+                      (Ye first version migration file hoti hai jisme initial database schema create karte hain.)
+                   4. Add SQL queries to create required tables.
+                      (Is file me tables create karne wali SQL queries likhte hain jaise employee table.)
+                   5. Run the project.
+                      (Project run karte hi Flyway automatically migration script run karega.)
+                   6. Flyway will create a table:
+                           flyway_schema_history
+                      (Ye table database me create hoti hai jo migration scripts ka version history track karti hai.)
+
+To migrate :
+    make changes in DB -> Create migration file (with sql query) -> run
