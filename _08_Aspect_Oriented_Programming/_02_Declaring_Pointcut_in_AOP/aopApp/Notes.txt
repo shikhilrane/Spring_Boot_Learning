@@ -1,0 +1,130 @@
+Pointcuts :
+    1. In Spring AOP (Aspect-Oriented Programming), pointcut expressions define the join points where advice (cross-cutting concerns like logging, security, etc.) should be applied. These expressions use AspectJ syntax and can be defined using annotations or XML configurations in Spring Boot.
+        (Spring AOP me pointcut expressions define karte hain ki kaunse join points par advice apply hoga. Ye expressions AspectJ syntax use karte hain aur Spring Boot me annotations ya XML configuration ke through define kiye ja sakte hain.)
+    2. Official doc: https://docs.spring.io/spring-framework/reference/core/aop/ataspectj/pointcuts.html
+
+Types of Pointcut kind :
+    1. execution kind point :
+        This is the most widely used pointcut expression. It allows you to target method executions in your classes.
+            (Ye sabse zyada use hone wala pointcut expression hai. Isse hum apni classes ke method executions ko target kar sakte hain.)
+        Example :
+            @Before("execution(* com.codingshuttle.aopApp.services.*.*(..))")
+            public void beforeMethod() {
+                // Advice code
+            }
+        From Code (beforeOrderPackage) :
+            1. @Before("execution(* orderPackage(..))")
+               - This advice runs before the method orderPackage().
+               (Ye advice orderPackage() method run hone se pehle execute hoga.)
+               - It applies to any class that has a method named orderPackage().
+               (Jis bhi class me orderPackage() method hoga waha ye apply ho jayega.)
+            2. @Before("execution(* com.shikhilrane.aop.aopApp.services.impl.*.orderPackage(..))")
+               - This advice runs before orderPackage() method.
+               (Ye advice orderPackage() method run hone se pehle execute hoga.)
+               - It applies to any class inside services.impl package.
+               (Ye services.impl package ki kisi bhi class par apply ho sakta hai.)
+            3. @Before("execution(* com.shikhilrane.aop.aopApp.services.impl.*.*(..))")
+               - This advice runs before any method.
+               (Ye advice kisi bhi method run hone se pehle execute hoga.)
+               - It applies to all classes inside services.impl package.
+               (Ye services.impl package ki sabhi classes ke methods par apply hoga.)
+            4. JoinPoint
+               - JoinPoint gives information about the method that is being executed.
+               (JoinPoint hume batata hai ki kaunsa method execute hone wala hai.)
+            5. joinPoint.getKind()
+               - Returns the type of join point.
+               (Ye join point ka type batata hai.)
+               - Example: method-execution.
+            6. joinPoint.getSignature()
+               - Returns the method signature.
+               (Ye method ka pura detail deta hai jaise method name aur class name.)
+        Understanding terms :
+            execution(* package.Class.method(..))
+            here,
+                *          → return type (koi bhi)
+                package    → package name
+                Class      → class name
+                method     → method name
+                (..)       → any number of arguments
+
+    2. Within kind pointcut :
+       Use within() when you want to limit the advice to a particular class or package, without focusing on specific methods.
+         (within() tab use hota hai jab hume advice ko kisi specific class ya package tak limit karna hota hai, bina kisi particular method ko target kiye.)
+       This pointcut applies to any join point within the com.codingshuttle.aopApp.services package, including methods, fields, and constructors.
+         (Is pointcut ka matlab hai ki com.codingshuttle.aopApp.services package ke andar jo bhi join points honge jaise methods, fields aur constructors un sab par advice apply ho sakta hai.)
+       Example:
+           @Before("within(com.codingshuttle.aopApp.services.*)")
+           public void logWithinServicePackage() {
+               // Advice code
+           }
+       From code :
+            1. @Before("within(com.shikhilrane.aop.aopApp..*)")
+               - This advice runs before method execution.
+               (Ye advice method execute hone se pehle run hota hai.)
+            2. within(com.shikhilrane.aop.aopApp..*)
+               - It targets all classes inside the package com.shikhilrane.aop.aopApp and its sub-packages.
+               (Ye pointcut com.shikhilrane.aop.aopApp package aur uske sabhi sub-packages ki classes ko target karta hai.)
+            3. beforeServiceImplCalls()
+               - This is the advice method that will execute when the pointcut matches.
+               (Ye advice method hai jo tab execute hoga jab pointcut match karega.)
+            4. log.info("Service Impl calls")
+               - It prints a log message when a method in that package is called.
+               (Jab us package ki koi method call hoti hai tab ye log message print hota hai.)
+            5. within vs execution
+               - within → Targets classes or packages.
+               (within class ya package level par target karta hai.)
+               - execution → Targets specific methods.
+               (execution specific methods ko target karta hai.)
+       Understanding terms :
+            within(package.Class)
+            here,
+               within        → pointcut keyword used to target classes inside a package
+                               (Ye keyword classes ko target karne ke liye use hota hai.)
+               package       → package name
+                               (Ye batata hai kaunsa package target karna hai.)
+               Class         → class name or * for all classes
+                               (Class ka naam ya * likh kar sabhi classes target ki ja sakti hain.)
+
+    3. Annotation kind pointcut :
+        Use @annotation() when you want to apply advice to methods annotated with a particular annotation.
+            (@annotation() tab use hota hai jab hume kisi specific annotation wale methods par advice apply karna hota hai.)
+        You can also create your custom annotations for this pointcut.
+            (Is pointcut ke liye hum apni custom annotations bhi bana sakte hain.)
+        Example :
+            @Before("@annotation(org.springframework.transaction.annotation.Transactional)")
+            public void logTransactionalMethods() {
+                // Advice code
+            }
+        From code :
+            1. @MyLogging
+               - This is a custom annotation created by the developer.
+               (Ye developer ke dwara banayi gayi custom annotation hai.)
+            2. @Retention(RetentionPolicy.RUNTIME)
+               - This makes the annotation available at runtime.
+               (Isse annotation runtime par available hoti hai jisse AOP usse detect kar sakta hai.)
+            3. @Target(ElementType.METHOD)
+               - This annotation can only be applied to methods.
+               (Iska matlab hai ye annotation sirf methods par use ho sakti hai.)
+            4. @Before("@annotation(com.shikhilrane.aop.aopApp.aspects.MyLogging)")
+               - This advice runs before methods that have @MyLogging annotation.
+               (Ye advice un methods se pehle run hota hai jinke upar @MyLogging annotation laga hota hai.)
+            5. beforeTransationalAnnotationCalls()
+               - This is the advice method that will execute when the pointcut matches.
+               (Ye advice method hai jo tab execute hoga jab koi method @MyLogging annotation ke sath call hoga.)
+            6. log.info("Before MyLogging Annotation calls")
+               - Logs a message before the annotated method is executed.
+               (Jab annotated method run hone wala hota hai tab ye log message print karta hai.)
+
+    4. Pointcut declaration
+        The pointcut is defined separately using @Pointcut and then referenced by the advice annotations.
+            (Pointcut ko alag se @Pointcut annotation ke sath define kiya jata hai aur phir advice annotations me use kiya jata hai.)
+        Example :
+            @Pointcut("execution(* com.example.service.*.*(..))")
+            public void serviceMethods() {}
+
+            // Advice using the pointcut
+            @Before("serviceMethods()")
+            public void logBeforeMethod(JoinPoint joinPoint) {
+                System.out.println("Logging before method: " + joinPoint.getSignature());
+            }
+        From code :
