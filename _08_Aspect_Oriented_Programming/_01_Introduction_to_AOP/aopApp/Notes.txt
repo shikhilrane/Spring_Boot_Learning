@@ -1,0 +1,169 @@
+Cross Cutting Concerns
+    1. Cross-cutting concerns are aspects of a program that affect multiple modules and often cannot be modularized by traditional object-oriented (OO) design. This is where Aspect-Oriented Programming (AOP) steps in, providing a powerful tool to modularize cross-cutting concerns and weave them into your main business logic, without entangling the core code.
+       (Cross-cutting concerns wo cheezein hoti hain jo application ke multiple modules ko affect karti hain aur traditional OOP se easily separate nahi hoti. AOP in concerns ko modularize karke main business logic me integrate karne me help karta hai bina core code ko messy banaye.)
+    2. In the realm of Spring, a prominent Java framework, AOP provides a seamless solution for managing these concerns.
+       (Spring framework me AOP cross-cutting concerns jaise logging, security, transactions ko easily manage karne ka solution deta hai.)
+
+Aspect Oriented Programming :
+    1. The world of software development has long embraced Object-Oriented Programming (OOP) as a standard paradigm to promote code reusability. However, when it comes to cross-cutting concerns, OOP alone often falls short. Enter Aspect-Oriented Programming (AOP) — a paradigm that complements OOP to handle concerns that span multiple parts of an application.
+       (Software development me OOP ko code reusability ke liye use kiya jata hai. Lekin jab cross-cutting concerns jaise logging, security, transactions ki baat aati hai to sirf OOP kaafi nahi hota. Yaha AOP use hota hai jo OOP ko complement karta hai aur application ke multiple parts me spread concerns ko handle karta hai.)
+    2. At its core, AOP is about separating concerns in a software application. It offers a way to modularize cross-cutting concerns independently of the main business logic.
+       (AOP ka main idea concerns ko separate karna hai. Ye cross-cutting concerns ko main business logic se alag modularize karne ka tarika deta hai.)
+    3. AOP Principle:
+        1. Controller, Service, and Repository classes should contain only pure business logic.
+        2. Secondary logic such as logging, transaction management, security, and other cross-cutting concerns should not be written inside these classes. Instead, they should be handled separately using AOP so that the core business code remains clean, modular, and easy to maintain.
+        (Controller, Service aur Repository classes me sirf business logic hona chahiye. Secondary logic jaise logging, transaction management, security wagairah in classes ke andar nahi likhna chahiye. Inhe AOP ke through alag handle kiya jata hai taaki main business code clean aur maintainable rahe.)
+    4. There is already AOP dependency present in pom.xml in 'spring-boot-starter-data-jpa'
+        (spring-boot-starter-data-jpa dependency ke andar already AOP related libraries present hoti hain, isliye basic AOP features use karne ke liye alag se dependency add karne ki zarurat nahi padti.)
+
+Benefits of AOP :
+    1. Cleaner and more focused code
+    2. Reduced code Duplication
+    3. Enhanced Modularity
+    4. Loose coupling and enhanced flexibility
+
+Key concepts in AOP
+    • Aspect: an aspect is a module that encapsulates a single cross-cutting concern.
+        (Aspect ek module hota hai jo ek specific cross-cutting concern ko handle karta hai jaise logging, security ya transaction management.)
+    • Join Point: These are specific points in your program where you might want to inject additional behavior or logic.
+        (Join Point program ke wo specific points hote hain jaha hum additional logic add kar sakte hain, jaise method call, method execution, etc.)
+    • Advice: It's the code associated with an aspect that gets executed when a specific join point is reached.
+        (Advice wo code hota hai jo aspect me likha hota hai aur jab specified join point hit hota hai tab execute hota hai.)
+    • Pointcut: They are expressions that match certain join points.
+        (Pointcut ek expression hota hai jo define karta hai ki kaunse join points par advice apply hoga.)
+    • Weaving: This is the process by which aspects are integrated into the main business logic. It can happen at different times: compile-time, load-time, or even runtime.
+        (Weaving wo process hai jisme aspects ko main business logic ke sath integrate kiya jata hai. Ye compile time, load time ya runtime par ho sakta hai.)
+
+
+
+Steps :
+    A. Created 2 methods in services :
+        1. orderPackage(Long orderId) method
+            1. Prints a log message that order processing has started.
+                (Matlab system batata hai ki order process hona start ho gaya.)
+            2. Pauses the thread for 1 second to simulate order processing.
+                (Yani system 1 second rukta hai taaki lage ki order process ho raha hai.)
+            3. Logs an error if the thread gets interrupted while sleeping.
+                (Agar sleep ke time thread interrupt ho jaye to error log ho jayega.)
+            4. Returns a success message with the orderId.
+                (End me system batata hai ki order successfully process ho gaya.)
+        2. trackPackage(Long orderId) method
+            1. Prints a log message that package tracking has started.
+                (Matlab system batata hai ki package track ho raha hai.)
+            2. Pauses the thread for 0.5 seconds to simulate tracking delay.
+                (System aadha second rukta hai taaki tracking process jaisa lage.)
+            3. Throws a RuntimeException intentionally.
+                (Matlab jaan-bujh ke error throw kiya gaya hai.)
+            4. This is mainly used to demonstrate exception handling in AOP.
+                (Yeh AOP me exception handling dikhane ke liye use hota hai.)
+            5. If the thread is interrupted during sleep, it throws a RuntimeException.
+                (Agar sleep ke time thread interrupt ho jaye to RuntimeException throw ho jayega.)
+
+    B. Created 2 Test methods in test :
+        1. aopTestOrderPackage() test method
+            1. Calls the orderPackage() method with orderId 4.
+                (Yeh method orderPackage ko orderId 4 ke saath call karta hai.)
+            2. Stores the returned result in a variable.
+                (Return hone wala message ek variable me store hota hai.)
+            3. Prints the returned message in the logs.
+                (System log me success message print karta hai.)
+        2. aopTestTrackPackage() test method
+            1. Calls the trackPackage() method with orderId 4.
+                (Yeh method trackPackage ko orderId 4 ke saath call karta hai.)
+            2. The method throws a RuntimeException intentionally.
+                (Yeh method jaan-bujh kar RuntimeException throw karta hai.)
+            3. This is usually used to test AOP exception handling.
+                (Yeh usually AOP me exception handling test karne ke liye use hota hai.)
+
+    C. Created aspects > LoggingAspects class
+        Used @Aspect annotation
+        @Before Advice
+            1. This advice runs before any method of ShipmentServiceImpl is executed.
+                (Matlab ShipmentServiceImpl ke kisi bhi method ke chalne se pehle ye advice run hoti hai.)
+            2. The pointcut expression selects all methods inside ShipmentServiceImpl.
+                (Yeh pointcut ShipmentServiceImpl ke andar ke sabhi methods ko select karta hai.)
+            3. When any method is called, this advice runs first.
+                (Jab bhi koi method call hota hai, sabse pehle ye advice execute hoti hai.)
+            4. It receives JoinPoint which contains method details.
+                (JoinPoint me method ki information hoti hai jaise method name.)
+            5. It prints the method signature in the log.
+                (Yeh log me method ka naam print karta hai.)
+
+    D. Running the test cases :
+        A. When tests run WITHOUT AOP Aspect
+        1. aopTestOrderPackage()
+            Execution flow :
+                1. orderPackage() method is called.
+                   (orderPackage method directly call hota hai.)
+                2. Log prints → "Processing the order..."
+                   (System batata hai ki order process ho raha hai.)
+                3. Thread pauses for 1 second.
+                   (System 1 second rukta hai.)
+                4. Method returns success message.
+                   (Order successfully process hone ka message return hota hai.)
+                5. Test prints the returned message in logs.
+                   (Log me success message print hota hai.)
+            Example log output :
+                Processing the order...
+                Order has been processed successfully, orderId: 4
+
+        2. aopTestTrackPackage()
+            Execution flow :
+                1. trackPackage() method is called.
+                   (trackPackage method directly call hota hai.)
+                2. Log prints → "Tracking the order..."
+                   (System batata hai ki package track ho raha hai.)
+                3. Thread pauses for 0.5 second.
+                   (System aadha second rukta hai.)
+                4. RuntimeException is thrown intentionally.
+                   (Method jaan-bujh ke exception throw karta hai.)
+                5. Test fails because exception occurs.
+                   (Test fail ho jata hai kyunki exception aata hai.)
+            Example log output :
+                Tracking the order...
+                RuntimeException: Exception occurred during trackPackage
+
+        ------------------------------------------------------------
+
+        B. When tests run WITH AOP Aspect (@Before Advice)
+        1. aopTestOrderPackage()
+            Execution flow :
+                1. Before advice runs first.
+                   (Sabse pehle AOP advice run hoti hai.)
+                2. Log prints → "Before method called : orderPackage(..)"
+                   (AOP log me method name print karta hai.)
+                3. orderPackage() method starts.
+                   (Actual service method run hota hai.)
+                4. Log prints → "Processing the order..."
+                   (System batata hai ki order process ho raha hai.)
+                5. Thread pauses for 1 second.
+                   (System 1 second rukta hai.)
+                6. Method returns success message.
+                   (Order successfully process hone ka message return hota hai.)
+                7. Test prints the message in logs.
+                   (Log me success message print hota hai.)
+            Example log output :
+                Before method called : orderPackage(..)
+                Processing the order...
+                Order has been processed successfully, orderId: 4
+
+        2. aopTestTrackPackage()
+            Execution flow :
+                1. Before advice runs first.
+                   (Sabse pehle AOP advice run hoti hai.)
+                2. Log prints → "Before method called : trackPackage(..)"
+                   (AOP method ka naam log karta hai.)
+                3. trackPackage() method starts.
+                   (Actual service method run hota hai.)
+                4. Log prints → "Tracking the order..."
+                   (System batata hai ki package track ho raha hai.)
+                5. Thread pauses for 0.5 second.
+                   (System aadha second rukta hai.)
+                6. RuntimeException is thrown intentionally.
+                   (Method jaan-bujh ke exception throw karta hai.)
+                7. Test fails due to exception.
+                   (Test fail ho jata hai.)
+            Example log output :
+                Before method called : trackPackage(..)
+                Tracking the order...
+                RuntimeException: Exception occurred during trackPackage
