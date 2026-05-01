@@ -1,0 +1,204 @@
+Advice :
+    Declaring Advice
+        1. Advice is associated with a pointcut expression and runs before, after, or around method executions matched by the pointcut. The pointcut expression may be either an inline pointcut or a reference to a named pointcut.
+            (Advice ek pointcut expression ke sath linked hota hai aur wo matched methods ke execution se pehle, baad me ya around run karta hai. Pointcut expression inline bhi ho sakta hai ya kisi named pointcut ka reference bhi ho sakta hai.)
+        2. So far we have been using the @Before Advice annotation simply. Spring AOP, however, provides more interesting functionalities.
+            (Ab tak hum sirf @Before advice use kar rahe the, lekin Spring AOP aur bhi advanced functionalities provide karta hai.)
+
+    Code :
+        1. @Before advice (Runs before the method) :
+            We can capture the JointPoint at the @Before annotated method which offers us much useful information like the method name, method arguments and many more
+                (Hum @Before annotated method me JoinPoint ko capture kar sakte hain, jo hume useful information deta hai jaise method ka naam, method ke arguments, aur bhi details.)
+            This advice runs before the execution of a method matched by the pointcut expression. It is used to execute logic before the actual business method runs.
+             (Ye advice pointcut ke through matched method ke execute hone se pehle run hota hai. Iska use actual business method se pehle kuch logic run karne ke liye hota hai, jaise logging, validation, etc.)
+            Example :
+                  @Before("execution(* com.shikhilrane.aop.aopApp.services.*.*(..))")
+                  public void beforeMethod() {
+                      // Advice code
+                  }
+            From code :
+                1. @Before advice
+                   - Runs before the execution of a matched method.
+                   (Ye advice matched method ke execute hone se pehle run hota hai.)
+                2. @Pointcut("execution(* com.shikhilrane.aop.aopApp.services.impl.*.*(..))")
+                   - Defines a reusable pointcut for all methods in services.impl package.
+                   (Ye services.impl package ki sabhi classes ke sabhi methods ko target karta hai.)
+                3. allServiceMethodsPointCut()
+                   - Name of the pointcut method.
+                   (Ye pointcut method ka naam hai jise advice me use kiya jata hai.)
+                4. @Before("allServiceMethodsPointCut()")
+                   - Connects the advice with the defined pointcut.
+                   (Ye advice ko defined pointcut ke sath connect karta hai.)
+                5. beforeServiceMethodCalls(JoinPoint joinPoint)
+                   - Advice method that gets executed before the actual method.
+                   (Ye advice method hai jo actual method se pehle execute hota hai.)
+                6. JoinPoint
+                   - Provides information about the method being executed.
+                   (JoinPoint hume method ki information deta hai jo execute hone wala hai.)
+                7. joinPoint.getSignature()
+                   - Returns method details like name and class.
+                   (Ye method ka naam aur class detail return karta hai.)
+                8. log.info(...)
+                   - Logs a message before method execution.
+                   (Method execute hone se pehle log message print hota hai.)
+
+        2. @After advice (Runs after the method) :
+            @After advice runs after the method finishes execution, whether it completes normally or throws an exception.
+             (@After advice method ke execution ke baad run hota hai, chahe method normally complete ho ya exception throw kare.)
+            Example :
+                  @After("execution(* com.shikhilrane.aop.aopApp.services.*.*(..))")
+                  public void afterMethod() {
+                      // Advice code
+                  }
+            From Code :
+                1. @After advice
+                   - Runs after the execution of a matched method.
+                   (Ye advice matched method ke execute hone ke baad run hota hai.)
+                2. Works for both cases
+                   - Executes after normal completion or exception.
+                   (Ye normal completion aur exception dono cases me run hota hai.)
+                3. @After("allServiceMethodsPointCut()")
+                   - Connects the advice with the defined pointcut.
+                   (Ye advice ko defined pointcut ke sath connect karta hai.)
+                4. afterServiceMethodCalls(JoinPoint joinPoint)
+                   - Advice method executed after method execution.
+                   (Ye advice method hai jo method ke baad execute hota hai.)
+                5. JoinPoint
+                   - Provides method details.
+                   (JoinPoint method ki details deta hai.)
+                6. joinPoint.getSignature()
+                   - Returns method name and class details.
+                   (Ye method ka naam aur class detail batata hai.)
+                7. log.info(...)
+                   - Logs message after method execution.
+                   (Method execute hone ke baad log message print hota hai.)
+
+        3. @AfterReturning advice (Runs after the method only when method successfully return) :
+            @AfterReturning advice is similar to @After advice, but it runs only after the method completes successfully (no exception).
+                (@AfterReturning advice @After jaisa hi hota hai, lekin ye sirf tab run hota hai jab method successfully complete ho jaye, bina kisi exception ke.)
+            It can also be used to access the returned value of the method.
+                (Iska use method ke return hone wale object/value ko access karne ke liye bhi kiya ja sakta hai.)
+            Example :
+                @AfterReturning(pointcut = "execution(* com.shikhilrane.aop.aopApp.services.*.*(..))", returning = "result")
+                public void afterReturningMethod(Object result) {
+                    // Advice code
+                }
+            From code :
+                1. @AfterReturning advice
+                   - Runs only after successful method execution.
+                   (Ye sirf successful execution ke baad run hota hai.)
+                2. value = "allServiceMethodsPointCut()"
+                   - Connects advice with the defined pointcut.
+                   (Ye advice ko defined pointcut ke sath connect karta hai.)
+                3. returning = "returnedObj"
+                   - Captures the returned value of the method.
+                   (Ye method ke return value ko capture karta hai.)
+                4. Object returnedObj
+                   - Holds the returned value.
+                   (Ye variable method ka returned value store karta hai.)
+                5. JoinPoint
+                   - Provides method details.
+                   (JoinPoint method ki details deta hai.)
+                6. joinPoint.getSignature()
+                   - Returns method name and class details.
+                   (Ye method ka naam aur class detail batata hai.)
+                7. log.info(...)
+                   - Logs method details and returned value.
+                   (Ye method details aur returned value dono print karta hai.)
+
+        4. @AfterThrowing advice (Runs after the method only when method throws exception):
+            @AfterThrowing advice is similar to @After advice, but it runs only when a method throws an exception.
+                (@AfterThrowing advice @After jaisa hi hota hai, lekin ye sirf tab run hota hai jab method execution ke time exception throw hoti hai.)
+            It can also be used to capture and handle the exception.
+                (Iska use exception ko capture karne aur handle karne ke liye bhi kiya ja sakta hai.)
+            Example :
+                @AfterThrowing(pointcut = "execution(* com.shikhilrane.aop.aopApp.services.*.*(..))", throwing = "ex")
+                public void afterThrowingMethod(Exception ex) {
+                    // Advice code
+                }
+            From code :
+                1. @AfterThrowing advice
+                   - Runs only when a method throws an exception.
+                   (Ye sirf tab run hota hai jab method execution ke time exception throw hoti hai.)
+                2. @AfterThrowing("allServiceMethodsPointCut()")
+                   - Connects advice with the defined pointcut.
+                   (Ye advice ko defined pointcut ke sath connect karta hai.)
+                3. afterServiceMethodCallsThrows(JoinPoint joinPoint)
+                   - Advice method executed on exception.
+                   (Ye advice method hai jo exception aane par execute hota hai.)
+                4. JoinPoint
+                   - Provides method details.
+                   (JoinPoint method ki details deta hai.)
+                5. joinPoint.getSignature()
+                   - Returns method name and class details.
+                   (Ye method ka naam aur class detail batata hai.)
+                6. log.info(...)
+                   - Logs message when exception occurs.
+                   (Jab exception aati hai tab log message print hota hai.)
+
+        5. @Around advice
+            @Around advice allows us to execute logic before and after a method (JoinPoint) runs.
+                (@Around advice hume method (JoinPoint) ke run hone se pehle aur baad me logic execute karne deta hai.)
+            It gives full control over method execution.
+                (Ye method execution par full control deta hai.)
+            We can:
+                1. Run code before and after the method.
+                   (Method ke pehle aur baad me code run kar sakte hain.)
+                2. Modify or return a custom value.
+                   (Custom value return kar sakte hain ya result modify kar sakte hain.)
+                3. Throw an exception if needed.
+                   (Agar zarurat ho to exception throw kar sakte hain.)
+                4. Decide whether to call the actual method or not.
+                   (Ye decide kar sakte hain ki actual method call karna hai ya nahi.)
+            From code
+                5.1
+                1. @Around advice
+                   - Runs before and after method execution.
+                   (Ye method ke pehle aur baad dono me run hota hai.)
+                2. ProceedingJoinPoint
+                   - Used to control method execution.
+                   (Iska use method execution control karne ke liye hota hai.)
+                3. proceed()
+                   - Calls the actual method.
+                   (Ye actual method ko call karta hai.)
+                4. startTime & endTime
+                   - Used to measure execution time.
+                   (Execution time calculate karne ke liye use hota hai.)
+                5. diff (endTime - startTime)
+                   - Calculates time taken by method.
+                   (Method ko run hone me kitna time laga wo batata hai.)
+                6. getSignature()
+                   - Returns method details.
+                   (Method ka naam aur detail deta hai.)
+                7. return returnedValue
+                   - Returns original method result.
+                   (Original method ka result return karta hai.)
+
+                5.1
+                1. @Around advice
+                   - Runs before and after method execution and gives full control.
+                   (Ye method ke pehle aur baad dono time run hota hai aur full control deta hai.)
+                2. allServiceMethodsPointCut()
+                   - Applies this advice to all matched service methods.
+                   (Ye advice sabhi matched service methods par apply hota hai.)
+                3. ProceedingJoinPoint
+                   - Used to control method execution.
+                   (Iska use method ko control karne ke liye hota hai.)
+                4. getArgs()
+                   - Gets method arguments.
+                   (Ye method ke arguments nikalta hai.)
+                5. orderId = args[0]
+                   - Takes first argument as orderId.
+                   (Ye first argument ko orderId maan raha hai.)
+                6. if (orderId > 0)
+                   - Checks if orderId is valid.
+                   (Ye check karta hai ki orderId valid hai ya nahi.)
+                7. proceed()
+                   - Calls the actual method.
+                   (Ye actual method ko call karta hai.)
+                8. return custom message
+                   - Skips method if condition fails and returns custom response.
+                   (Agar condition fail ho jaye to method ko skip karke custom message return karta hai.)
+                9. Key concept
+                   - @Around can stop method execution.
+                   (Ye method ko chalne se rok bhi sakta hai.)

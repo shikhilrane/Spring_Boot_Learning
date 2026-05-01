@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-@Aspect         // Used to mark a class as an Aspect in Spring AOP so it can contain advice methods like @Before, @After, etc.
+//@Aspect         // Used to mark a class as an Aspect in Spring AOP so it can contain advice methods like @Before, @After, etc.
 @Component
 @Slf4j
 public class LoggingAspect {
