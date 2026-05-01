@@ -40,7 +40,7 @@ public class LoggingAspectV2 {
         log.info("After throwing advice method call, {}", joinPoint.getSignature());    // Logs method details when an exception occurs
     }
 
-    // 5. @Around
+    // 5.1. @Around
     @Around("allServiceMethodsPointCut()")      // This advice runs before and after the matched method execution
     public Object logExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long startTime = System.currentTimeMillis();            // Captures start time before method execution
