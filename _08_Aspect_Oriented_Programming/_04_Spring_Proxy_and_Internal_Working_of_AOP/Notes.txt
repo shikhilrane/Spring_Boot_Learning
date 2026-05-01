@@ -1,0 +1,68 @@
+Spring Proxy :
+    1. Proxies are created only when certain conditions are met, such as when:
+        (Proxies sirf tab create hote hain jab kuch conditions meet hoti hain, jaise:)
+        • AOP (Aspect-Oriented Programming) is enabled, and there are pointcuts matching specific methods.
+          (Jab AOP enable hota hai aur pointcuts kisi specific methods ko match karte hain.)
+        • Spring features like @Transactional, @Cacheable, and @Async are used, which internally rely on proxies to apply cross-cutting concerns like transaction management, caching, or asynchronous method execution.
+          (Jab @Transactional, @Cacheable, aur @Async jaise features use hote hain jo internally proxies ka use karte hain cross-cutting concerns handle karne ke liye.)
+    2. If a Spring bean doesn’t need any cross-cutting functionality (like AOP, transaction management, caching, or async processing), no proxy will be created. Spring optimizes its proxy creation to avoid unnecessary overhead.
+        (Agar kisi bean ko cross-cutting functionality ki zarurat nahi hai to proxy create nahi hota. Spring unnecessary overhead avoid karne ke liye proxy creation optimize karta hai.)
+    3. If there is a need of AOP in the class and the pointcut matches a method, then the advice is executed first and then the actual method is executed.
+          (Agar class me AOP apply ho raha hai aur pointcut kisi method se match karta hai, to pehle advice execute hota hai aur phir actual method run hota hai.)
+
+How Proxies are managed? :
+    1. Proxies are created and managed by the Spring container (the ApplicationContext).
+        (Proxies Spring container (ApplicationContext) ke through create aur manage hote hai.)
+    2. When Spring determines that a bean needs to be proxied (due to AOP advice, transaction management, caching, etc.), it creates a proxy for the bean instead of instantiating the bean directly.
+        (Jab Spring decide karta hai ki kisi bean ko proxy banana hai (AOP, transaction, caching ki wajah se), to wo direct bean banane ke bajaye uska proxy create karta hai.)
+        • This proxy wraps around the actual bean and adds additional behavior (advice) before and after the actual method calls.
+          (Yeh proxy actual bean ke around wrap hota hai aur method call ke pehle aur baad extra behavior (advice) add karta hai.)
+        • Thus, proxies are stored in place of the actual beans in the ApplicationContext.
+          (Isliye ApplicationContext me actual bean ki jagah proxy store hota hai.)
+    3. Whenever a client retrieves a bean (e.g., via @Autowired or context.getBean()), what they receive is the proxy object, if proxying is enabled for that bean.
+        (Jab bhi client bean leta hai (@Autowired ya getBean se), to use actual bean nahi balki proxy object milta hai agar proxy enabled ho.)
+    4. Proxy first intercepts the method call, applies validation/security, and only if everything passes then it executes the actual method.
+        (Proxy pehle method call ko intercept karta hai, uspe validation/security lagata hai, aur sab pass ho jaye tabhi actual method chalata hai.)
+
+How Proxy are created? :
+    1. Spring AOP typically relies on dynamic proxies (JDK dynamic proxies or CGLIB proxies) to implement the interception of method calls.
+        (Spring AOP usually dynamic proxies use karta hai (JDK ya CGLIB) taaki method calls ko intercept kar sake.)
+        • JDK Dynamic Proxies: If the target object implements one or more interfaces, Spring uses JDK dynamic proxies. The proxy is created at runtime, implementing the same interfaces as the target object.
+          (JDK Dynamic Proxy: Agar target object ek ya zyada interfaces implement karta hai, to Spring JDK dynamic proxy use karta hai. Proxy runtime pe create hota hai aur same interfaces implement karta hai jo target object karta hai.)
+        • CGLIB Proxies: If the target object doesn’t implement any interfaces, Spring uses CGLIB, which generates a subclass of the target class at runtime to create the proxy.
+          (CGLIB Proxy: Agar target object koi interface implement nahi karta, to Spring CGLIB use karta hai, jo runtime pe target class ka subclass bana ke proxy create karta hai.)
+    2. When a method on the proxy object is called, the proxy intercepts the method call and applies the advice around it.
+        (Jab proxy object ka method call hota hai, to proxy us call ko intercept karta hai aur uske around advice apply karta hai.)
+
+How Proxies are used?
+    1. When Spring starts up, it scans the classes for aspects and applies the advice to the relevant beans based on the pointcuts.
+       (Jab Spring start hota hai, wo classes ko scan karta hai aspects ke liye aur pointcuts ke basis pe sahi beans par advice apply karta hai.)
+    2. For each bean, Spring determines whether it needs to be proxied (based on whether any methods match a pointcut).
+       (Har bean ke liye Spring check karta hai ki usko proxy banana hai ya nahi, yani koi method pointcut se match ho raha hai ya nahi.)
+    3. If proxying is needed, Spring creates a proxy object that wraps the original bean.
+       (Agar proxy ki zarurat ho, toh Spring ek proxy object banata hai jo original bean ko wrap karta hai.)
+    4. When a client calls a method on the proxied bean, the call is intercepted by the proxy. The proxy determines if there is any advice that should be applied based on the pointcuts.
+       (Jab client proxied bean ka method call karta hai, toh proxy us call ko intercept karta hai aur check karta hai ki koi advice apply karni hai ya nahi.)
+    5. If the method does not match any pointcuts, the proxy delegates the call directly to the target object without applying any advice.
+       (Agar method kisi pointcut se match nahi karta, toh proxy bina koi advice lagaye direct actual object ko call forward kar deta hai.)
+    6. If advice exists, the proxy executes the advice (e.g., logging, transaction management) before, after, or around the actual method invocation.
+       (Agar advice exist karti hai, toh proxy actual method ke pehle, baad me ya around logging/transaction jaise kaam execute karta hai.)
+    7. The most powerful type of advice is @Around. It allows you to control the execution of the target method by calling ProceedingJoinPoint.proceed().
+       You can choose to execute code before and after the target method execution or even decide not to execute it at all.
+       (Sabse powerful advice @Around hoti hai, jisme tum control kar sakte ho ki method chale ya nahi, aur uske pehle/baad kya execute ho.)
+    8. After the advice has been executed, control is returned to the original method.
+       (Advice execute hone ke baad control wapas original method ko milta hai.)
+    9. Any results returned by the method or exceptions thrown are then passed back to the caller.
+       (Method ka result ya exception fir caller ko wapas de diya jata hai.)
+
+Weaving
+    1. In addition to dynamic proxies, Spring AOP can use a process called weaving for bytecode manipulation. Weaving is the process of injecting aspects into the target class bytecode at different points in the lifecycle.
+        (Spring AOP me sirf dynamic proxy hi nahi, balki weaving naam ka process bhi use hota hai jisme bytecode me aspects inject kiye jate hain lifecycle ke alag-alag stages par.)
+    2. Compile-time Weaving: Aspects are woven into the code during the compilation process.
+        (Compile-time weaving me aspects compile hone ke time hi code me inject ho jate hain.)
+    3. Load-time Weaving: Aspects are woven when the class is loaded into the JVM.
+        (Load-time weaving me class jab JVM me load hoti hai tab aspects inject hote hain.)
+    4. Post-compilation Weaving: Aspects are woven after the classes have been compiled.
+        (Post-compilation weaving me classes compile hone ke baad aspects add kiye jate hain.)
+    5. Spring primarily uses dynamic proxies, but with AspectJ integration, load-time weaving or compile-time weaving can also be used for more complex scenarios.
+        (Spring mostly dynamic proxy use karta hai, lekin AspectJ ke sath load-time ya compile-time weaving bhi use hota hai complex cases me.)
