@@ -115,7 +115,11 @@ Types of Pointcut kind :
                - Logs a message before the annotated method is executed.
                (Jab annotated method run hone wala hota hai tab ye log message print karta hai.)
 
-    4. Pointcut declaration
+    4. Pointcut declaration :
+        If we have to use same aspect to different places, we use @Pointcut and use it directly anywhere we want, so we don't have to define same Pointcut again and again
+            (Agar hume same aspect multiple jagah use karna ho to hum @Pointcut use karke usse reuse kar sakte hain, jisse hume baar-baar same pointcut likhne ki zarurat nahi padti.)
+        also, Pointcut may become complex because we can use && and || with to join different Pointcut. In that case we can simply use @Pointcut
+            (Pointcut complex ho sakta hai kyuki hum && aur || use karke multiple pointcuts combine karte hain. Isliye hum ek baar @Pointcut me define karke usse easily reuse kar sakte hain.)
         The pointcut is defined separately using @Pointcut and then referenced by the advice annotations.
             (Pointcut ko alag se @Pointcut annotation ke sath define kiya jata hai aur phir advice annotations me use kiya jata hai.)
         Example :
@@ -128,3 +132,24 @@ Types of Pointcut kind :
                 System.out.println("Logging before method: " + joinPoint.getSignature());
             }
         From code :
+            1. @Pointcut("@annotation(...) && within(...)")
+               - Combines two conditions using && (AND).
+               (Ye do conditions ko && se combine karta hai.)
+            2. @annotation(com.shikhilrane.aop.aopApp.aspects.MyLogging)
+               - Targets methods annotated with @MyLogging.
+               (Ye un methods ko target karta hai jinke upar @MyLogging annotation laga hai.)
+            3. within(com.shikhilrane.aop.aopApp..*)
+               - Targets classes inside aopApp package and its sub-packages.
+               (Ye aopApp package aur uske sabhi sub-packages ki classes ko target karta hai.)
+            4. myLoggingAndAopMethodsPointCut()
+               - This is a reusable pointcut method.
+               (Ye ek reusable pointcut method hai jise multiple advices me use kar sakte hain.)
+            5. @After("myLoggingAndAopMethodsPointCut()")
+               - This advice runs after the matched method execution.
+               (Ye advice matched method execute hone ke baad run hota hai.)
+            6. afterTransationalAnnotationCalls()
+               - This is the advice method.
+               (Ye advice method hai jo pointcut match hone par execute hoga.)
+            7. log.info("After MyLogging Annotation calls")
+               - Logs a message after method execution.
+               (Method execute hone ke baad ye log message print hota hai.)
