@@ -1,0 +1,47 @@
+1. Security Aspect
+    Code :
+        @Aspect
+        @Component
+        public class SecurityAspect {
+            @Before("execution(* com.shikhilrane.aop.aopApp.services.*.*(..)) && @annotation(RequiresAdmin)")
+            public void checkAdminAccess() {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    // Get current logged-in user's authentication details
+                    // (Yaha current logged-in user ki authentication info milti hai)
+                if (!auth.getAuthorities().contains("ROLE_ADMIN")) {
+                        // Check if user has ADMIN role
+                        // (Check karta hai ki user ke paas ADMIN role hai ya nahi)
+                    throw new SecurityException("Only admins can access this resource.");
+                        // If not admin, throw exception and stop method execution
+                        // (Agar admin nahi hai toh error throw karke method ko rok deta hai)
+                }
+            }
+        }
+    Instead of using this here, we can simply use @Secured or @PreAuthorize annotations.
+        (Iske jagah hum direct @Secured ya @PreAuthorize annotations use kar sakte hain.)
+    But for complex logic where our use case is not covered by @Secured or @PreAuthorize, we can use a Security Aspect.
+        (Lekin jab logic complex ho aur @Secured/@PreAuthorize se handle na ho, tab hum Security Aspect use karte hain.)
+
+2. Caching Aspect : same as Security Aspect (Prefer Cacheble or other techniques)
+
+3. Auditing Aspect : same as Security Aspect (Prefer Spring Hibernate Envers for that)
+
+4. Exception handling Aspect : same as Security Aspect (Prefer Global handling functionality ith Springboot so we can prefer that)
+
+
+Do we really need AOP for these?
+    1. Transactional: For database transactions, @Transactional is sufficient, well-optimized, and easier to configure.
+      (Database transactions ke liye @Transactional kaafi hota hai, optimized hota hai aur configure karna easy hota hai.)
+    2. Security: For method-level security, @Secured, @PreAuthorize, and @RolesAllowed are often more straightforward than creating custom security aspects.
+      (Method-level security ke liye @Secured, @PreAuthorize aur @RolesAllowed use karna zyada simple hota hai instead of custom AOP banana.)
+    3. Validation: @Valid annotations provide built-in input validation at the controller and service level.
+      (@Valid annotation se input validation already mil jata hai controller aur service level par.)
+    4. Caching: @Cacheable is powerful and integrates directly with Spring’s caching abstraction, so custom caching with AOP is usually unnecessary unless you have a unique requirement.
+      (@Cacheable powerful hota hai aur direct Spring caching ke sath kaam karta hai, isliye custom AOP caching usually zaroori nahi hoti jab tak special case na ho.)
+
+
+Where to use AOP?
+    1. AOP is often better suited for advanced logging, monitoring, or profiling that applies across multiple layers of the application.
+        (AOP zyada useful hota hai advanced logging, monitoring ya profiling ke liye jo poore application ke multiple layers par apply hota hai.)
+    2. You may also use it for other tasks like caching, auditing, exception handling, etc. if the inbuilt methods are not sufficient for your use-case.
+        (Agar built-in features sufficient nahi hain, tab AOP ko caching, auditing, exception handling jaise kaam ke liye bhi use kar sakte hain.)
