@@ -1,0 +1,112 @@
+Introduction to Caching :
+    1. In this module we will understand things related to caching and we are going to deal with DB and DB operations quite a lot.
+       (Is module me hum caching se related cheeze samjhenge aur DB aur DB operations ke saath kaafi kaam karenge)
+
+    2. Caching is a way to retrieve data faster from cached memory, which is already fetched from DB and stored in cache.
+       (Caching ek tarika hai data ko fast retrieve karne ka, jo pehle se DB se fetch karke cache memory me store kiya gaya hota hai)
+
+    3. Caching allows you to efficiently reuse previously retrieved or computed data.
+       (Caching ka matlab hai ki jo data pehle se fetch ya compute ho chuka hai usko efficiently dobara use karna)
+
+    4. In computing, a cache is a high-speed data storage layer which stores a subset of data, typically transient in nature, so that future requests for that data are served up faster than is possible by accessing the data’s primary storage location.
+       (Computing me cache ek high-speed storage layer hoti hai jo data ka chhota hissa temporarily store karti hai, taaki future me jab wahi data chahiye ho toh wo primary storage se laane ke bajay fast mil sake)
+
+    5. There are 2 ways of caching :
+        1. CACHE MISS (Data not found in Cache memory so fetched from DB then stored in cached memory and returned to user)
+            +-------------+        1. Data request        +---------+        2. Read original        +-----------+
+            | Application | ----------------------------> |  Cache  | -----------------------------> |   Data    |
+            |             |                               |         |                                |   (DB)    |
+            |             | <---------------------------- |         | <----------------------------- |           |
+            +-------------+        4. Data response       +---------+        3. Copy to cache        +-----------+
+
+            Application → (1. Data request) → Cache
+                (Cache me data check karne ke liye request jati hai)
+            Cache → (2. Read original) → Data (DB)
+                (Agar cache me data nahi mila toh DB se data read hota hai)
+            Data (DB) → (3. Copy to cache) → Cache
+                (DB se data laake cache me store kiya jata hai)
+            Cache → (4. Data response) → Application
+                (Cache se data application ko return hota hai)
+
+        2. CACHE HIT (Data got from cached memory and returned the data directly from there)
+            +-------------+        1. Data request        +---------+
+            | Application | ----------------------------> |  Cache  |
+            |             |                               |         |
+            |             | <---------------------------- |         |
+            +-------------+        2. Data response      +---------+
+
+                                     +-----------+
+                                     |   Data    |
+                                     |   (DB)    |
+                                     +-----------+
+            Application → (1. Data request) → Cache
+                (Application cache se data maangta hai)
+            Cache → (2. Data response) → Application
+                (Cache me data already mil jata hai aur direct return hota hai, DB hit nahi hota)
+
+    6. CACHING IN MULTIPLE LAYERS
+           A. DNS :
+                1. Domain to IP Resolution
+                    (DNS ka matlab hai domain name ko IP address me convert karna)
+                2. When a user requests a website, their system or browser queries DNS servers to translate the domain name into an IP address.
+                    (Jab user kisi website ko open karta hai, uska system ya browser DNS servers se poochta hai domain ko IP address me convert karne ke liye)
+                3. Caching these results means that repeated requests for the same domain are resolved faster, reducing the need for repetitive network lookups and improving overall browsing efficiency.
+                    (In results ko cache karne ka matlab hai ki same domain ke liye baar-baar request fast resolve hoti hai, network calls kam hoti hain aur browsing fast ho jati hai)
+                4. This is particularly beneficial for reducing latency and enhancing user experience by avoiding delays in domain resolution.
+                    (Ye latency kam karta hai aur user experience better banata hai kyunki domain resolution me delay avoid hota hai)
+
+           B. Web :
+                1. Accelerate retrieval of web content from web/app servers.
+                    (Web ka matlab hai web/app servers se content ko fast retrieve karna)
+                2. Web caching enhances performance by storing copies of frequently accessed Web pages, images, and other content.
+                    (Web caching performance improve karta hai frequently access hone wale web pages, images aur content ko store karke)
+                3. When users request content, the cache delivers it quickly without needing to retrieve it from the origin server, which reduces load times and server strain.
+                    (Jab user content request karta hai, cache directly fast data de deta hai bina origin server se laaye, jisse load time aur server load dono kam ho jata hai)
+                4. This not only speeds up content delivery but also reduces bandwidth usage and server costs.
+                    (Ye sirf speed nahi badhata balki bandwidth usage aur server cost bhi kam karta hai)
+                5. This is typically implemented using CDN.
+                    (Ye generally CDN use karke implement kiya jata hai)
+                6. Web caching is crucial for improving the responsiveness of web applications and ensuring a smoother, faster user experience.
+                    (Web caching web applications ko fast aur responsive banata hai aur better user experience deta hai)
+
+           C. Application :
+                1. Accelerate application performance and data access
+                    (Application ka matlab hai application ki performance aur data access ko fast banana)
+                2. Application caching improves performance by storing frequently accessed data and computational results closer to the application.
+                    (Application caching frequently use hone wale data aur computed results ko application ke paas store karta hai jisse performance improve hoti hai)
+                3. This reduces the need for repeated and time-consuming database queries or complex calculations.
+                    (Isse baar-baar hone wale slow database queries aur complex calculations ki need kam ho jati hai)
+                4. This is usually implemented by Memcached or Redis.
+                    (Ye usually Memcached ya Redis ke through implement kiya jata hai)
+                5. This caching is especially valuable for high-traffic applications, where it can significantly enhance scalability and reduce backend load.
+                    (Ye caching high-traffic applications ke liye bahut useful hoti hai jahan ye scalability badhati hai aur backend load kam karti hai)
+
+    7. Benefits of Caching :
+        • It make data access faster and less expensive
+          (Ye data access ko fast aur kam costly bana deta hai)
+        • It improves the performance of the application.
+          (Ye application ki performance improve karta hai)
+        • It gives responses quickly.
+          (Ye jaldi response deta hai)
+        • Data access from memory is always faster than fetching from database.
+          (Memory se data lena hamesha database se laane se fast hota hai)
+        • It reduces the costly backend requests.
+          (Ye backend ke expensive requests ko kam karta hai)
+
+    8. CACHING TERMINOLOGIES
+        Understanding caching involves several key concepts that are crucial for effective implementation and management:
+        (Caching ko samajhne ke liye kuch important concepts hote hain jo implementation aur management ke liye zaroori hote hain)
+            1. Cache Hit and Cache Miss
+                    (Cache Hit = data cache me mil gaya, Cache Miss = data cache me nahi mila)
+            2. Cache Eviction Policies
+                    (Cache me jagah khali karne ke rules)
+                LRU, LFU, FIFO, TTL based
+                    (LRU = Least Recently Used, LFU = Least Frequently Used, FIFO = First In First Out, TTL = Time based removal)
+            3. Cache Expiry and TTL
+                   (Cache ka data kitne time tak valid rahega)
+            4. Cache Loading Strategies
+                   (Cache me data kaise load hota hai)
+               Lazy Loading, Eager Loading or Cache Warming
+                   (Lazy = jab zarurat pade tab load, Eager = pehle se load, Warming = cache ko pehle se fill karna)
+            5. Cache size and capacity
+                    (Cache me kitna data store ho sakta hai)
