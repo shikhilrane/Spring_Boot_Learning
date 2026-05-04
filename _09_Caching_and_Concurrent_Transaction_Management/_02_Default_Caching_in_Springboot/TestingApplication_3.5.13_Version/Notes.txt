@@ -1,0 +1,89 @@
+SPRING BOOT DEFAULT CACHING
+    Spring Boot provides a Cache Abstraction API that allows us to use different cache providers to cache objects.
+    (Spring Boot ek Cache Abstraction API deta hai jisse hum alag-alag cache providers use kar sakte hain)
+
+                                                            Look in cache
+                              +----------------------+ ---------------------------> +-----------+
+                              |                      |                              |   Cache   |
+                              |                      | <--------------------------- +-----------+
+        Request for data ---> |   Spring Boot App    |      Returned cached data
+                              |                      |
+                              |                      |     Fetch from db
+                              +----------------------+ --------------------------->   __________
+                                                                                      |        |
+                                                                                      |   DB   |
+                                                                                      |________|
+
+                Flow:
+                    1. Application request aati hai Spring Boot app pe
+                       (User request backend tak aati hai)
+                    2. Spring Boot pehle cache me check karta hai
+                       (Cache hit/miss check hota hai)
+                    3. Agar cache me data mil gaya → direct return
+                       (Cache hit → fast response)
+                    4. Agar cache me nahi mila → DB se fetch
+                       (Cache miss → DB hit)
+                    5. DB ka data cache me store hota hai + response return hota hai
+                       (Future requests fast ho jati hain)
+                    6. Ye local memory use karta he jese ki RAM
+                       (RAM me cache data save hota he)
+
+SPRING BOOT CACHING ANNOTATIONS
+
+1. @EnableCaching
+       It is a class level annotation to enable caching in spring boot application.
+            (Ye class level annotation hai jo Spring Boot application me caching enable karta hai)
+       By default it setup a CacheManager and creates in-memory cache using one concurrent HashMap.
+            (By default ye CacheManager setup karta hai aur in-memory cache create karta hai using concurrent HashMap)
+2. @Cacheable
+       It is a method level annotation.
+            (Ye method level annotation hai)
+       It is used in the method whose response is to be cached.
+            (Ye us method par use hota hai jiska response cache karna hota hai)
+       The Spring boot manages the request and response of the method to the cache that is specified in the annotation attribute.
+            (Spring Boot request aur response ko manage karta hai aur specified cache me store karta hai jo annotation me diya hota hai)
+3. @CachePut
+   It is a method-level annotation. It is used to update the cache after the method is executed.
+        (Ye method level annotation hai. Ye method execute hone ke baad cache update karta hai)
+   By doing this, the result is put into the cache and the method is executed every time.
+        (Isme method hamesha execute hota hai aur result cache me store/update hota hai)
+   It has the same attributes as the @Cacheable annotation.
+        (Iske attributes @Cacheable jaise hi hote hain)
+4. @CacheEvict
+   It is a method-level annotation. It is used to remove data from the cache.
+        (Ye method level annotation hai. Ye cache se data remove karta hai)
+   When a method is annotated with this, the method is executed and the cache entry is removed (evicted).
+        (Jab method par ye annotation lagta hai, tab method execute hota hai aur cache entry remove ho jati hai)
+
+Steps :
+    1. We do not need to add any caching-related dependency for Spring Boot default caching.
+       (Spring Boot ke default caching ke liye alag se dependency add karne ki zarurat nahi hoti)
+    2. We can implement caching at any layer, such as the controller, service, or database layer, but we should avoid implementing caching at the controller layer.
+       (Caching kisi bhi layer par implement kar sakte hain jaise controller, service ya DB, lekin controller layer par caching avoid karni chahiye)
+    3. It is a good practice to implement caching at the service layer because the service layer retrieves data.
+       (Best practice ye hai ki caching service layer par karein kyunki service layer hi data retrieve karti hai)
+    4. Enable caching in the project by creating a configuration class named CachingConfig in the config folder and using @EnableCaching in that class.
+       (Project me caching enable karne ke liye config folder me CachingConfig naam ki class banao aur usme @EnableCaching annotation use karo)
+    5. Apply the @Cacheable annotation to the getEmployeeById method in EmployeeServiceImpl so that the data returned by this method is cached.
+       @Cacheable has multiple properties like,
+               value / cacheNames : Used to specify the cache name (both are aliases of each other).
+                                    (Cache ka naam dene ke liye use hota hai, dono same kaam karte hain)
+               key : Used to define a specific key for storing and retrieving cache data (supports SpEL).
+                     (Cache me data store/retrieve karne ke liye custom key define karte hain, SpEL use hota hai)
+               keyGenerator : Used to define a custom key generator instead of the default one.
+                              (Default key ke jagah custom key generate karne ke liye use hota hai)
+               condition : Caches the data only if the given condition is true (evaluated before method execution).
+                           (Condition true hone par hi cache hota hai, method execute hone se pehle check hota hai)
+               unless : Skips caching if the condition is true (evaluated after method execution).
+                        (Agar condition true ho toh cache nahi hota, method ke baad check hota hai)
+               sync : Ensures only one thread loads the cache value for the same key at a time.
+                      (Ek hi key ke liye ek time par sirf ek thread cache load kare, race condition avoid hoti hai)
+
+       (EmployeeServiceImpl ke getEmployeeById method par @Cacheable lagao taaki is method se aane wala data cache ho jaye)
+    6. Now, go to Postman and create an employee.
+       When we call getEmployeeById for the first time, Hibernate runs an SQL query to fetch data from the database and stores it in cache memory.
+        (Jab hum pehli baar getEmployeeById call karte hain, tab Hibernate DB se data fetch karta hai aur cache memory me store karta hai)
+       When we call getEmployeeById again for the same employee, Hibernate does not run the query, and the data is retrieved from cache memory (in-memory RAM).
+        (Jab hum same employee ke liye dubara getEmployeeById call karte hain, tab Hibernate query run nahi karta aur data cache memory (RAM) se milta hai)
+       Also, the time required to retrieve the data is reduced. We can observe this in Postman.
+        (Isse data retrieve karne ka time bhi kam ho jata hai, jo hum Postman me dekh sakte hain)
