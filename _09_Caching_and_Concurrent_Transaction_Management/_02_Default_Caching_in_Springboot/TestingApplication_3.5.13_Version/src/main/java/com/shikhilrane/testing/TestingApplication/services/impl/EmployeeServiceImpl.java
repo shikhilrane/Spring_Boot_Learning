@@ -8,6 +8,8 @@ import com.shikhilrane.testing.TestingApplication.services.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final ModelMapper modelMapper;
+    private final String CACHE_NAME = "employees";
 
     @Override
-    @Cacheable(cacheNames = "employees", key = "#id")
+    @Cacheable(cacheNames = CACHE_NAME, key = "#id")
     public EmployeeDto getEmployeeById(Long id) {
         log.info("Fetching employee with id: {}", id);
         Employee employee = employeeRepository.findById(id)
@@ -35,6 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @CachePut(cacheNames = CACHE_NAME, key = "#result.id")
     public EmployeeDto createNewEmployee(EmployeeDto employeeDto) {
         log.info("Creating new employee with email: {}", employeeDto.getEmail());
         List<Employee> existingEmployees = employeeRepository.findByEmail(employeeDto.getEmail());
@@ -50,6 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @CachePut(cacheNames = CACHE_NAME, key = "#id")
     public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto) {
         log.info("Updating employee with id: {}", id);
         Employee employee = employeeRepository.findById(id)
@@ -70,6 +75,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @CacheEvict(cacheNames = CACHE_NAME, key = "#id")
     public void deleteEmployee(Long id) {
         log.info("Deleting employee with id: {}", id);
         boolean exists = employeeRepository.existsById(id);

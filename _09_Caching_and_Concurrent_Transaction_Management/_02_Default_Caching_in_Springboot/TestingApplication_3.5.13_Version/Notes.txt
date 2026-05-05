@@ -78,7 +78,6 @@ Steps :
                         (Agar condition true ho toh cache nahi hota, method ke baad check hota hai)
                sync : Ensures only one thread loads the cache value for the same key at a time.
                       (Ek hi key ke liye ek time par sirf ek thread cache load kare, race condition avoid hoti hai)
-
        (EmployeeServiceImpl ke getEmployeeById method par @Cacheable lagao taaki is method se aane wala data cache ho jaye)
     6. Now, go to Postman and create an employee.
        When we call getEmployeeById for the first time, Hibernate runs an SQL query to fetch data from the database and stores it in cache memory.
@@ -87,3 +86,24 @@ Steps :
         (Jab hum same employee ke liye dubara getEmployeeById call karte hain, tab Hibernate query run nahi karta aur data cache memory (RAM) se milta hai)
        Also, the time required to retrieve the data is reduced. We can observe this in Postman.
         (Isse data retrieve karne ka time bhi kam ho jata hai, jo hum Postman me dekh sakte hain)
+    7. Update :
+           Now, when we update the data using the updateEmployee method, the data is updated in the database, but the changes are not reflected when calling getEmployeeById().
+            (Jab hum updateEmployee method se data update karte hain, tab DB me data update ho jata hai, lekin getEmployeeById() call karne par updated data reflect nahi hota)
+           To ensure that the updated data is also reflected in getEmployeeById(), we need to use the @CachePut annotation on the updateEmployee method.
+            (Updated data getEmployeeById() me reflect ho iske liye hume updateEmployee method par @CachePut annotation use karna padta hai)
+           Now, when we update the employee using the updateEmployee() method, the data is updated in both the database and the cache. As a result, getEmployeeById() will return the updated employee details.
+            (Ab jab hum updateEmployee() method se employee update karte hain, to data DB aur cache dono me update hota hai, isliye getEmployeeById() method se updated details milti hain)
+    8. Post :
+            We can use the @CachePut annotation in the createNewEmployee() method. Here, the key should use the standard keyword "result" because the method does not take an id as input. So we use "#result.id", which means the id of the object returned after method execution.
+                (Hum createNewEmployee() method me @CachePut use kar sakte hain. Yaha key me "result" use karte hain kyunki method me id input me nahi hota. "#result.id" ka matlab hai method ke result se jo id generate hoti hai usko key ke roop me use karna)
+            As a result, when we call getEmployeeById(), it will take less time because the data is already available in the cache.
+                (Isse jab hum getEmployeeById() call karte hain, to time kam lagta hai kyunki data pehle se cache me available hota hai)
+    9. Delete :
+           We can use the @CacheEvict annotation in the deleteEmployee() method to remove the corresponding data from the cache when an employee is deleted from the database.
+            (Hum deleteEmployee() method me @CacheEvict use kar sakte hain taaki jab employee DB se delete ho, to uska data cache se bhi remove ho jaye)
+           Here, we use the same key (id) to evict the specific cache entry, for example: key = "#id".
+            (Yaha hum same key (id) use karte hain taaki specific cache entry remove ho sake, jaise: key = "#id")
+           This ensures that when getEmployeeById() is called again for that employee, it does not return stale data from the cache.
+            (Isse ensure hota hai ki jab getEmployeeById() dubara call ho, to cache se purana data (stale data) return na ho)
+           Optionally, we can use allEntries = true to clear all cache entries if needed.
+            (Agar zarurat ho to allEntries = true use karke pura cache bhi clear kar sakte hain)
