@@ -1,0 +1,119 @@
+REDIS :
+    1. Redis is a caching provider.
+       (Redis ek caching provider hai)
+    2. Redis is a key-value type of storage.
+       (Redis ek key-value type storage hai)
+    3. We can use Redis for caching, the pub-sub model (publisher and subscriber) like Kafka, and also as a database, but using it as a database can be costly.
+       (Redis ko caching, pub-sub model (publisher-subscriber) jaise Kafka, aur database ke roop me bhi use kar sakte hain, lekin database ke roop me use karna costly ho sakta hai)
+    4. Redis is widely used for caching, and we will also use Redis only for caching purposes. We will maintain a separate database and use Redis to cache that data.
+       (Redis ka sabse zyada use caching ke liye hota hai, aur hum bhi Redis ko sirf caching ke liye use karenge. Hum alag database rakhenge aur us data ko cache karne ke liye Redis use karenge)
+    5. Why should we not use in-memory caching for production-ready applications?
+       In-Memory Caching:
+           Suppose we have deployed our application on an EC2 instance and are using in-memory caching.
+           (Maan lo humne apni application EC2 par deploy ki hai aur in-memory caching use kar rahe hain)
+           As long as the application is running, the cache is available. But when the application stops or restarts, the in-memory cache is completely cleared.
+           (Jab tak application chal rahi hoti hai tab tak cache available hota hai, lekin application stop ya restart hote hi in-memory cache puri tarah erase ho jata hai)
+           For example, if cache data for 100 users is stored in memory and we deploy a new feature, the application restarts and all cached data for those users is lost.
+           (Agar memory me 100 users ka cached data stored hai aur hum new feature deploy karte hain, to application restart hone par un sab users ka cached data delete ho jata hai)
+       Redis Caching:
+           When we use Redis caching with our EC2 application, the cache is stored separately from the application because Redis runs as a separate server/service.
+           (Jab hum EC2 application ke saath Redis caching use karte hain, to cache application ke andar nahi balki alag Redis server/service me store hota hai)
+           Therefore, even if the application restarts, the cached data in Redis is not affected.
+           (Isliye agar application restart bhi ho jaye, tab bhi Redis ka cached data affect nahi hota)
+           Also, a single Redis server can be shared by multiple EC2 instances behind a load balancer.
+           (Ek hi Redis server ko multiple EC2 instances ke saath load balancer ke through use kiya ja sakta hai)
+    6. Installing and Using Redis :
+        Install the redis from homebrew using "brew install redis" command
+        Run redis server/service using "brew services start redis" command
+        Once the redis is running, you can test it by running "redis-cli"
+        set the name using "set name your_name"
+        set the name using "set password your_password"
+        Understanding Redis with following flow :
+            1. REDIS FLOW :
+                1. Install Redis
+                       ↓
+                2. Start Redis Server
+                       ↓
+                3. Open Redis CLI
+                       ↓
+                4. Store data in Redis
+                       ↓
+                5. Retrieve data from Redis
+                       ↓
+                6. Use Redis with Spring Boot for caching
+                       ↓
+                7. Stop Redis Server
+            2. STEP BY STEP :
+                1. INSTALL REDIS (Only one time)
+                    Mac : brew install redis
+                2. START REDIS SERVER
+                    brew services start redis
+                    OR
+                    redis-server
+                3. CHECK REDIS SERVER IS RUNNING
+                    redis-cli ping
+                    Output:
+                    PONG
+                4. OPEN REDIS CLI
+                    redis-cli
+                    Now terminal changes to : 127.0.0.1:6379>
+                    Matlab:
+                    Ab tu Redis ke andar hai
+                5. STORE DATA IN REDIS
+                    SET name "Shikhil"
+                    Output:
+                    OK
+                6. GET DATA FROM REDIS
+                    GET name
+                    Output:
+                    "Shikhil"
+                7. UPDATE DATA
+                    SET name "Rane"
+                    GET name
+                    Output:
+                    "Rane"
+                8. DELETE DATA
+                    DEL name
+                    Output:
+                    (integer) 1
+                9. SEE ALL KEYS :
+                    KEYS *
+                10. CLEAR ALL REDIS DATA :
+                    FLUSHALL
+                11. EXIT REDIS CLI
+                    exit
+                    OR
+                    quit
+                12. STOP REDIS SERVER
+                    brew services stop redis
+                    OR
+                    redis-cli shutdown
+            3. SPRING BOOT FLOW :
+                Client Request
+                      ↓
+                Spring Boot
+                      ↓
+                Check Redis Cache
+                      ↓
+                --------------------------
+                | Cache Hit              |
+                | Data found in Redis    |
+                | Return data directly   |
+                --------------------------
+                OR
+                --------------------------
+                | Cache Miss             |
+                | Data not found         |
+                | Fetch from DB          |
+                | Store in Redis         |
+                | Return response        |
+                --------------------------
+            4. IMPORTANT :
+                Redis = Separate server
+                Spring Boot default cache:
+                    → In-memory RAM
+                    → Lost after restart
+                Redis cache:
+                    → Separate process/server
+                    → Survives app restart
+                    → Shared among multiple apps
