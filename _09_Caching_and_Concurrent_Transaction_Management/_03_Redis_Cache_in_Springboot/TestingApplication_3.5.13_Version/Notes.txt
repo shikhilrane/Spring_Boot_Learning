@@ -117,3 +117,112 @@ REDIS :
                     → Separate process/server
                     → Survives app restart
                     → Shared among multiple apps
+    7. Configure Redis in Spring-boot Application :
+        1. Add dependency in pom.xml :
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+            </dependency>
+        2. Configuration :
+            spring.cache.type=redis                             # Tells Spring Boot to use Redis as the caching provider.
+            spring.data.redis.host=your-redis-host              # Specifies the hostname/IP address of the Redis server.
+            spring.data.redis.port=your-redis-port              # Specifies the port number on which the Redis server is running.
+            spring.data.redis.password=your-redis-password      # Specifies the password used to connect to the Redis server.
+            spring.data.redis.ssl.enabled=false                 # Enables or disables SSL connection for Redis communication.
+        3. We also need to implement Serializable in the DTO class so that objects can be stored in Redis cache.
+           (Hume DTO class me Serializable implement karna padta hai taaki objects Redis cache me store ho sake)
+        4. In Redis CLI, if we run the command "KEYS *", it shows all cached employees with names in the format: CACHE_NAME::ID (CACHE_NAME is variable that we created in service)
+           (Redis CLI me agar hum "KEYS *" command chalate hain, to cache me stored employees CACHE_NAME::ID format me dikhte hain)
+        5. When we check the CacheManager interface, we can see that it is also implemented by RedisCacheManager.
+           (Jab hum CacheManager interface check karte hain, tab hume dikhta hai ki RedisCacheManager bhi usko implement karta hai)
+        6. As of now, we are using a localhost Redis server, but in production-grade applications, we should not use a localhost server.
+           (Abhi hum localhost Redis server use kar rahe hain, lekin production-grade applications me localhost server use nahi karna chahiye)
+           To overcome this:
+               1. We can create a separate server to store Redis cache.
+                  (Hum Redis cache store karne ke liye alag server bana sakte hain)
+               2. We can use third-party providers that offer managed cache servers. These providers may use Redis or other caching technologies such as Hazelcast, EhCache, or Caffeine.
+                  (Hum third-party providers use kar sakte hain jo managed cache servers provide karte hain. Ye Redis ya Hazelcast, EhCache, Caffeine jaise caching technologies use kar sakte hain)
+           We will use Redis Cloud as the third-party provider.
+           (Hum Redis Cloud ko third-party provider ke roop me use karenge)
+        7. Create Redis account
+            1. Creating cache DB :
+                From Dashboard
+                > create database
+                > Choose free plan
+                > Database name : "cache-spring"
+                > vendor : aws
+                > Region : Asia Pacific (Mumbai) ap-south-1
+                > Create Database
+            2. After creating the database, a cache DB will be created for us and we will get a public endpoint for it.
+                  (Database create hone ke baad hume cache DB aur uska public endpoint mil jayega)
+            3. Now we can connect this database using Redis CLI, Client, or Redis Insight.
+                  (Ab hum is database ko Redis CLI, Client ya Redis Insight se connect kar sakte hain)
+               Select Redis Insight so that it redirects to the Redis Insight desktop application.
+                  (Redis Insight select karo taaki Redis Insight desktop app open ho jaye)
+               Sign in there and then click : "Launch Redis Insight Desktop"
+               so that the browser automatically connects the DB to the desktop application.
+                  (Waha sign-in karo aur "Launch Redis Insight Desktop" par click karo taaki browser automatically desktop app se connect ho jaye)
+
+           4. Connect the Redis DB to the Spring Boot application:
+              Copy the "Public Endpoint" and use it in application.properties for host and port.
+                  (Public Endpoint copy karke application.properties me host aur port me use karo)
+              Also provide the password from:
+              Browser > Security
+                  (Aur browser ke Security section se password bhi provide karo)
+        8. Run the application:
+           1. Make a GET request from Postman.
+              For the first request, it may take more time (around 1 second) compared to localhost because now the request goes over the network.
+              After that, response time will be reduced because the data will come from Redis cache.
+              (Postman se GET request bhejo. Pehli request localhost se thodi slow ho sakti hai kyuki ab network request ja rahi hai. Uske baad response fast ho jayega kyuki data Redis cache se aayega)
+           2. Open the Redis Insight application and refresh the tab.
+              We will be able to see the data stored inside the Redis database.
+              (Redis Insight app open karke refresh karo, fir hume Redis DB ke andar stored data dikh jayega)
+
+        SPRINGBOOT APP CONNECTED TO REDIS DB
+
+        9. We can configure more cache settings here:
+           We know that this application is using the RedisCacheManager class, so we can configure it inside the CachingConfig class by returning a CacheManager bean from there.
+               (Hume pata hai ki ye application RedisCacheManager class use kar rahi hai, isliye hum usko CachingConfig class me CacheManager bean return karke configure kar sakte hain)
+           This bean creates a RedisCacheManager for managing cache operations using Redis.
+               (Ye bean Redis ka use karke cache operations manage karne ke liye RedisCacheManager create karta hai)
+           It also adds a custom prefix ("my-redis-") before cache names stored in Redis.
+               (Ye Redis me store hone wale cache names ke pehle custom prefix "my-redis-" add karta hai)
+        10. Time duration of data in Redis DB:
+            1. In the Redis Insight application, we can see "No Limit", which indicates that the cache entry will never be removed automatically.
+                   (Redis Insight application me "No Limit" dikhata hai, iska matlab cache entry automatically remove nahi hogi)
+               If the data is not updated or removed manually, it will remain in the Redis database permanently.
+                   (Agar data manually update ya remove nahi kiya gaya, to wo Redis DB me permanently rahega)
+               Therefore, we need an eviction mechanism for cache data.
+                   (Isliye hume cache data ke liye eviction mechanism ki zarurat hoti hai)
+            2. To achieve this, we need to provide a TTL (Time To Live) in the configuration.
+                   (Iske liye hume configuration me TTL (Time To Live) dena padta hai)
+               After prefixCacheNameWith(), add:
+               .entryTtl(Duration.ofSeconds(60))
+               This means the cache data will remain in Redis for 60 seconds only.
+                   (Iska matlab cache data Redis me sirf 60 seconds tak rahega)
+            3. So now, the data will exist in Redis for only 60 seconds.
+                   (Ab data Redis me sirf 60 seconds tak hi rahega)
+        11. Time duration with Time-To-Idle:
+            1. If someone is continuously using the cached data, then we may not want to remove that data from the Redis database.
+                (Agar koi continuously cached data use kar raha hai, to hum shayad us data ko Redis DB se remove nahi karna chahenge)
+            1. After adding : .enableTimeToIdle();
+               along with : .entryTtl(Duration.ofSeconds(60))
+               the cache duration gets reset to 60 seconds whenever the API is accessed.
+                (Jab hum .enableTimeToIdle() use karte hain, tab API hit hone par cache ka duration firse 60 seconds reset ho jata hai)
+            2. For example, if we fetch data for id = 2 and after 20 seconds we make the same request again, then the TTL will again become 60 seconds.
+               (Example ke liye, agar hum id = 2 ka data fetch karte hain aur 20 seconds baad same request firse karte hain, to TTL firse 60 seconds ho jayega)
+        12. Configure key and value serialization for Redis cache :
+            1. By default, Redis stores data in binary format, which is not easily readable.
+                (Default me Redis data ko binary format me store karta hai, jo easily readable nahi hota)
+            2. Therefore, we configure serializers for both cache keys and values.
+                (Isliye hum cache keys aur values ke liye serializers configure karte hain)
+            3. .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())) is used to store cache keys in a readable String format.
+                (Ye cache keys ko readable String format me store karne ke liye use hota hai)
+            4. .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())) is used to store cache values in JSON format.
+                (Ye cache values ko JSON format me store karne ke liye use hota hai)
+            5. This makes the data easy to read and inspect in Redis Insight or Redis CLI.
+                (Isse data Redis Insight ya Redis CLI me easily readable ho jata hai)
+            6. It is considered a good practice to configure serialization explicitly in production applications.
+                (Production applications me serialization explicitly configure karna ek achhi practice mani jati hai)
+            7. We can see that the data is now stored in a readable format in Redis Insight.
+                (Hum Redis Insight me dekh sakte hain ki ab data readable format me store ho raha hai)
