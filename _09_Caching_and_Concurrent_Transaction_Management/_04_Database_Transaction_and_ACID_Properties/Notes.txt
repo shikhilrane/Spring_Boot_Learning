@@ -1,0 +1,106 @@
+Database Transaction :
+    1. Transaction:
+       A transaction is a logical unit of work that contains several lower-level operations such as read and write.
+        (Transaction ek logical unit of work hota hai jisme multiple lower-level operations jaise read aur write hote hain)
+    2. A transaction follows the "all or nothing" principle.
+       This means either all operations inside the transaction should be completed successfully, or none of them should happen.
+        (Transaction "all or nothing" principle follow karta hai. Ya to saare operations successfully complete honge ya koi bhi operation apply nahi hoga)
+    3. Commit:
+       If all operations are completed successfully, the transaction is committed permanently.
+        (Agar saare operations successfully complete ho jaye, to transaction permanently commit ho jata hai)
+       Rollback:
+       If even a single operation fails, the entire transaction is rolled back.
+        (Agar ek bhi operation fail ho jaye, to poora transaction rollback ho jata hai)
+    4. Transactions are very important in systems where high consistency and high reliability are required, such as banking systems.
+        (Transactions un systems me bahut important hote hain jaha high consistency aur high reliability chahiye hoti hai, jaise banking systems)
+       High Consistency :
+       Data should always remain correct and valid in the database.
+        (Data hamesha correct aur valid state me rehna chahiye)
+       High Reliability :
+       The system should work correctly even if failures or crashes occur.
+        (Failures ya crashes hone par bhi system sahi tarike se kaam karna chahiye)
+    5.Example:
+          Money Transfer
+          1. Deduct money from Account A
+          2. Add money to Account B
+          If step 2 fails, then step 1 is also rolled back to maintain data consistency.
+            (Agar step 2 fail ho jaye, to data consistency maintain karne ke liye step 1 bhi rollback ho jata hai)
+
+ACID Properties :
+    1. Atomicity:
+       1. Ensures that a transaction follows the "all-or-nothing" principle.
+       2. Either all operations inside the transaction are completed successfully, or none of them are applied.
+            (Atomicity ensure karti hai ki transaction "all-or-nothing" principle follow kare. Ya to saare operations successfully complete honge ya koi bhi operation apply nahi hoga)
+       3. Example:
+            In banking systems, when transferring money between accounts, both debit and credit operations should happen together or not happen at all.
+            This ensures that no data inconsistency occurs.
+                (Banking systems me money transfer ke time debit aur credit dono operations saath me hone chahiye ya dono nahi hone chahiye. Isse data inconsistency nahi hoti)
+    2. Consistency:
+       1. Ensures that a transaction brings the database from one valid state to another valid state while maintaining all rules and constraints.
+            (Consistency ensure karti hai ki transaction database ko ek valid state se dusri valid state me le jaye aur saare rules aur constraints maintain rahe)
+       2. Example:
+           In e-commerce platforms, business rules such as stock availability and payment validation are checked before placing an order.
+           This ensures that users do not place orders for out-of-stock products or make invalid payments.
+            (E-commerce platforms me order place karne se pehle stock availability aur payment validation jaise business rules check kiye jate hain. Isse users out-of-stock products order nahi kar pate aur invalid payment issues nahi hote)
+    3. Isolation:
+       1. Ensures that concurrent transactions do not interfere with each other and behave as if they were executed sequentially.
+            (Isolation ensure karti hai ki concurrent transactions ek dusre ko affect na kare aur sequential execution ki tarah behave kare)
+       2. Example:
+            In a reservation system such as airline seat booking, isolation ensures that two users cannot book the same seat at the same time.
+            This maintains correctness and consistency during concurrent operations.
+                (Airline seat booking jaise reservation systems me isolation ensure karti hai ki do users ek hi seat same time par book na kar sake. Isse concurrent operations ke dauran correctness aur consistency maintain rehti hai)
+    4. Durability:
+       1. Ensures that once a transaction is committed, its changes are permanently saved even if a system failure or crash occurs.
+            (Durability ensure karti hai ki transaction commit hone ke baad uske changes permanently save ho jaye, chahe system failure ya crash hi kyu na ho)
+       2. Example:
+            In financial systems, once a money transfer transaction is confirmed, the transaction data is stored permanently and can be retrieved later for verification.
+            This prevents loss of important financial records and avoids discrepancies.
+                (Financial systems me jab money transfer transaction confirm ho jata hai, to uska data permanently store ho jata hai aur baad me verification ke liye retrieve kiya ja sakta hai. Isse important financial records lost nahi hote aur discrepancies avoid hoti hain)
+
+    Summary:
+        1. Atomicity :
+           Either all operations should happen or none of them should happen.
+           (Ya to saare operations hone chahiye ya koi bhi nahi hona chahiye)
+        2. Consistency :
+           All operations should maintain valid and consistent data.
+           (Saare operations valid aur consistent data maintain kare)
+        3. Isolation :
+           Concurrent transactions should not interfere with each other.
+           (Concurrent transactions ek dusre ko affect nahi karni chahiye)
+        4. Durability :
+           Once a transaction is committed, the data should be permanently saved.
+           (Transaction commit hone ke baad data permanently save hona chahiye)
+
+    Advantages of ACID Properties:
+        1. Data Integrity:
+           ACID properties ensure that data remains accurate, consistent, and free from corruption.
+           (ACID properties ensure karti hain ki data accurate, consistent aur corruption-free rahe)
+        2. Reliability:
+           ACID properties provide reliable and consistent execution of transactions.
+           (ACID properties transactions ka reliable aur consistent execution provide karti hain)
+        3. Concurrency Control:
+           ACID properties allow multiple users or transactions to access data simultaneously without conflicts.
+           (ACID properties multiple users/transactions ko data simultaneously access karne deti hain bina conflicts ke)
+        4. Fault Tolerance:
+           ACID properties ensure that committed data is not lost even if system failures or crashes occur.
+           (ACID properties ensure karti hain ki system failure ya crash hone par bhi committed data lost na ho)
+        5. Transaction Management:
+           ACID properties provide structured and secure transaction handling.
+           (ACID properties structured aur secure transaction handling provide karti hain)
+
+    Disadvantages of ACID Properties:
+        1. Performance Overhead:
+           ACID properties can reduce system performance and throughput because of additional processing and resource usage.
+           (Additional processing aur resource usage ki wajah se ACID properties system performance aur throughput ko reduce kar sakti hain)
+        2. Complexity:
+           Implementing ACID properties increases the complexity of database design and maintenance.
+           (ACID properties implement karne se database design aur maintenance ki complexity badh jati hai)
+        3. Scalability Challenges:
+           ACID properties can create difficulties in highly distributed and scalable systems.
+           (Highly distributed aur scalable systems me ACID properties challenges create kar sakti hain)
+        4. Potential for Deadlocks:
+           ACID transactions using locking mechanisms may lead to deadlocks and temporary system blocking.
+           (Locking mechanisms use karne wale ACID transactions deadlocks aur temporary system blocking ka reason ban sakte hain)
+        5. Limited Concurrency:
+           ACID properties may restrict concurrent operations, which can affect overall system throughput.
+           (ACID properties concurrent operations ko restrict kar sakti hain, jisse overall system throughput affect ho sakta hai)
