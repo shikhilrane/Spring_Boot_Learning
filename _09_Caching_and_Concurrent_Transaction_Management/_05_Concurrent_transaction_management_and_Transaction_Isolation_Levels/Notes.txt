@@ -1,0 +1,70 @@
+Concurrent Transaction Management :
+    1. Multiple transaction system at same time and all of these transaction is trying to update or modify the same record in same database
+    2. To achieve highly consistent database then concurrency is very important
+    3. To achieve high consistency we will have to have isolation levels
+    4. Isolation : Isolates multiple transactions when they are happening at same time, and those transaction should be performed sequentially and not concurrently.
+    5. We have multiple level of isolation in the database and different databases handles isolation differently like in MySql and PostgreSQL
+
+Transaction Isolation:
+    1. Isolation levels define the degree to which a transaction must be isolated from the data modifications made by any other transaction in the database system.
+        (Isolation levels define karte hain ki ek transaction ko database system me dusre transactions ke data modifications se kitna isolated rehna chahiye)
+    2. Spring Boot provides support for different isolation levels through the @Transactional annotation.
+        (Spring Boot @Transactional annotation ke through different isolation levels ka support provide karta hai)
+    3. In order to understand isolation levels, we first need to look at some of the problems that occur in the database.
+        (Isolation levels ko samajhne ke liye hume pehle database me hone wali kuch problems ko dekhna hoga)
+    4. Because isolation levels are a technology developed against these problems that we will talk about below.
+        (Kyuki isolation levels ek aisi technology hain jo in problems ko handle karne ke liye develop ki gayi hai jinhe hum neeche discuss karenge)
+        a. Dirty Read:
+           1. A dirty read occurs when one transaction reads data that has not yet been committed by another transaction.
+                (Dirty Read tab hota hai jab ek transaction dusre transaction ka uncommitted data read kar leta hai)
+           2. Example:
+                               TRANSACTION A                           TRANSACTION B
+               T0      UPDATE product_owner = "X"
+                       WHERE id = 1
+               T1                                                  SELECT * FROM product
+                                                                   WHERE id = 1
+                                                                   ← Reads uncommitted data
+               T2      ROLLBACK
+
+                   Now the changes made by Transaction A are reverted,
+                   but Transaction B has already read that temporary/invalid data.
+                   (Ab Transaction A rollback ho gaya, lekin Transaction B already temporary/uncommitted data read kar chuka tha)
+           3. This problem is called Dirty Read.
+                (Is problem ko Dirty Read kehte hain)
+        b. Non-Repeatable Read:
+            1. A non-repeatable read occurs when a transaction reads the same row multiple times and gets different values each time.
+                (Non-Repeatable Read tab hota hai jab ek transaction same row ko multiple times read karta hai aur har baar different value milti hai)
+            2. Example:
+                                TRANSACTION A                           TRANSACTION B
+                T0      SELECT * FROM product
+                        WHERE id = 1
+                        ← Reads original value
+                T1                                                  UPDATE product_owner = "X"
+                                                                    WHERE id = 1
+                                                                    COMMIT
+                T2      SELECT * FROM product
+                        WHERE id = 1
+                        ← Reads updated value
+                        Data is different on the second read.
+                            (Second read me data pehle se different milta hai)
+            3. This problem is called Non-Repeatable Read.
+                (Is problem ko Non-Repeatable Read kehte hain)
+        c. Phantom Read:
+            1. A phantom read occurs when the same query is executed multiple times, but different rows are returned each time.
+                (Phantom Read tab hota hai jab same query multiple times execute hoti hai, lekin har baar different rows return hoti hain)
+            2. Example:
+                            TRANSACTION A                           TRANSACTION B
+                T0      SELECT * FROM product
+                        WHERE price < 100
+                        ← Returns some rows
+
+                T1                                                  INSERT INTO product
+                                                                    VALUES ("New Product", 50)
+                                                                    COMMIT
+                T2      SELECT * FROM product
+                        WHERE price < 100
+                        ← Now one extra row is returned
+                        Rows are different on the second read.
+                        (Second read me rows pehle se different milti hain)
+           3. This problem is called Phantom Read.
+                (Is problem ko Phantom Read kehte hain)
