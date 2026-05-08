@@ -1,0 +1,128 @@
+Transactional in Spring Boot:
+    1. Spring Boot uses the JPA library to manage transactions on our behalf.
+       (Spring Boot transactions manage karne ke liye internally JPA library ka use karta hai)
+    2. We can configure transactional behavior using the @Transactional annotation, and Spring Boot applies those configurations to the underlying database with the help of JPA.
+       (Hum @Transactional annotation ka use karke transactional behavior configure kar sakte hain, aur Spring Boot JPA ki help se un configurations ko underlying database par apply karta hai)
+
+Spring Transactional Context:
+   1. When a method annotated with @Transactional is called, Spring creates a transactional context.
+      This context manages the database connection and transaction lifecycle.
+       (Jab @Transactional annotation wala method call hota hai, tab Spring ek transactional context create karta hai jo database connection aur transaction lifecycle manage karta hai)
+   2. Beginning a Transaction:
+      Before the method execution starts, Spring opens a database connection and begins a transaction.
+       (Method execute hone se pehle Spring database connection open karta hai aur transaction start karta hai)
+   3. Committing:
+      If the method executes successfully without any exception, Spring commits the transaction and saves all changes to the database.
+       (Agar method successfully execute ho jata hai bina exception ke, to Spring transaction commit karta hai aur saare changes database me save ho jate hain)
+   4. Rolling Back:
+      If the method throws an unchecked exception such as RuntimeException or Error, Spring rolls back the transaction.
+       (Agar method RuntimeException ya Error throw karta hai, to Spring transaction rollback kar deta hai)
+
+How does @Transactional work?
+    1. Spring uses Proxy-based AOP (Aspect-Oriented Programming) to manage transactions.
+        (Spring transactions manage karne ke liye Proxy-based AOP use karta hai)
+    2. When a method is annotated with @Transactional, Spring creates a proxy around that method.
+        (Jab kisi method par @Transactional lagate hain, tab Spring us method ke around proxy create karta hai)
+    3. Before entering the method, the proxy starts a transaction.
+        (Method execute hone se pehle proxy transaction start karta hai)
+    4. After the method execution:
+        a. If the method executes successfully, the proxy commits the transaction.
+           (Agar method successfully execute ho jata hai, to proxy transaction commit karta hai)
+        b. If an exception occurs, the proxy rolls back the transaction.
+           (Agar exception aata hai, to proxy transaction rollback karta hai)
+    NOTE : 1. When we add spring-boot-starter-data-jpa dependency, Spring Boot automatically enables built-in Proxy-based AOP support for @Transactional methods.
+               (Jab hum spring-boot-starter-data-jpa dependency add karte hain, tab Spring Boot automatically @Transactional methods ke liye built-in Proxy-based AOP support enable kar deta hai)
+           2. So, even if we do not manually implement AOP in the project, Spring internally creates proxies and manages transactions automatically.
+               (Isliye agar hum manually AOP implement nahi bhi karte, tab bhi Spring internally proxies create karke transactions automatically manage karta hai)
+           3. Why AOP (proxy) is used for transactions :
+                In Spring Boot, the proxy created for @Transactional methods is responsible for starting, managing, committing, and rolling back transactions.
+                 (Spring Boot me @Transactional methods ke liye create hua proxy hi transactions ko start, manage, commit aur rollback karta hai)
+
+Transactional Propagation:
+    1. Propagation defines how transactions behave when one transactional method calls another transactional method.
+        (Propagation define karta hai ki jab ek transactional method dusre transactional method ko call karta hai tab transaction ka behavior kya hoga)
+    2. We can configure propagation using:
+        (Hum propagation ko configure kar sakte hain)
+       @Transactional(propagation = Propagation.REQUIRED)
+    3. Different propagation types:
+            a. REQUIRED :
+               Uses existing transaction if available, otherwise creates a new transaction.
+               (Agar transaction already hai to usi ko use karta hai, warna naya transaction create karta hai)
+            b. REQUIRES_NEW :
+               Always creates a new transaction and suspends the current transaction.
+               (Hamesha naya transaction create karta hai aur current transaction ko temporarily stop karta hai)
+            c. MANDATORY :
+               Must have an existing transaction, otherwise exception occurs.
+               (Existing transaction hona zaruri hai, warna exception aata hai)
+            d. SUPPORTS :
+               Uses existing transaction if available, otherwise runs without transaction.
+               (Agar transaction available hai to use karta hai, warna bina transaction ke run hota hai)
+            e. NOT_SUPPORTED :
+               Always runs without transaction and suspends current transaction.
+               (Hamesha bina transaction ke run hota hai aur current transaction ko temporarily stop karta hai)
+            f. NESTED :
+               Creates a nested transaction inside the current transaction.
+               (Current transaction ke andar nested transaction create karta hai)
+            g. NEVER :
+               Runs only without transaction, throws exception if transaction exists.
+               (Sirf bina transaction ke run hota hai, agar transaction already ho to exception throw karta hai)
+            +-------------------+--------------------------------+------------------------------+
+            | Propagation       | Calling method (outer)         | Called method (inner)        |
+            +-------------------+--------------------------------+------------------------------+
+            | REQUIRED          | No                             | T2                           |
+            | REQUIRED          | T1                             | T1                           |
+            | REQUIRES_NEW      | No                             | T2                           |
+            | REQUIRES_NEW      | T1                             | T2                           |
+            | MANDATORY         | No                             | Exception                    |
+            | MANDATORY         | T1                             | T1                           |
+            | NOT_SUPPORTED     | No                             | No                           |
+            | NOT_SUPPORTED     | T1                             | No                           |
+            | SUPPORTS          | No                             | No                           |
+            | SUPPORTS          | T1                             | T1                           |
+            | NEVER             | No                             | No                           |
+            | NEVER             | T1                             | Exception                    |
+            | NESTED            | No                             | T2                           |
+            | NESTED            | T1                             | T2                           |
+            +-------------------+--------------------------------+------------------------------+
+            Here,
+                 T1 → Current transactional context
+                 T2 → New transactional context
+    4. Diagram:
+                        Transaction T1
+                      ┌───────────────┐
+                      │   Service1    │
+                      └──────┬────────┘
+                             │
+              ┌──────────────┴──────────────┐
+              │                             │
+        Transaction T1                Transaction T2
+      ┌───────────────┐             ┌───────────────┐
+      │   Service2    │             │   Service3    │
+      └──────┬────────┘             └──────┬────────┘
+             │                             │
+       Transaction T3                Transaction T2
+      ┌───────────────┐             ┌───────────────┐
+      │   Service4    │             │   Service5    │
+      └───────────────┘             └───────────────┘
+
+      From Code :
+        1. Create 'SalaryAccount' entity with id, balance and OneToOne relation with Employee entity, and also create repository 'SalaryAccountRepository' for it.
+            (id, balance aur Employee entity ke saath OneToOne relation wali 'SalaryAccount' entity create karo aur uske liye 'SalaryAccountRepository' bhi create karo)
+        2. Create service 'SalaryAccountService' and define a method that builds and saves a 'SalaryAccount' for the employee.
+            (Employee ke liye 'SalaryAccount' build aur save karne wala method 'SalaryAccountService' me define karo)
+        3. Run the program and create an employee with name, email, and salary.
+            (Program run karo aur name, email aur salary ke saath employee create karo)
+           Then employee's salary account will also be created with 0 balance because we set: .balance(BigDecimal.ZERO) in SalaryAccountServiceImpl.
+            (Fir employee ka salary account bhi 0 balance ke saath create ho jayega kyunki humne set kiya hai)
+        4. If by any means we do not want to create a SalaryAccount for an employee whose name is "Shikhil", then only the Employee will be created, but the SalaryAccount will not be created in the database, which may lead to data inconsistency.
+           (Agar hum "Shikhil" naam wale employee ke liye SalaryAccount create nahi karna chahte, to sirf Employee create hoga, lekin SalaryAccount database me create nahi hoga, jisse data inconsistency ho sakti hai)
+        5. Run the application. The Employee will be created, but the SalaryAccount will not be created.
+            (Application run karne par Employee create hoga, lekin SalaryAccount create nahi hoga)
+        6. To prevent this inconsistency problem, we will use the @Transactional annotation on the createEmployee method in EmployeeServiceImpl.
+            (Is inconsistency problem ko prevent karne ke liye hum EmployeeServiceImpl ke createEmployee method par @Transactional annotation use karenge)
+        7. Run the application again. Now neither the Employee nor the SalaryAccount will be created if any exception occurs.
+            (Application dobara run karne par agar exception aata hai, to na Employee create hoga aur na hi SalaryAccount)
+           Because according to the rules of @Transactional, the transaction is committed only if all methods execute successfully; otherwise, the AOP proxy rolls back the entire transaction.
+            (@Transactional ke rules ke according, transaction tabhi commit hota hai jab saare methods successfully execute ho jaye, warna AOP proxy poore transaction ko rollback kar deta hai)
+           Here, the method of SalaryAccount threw an exception, so the entire transaction was rolled back.
+            (Yaha SalaryAccount ke method ne exception throw kiya, isliye poora transaction rollback ho gaya)
