@@ -14,6 +14,8 @@ Transaction Isolation:
         (Isolation levels ko samajhne ke liye hume pehle database me hone wali kuch problems ko dekhna hoga)
     4. Because isolation levels are a technology developed against these problems that we will talk about below.
         (Kyuki isolation levels ek aisi technology hain jo in problems ko handle karne ke liye develop ki gayi hai jinhe hum neeche discuss karenge)
+
+    Types of Isolation Problems :
         a. Dirty Read:
            1. A dirty read occurs when one transaction reads data that has not yet been committed by another transaction.
                 (Dirty Read tab hota hai jab ek transaction dusre transaction ka uncommitted data read kar leta hai)
@@ -68,3 +70,122 @@ Transaction Isolation:
                         (Second read me rows pehle se different milti hain)
            3. This problem is called Phantom Read.
                 (Is problem ko Phantom Read kehte hain)
+        d. Serialization Anomaly:
+            1. A serialization anomaly occurs when concurrent transactions execute in such a way that the final result becomes inconsistent, as if transactions were not executed sequentially.
+                (Serialization Anomaly tab hoti hai jab concurrent transactions aise execute hote hain ki final result inconsistent ho jata hai, matlab transactions sequentially execute nahi hue aisa effect aata hai)
+            2. Example:
+                                TRANSACTION A                           TRANSACTION B
+                T0      SELECT balance FROM account
+                        WHERE id = 1
+                        ← Reads balance = 1000
+                T1                                                  SELECT balance FROM account
+                                                                    WHERE id = 1
+                                                                    ← Reads balance = 1000
+                T2      UPDATE account
+                        SET balance = balance - 100
+                        WHERE id = 1
+                        COMMIT
+                T3                                                  UPDATE account
+                                                                    SET balance = balance - 200
+                                                                    WHERE id = 1
+                                                                    COMMIT
+                        Final balance becomes inconsistent because
+                        both transactions used the same old balance value.
+                        (Final balance inconsistent ho jata hai kyuki dono transactions ne same old balance value use ki)
+            3. This problem is called Serialization Anomaly.
+                (Is problem ko Serialization Anomaly kehte hain)
+
+    Isolation Levels:
+        1. Read Uncommitted
+           - Lowest isolation level.
+           - Dirty Read, Non-Repeatable Read, and Phantom Read can occur.
+             (Ye lowest isolation level hai jisme Dirty Read, Non-Repeatable Read aur Phantom Read possible hote hain)
+        2. Read Committed
+           - Dirty Read is prevented.
+           - Non-Repeatable Read and Phantom Read can still occur.
+             (Isme Dirty Read prevent ho jata hai, lekin Non-Repeatable Read aur Phantom Read abhi bhi possible hote hain)
+        3. Repeatable Read
+           - Dirty Read and Non-Repeatable Read are prevented.
+           - Phantom Read may still occur.
+             (Isme Dirty Read aur Non-Repeatable Read prevent ho jate hain, lekin Phantom Read possible ho sakta hai)
+        4. Serializable
+           - Highest isolation level.
+           - Prevents Dirty Read, Non-Repeatable Read, and Phantom Read.
+           - Transactions execute one by one in sequence.
+             (Ye highest isolation level hai jo Dirty Read, Non-Repeatable Read aur Phantom Read ko prevent karta hai aur transactions sequentially execute hote hain)
+
+        -----------------------------------------------------------------------------------------------------------------------------
+        | Isolation Level   | Dirty Read                 | Non-Repeatable Read  | Phantom Read             | Serialization Anomaly  |
+        |-------------------|----------------------------|----------------------|--------------------------|------------------------|
+        | Read Uncommitted  | Allowed, but not in PG     | Possible             | Possible                 | Possible               |
+        | Read Committed    | Not Possible               | Possible             | Possible                 | Possible               |
+        | Repeatable Read   | Not Possible               | Not Possible         | Allowed, but not in PG   | Possible               |
+        | Serializable      | Not Possible               | Not Possible         | Not Possible             | Not Possible           |
+        -----------------------------------------------------------------------------------------------------------------------------
+
+        Higher Level of Isolation = Lower Concurrency and Higher Consistency (Higher level of isolation = Serializable)
+            (Higher isolation level me concurrency kam hoti hai lekin consistency zyada hoti hai)
+        Lower Level of Isolation = Higher Concurrency and Lower Consistency (Lower level of isolation = Read Uncommitted)
+            (Lower isolation level me concurrency zyada hoti hai lekin consistency kam hoti hai)
+
+
+    How Serializable Isolation Works:
+        1. PostgreSQL uses a modern approach called Serializable Snapshot Isolation (SSI).
+           It does not rely completely on strict locking, instead it detects and aborts transactions that may cause non-serializable behavior.
+            (PostgreSQL Serializable Snapshot Isolation (SSI) use karta hai. Ye fully strict locking par depend nahi karta, balki aise transactions ko detect aur abort karta hai jo non-serializable behavior cause kar sakte hain)
+        2. Oracle, MySQL, SQL Server, and DB2 mainly rely on row locks and range locks.
+           These locks ensure serializable behavior, but transactions may need to wait for locks, which can reduce concurrency.
+            (Oracle, MySQL, SQL Server aur DB2 mainly row locks aur range locks use karte hain. Ye serializable behavior ensure karte hain, lekin locks ki wajah se transactions ko wait karna pad sakta hai, jisse concurrency reduce ho sakti hai)
+
+Summary :
+    Types of Isolation Problems:
+        1. Dirty Read:
+           Reading uncommitted data modified by another transaction.
+           (Dusre transaction ke uncommitted data ko read kar lena)
+        2. Non-Repeatable Read:
+           Reading the same row multiple times and getting different values.
+           (Same row ko multiple times read karne par different values milna)
+        3. Phantom Read:
+           Executing the same query multiple times and getting different rows.
+           (Same query multiple times execute karne par different rows milna)
+        4. Serialization Anomaly:
+           Concurrent transactions produce inconsistent final results.
+           (Concurrent transactions ki wajah se inconsistent final result aana)
+
+    Isolation Levels:
+        1. Read Uncommitted :
+           Allows Dirty Read, Non-Repeatable Read, Phantom Read, and Serialization Anomaly.
+            (Dirty Read, Non-Repeatable Read, Phantom Read aur Serialization Anomaly possible hote hain)
+           Reason : Transactions can read even uncommitted changes made by other transactions.
+            (Transactions dusre transactions ke uncommitted changes bhi read kar sakte hain)
+           Behavior :
+            ↓ Prevents: Nothing
+            ↑ Concurrency
+            ↓ Consistency
+        2. Read Committed :
+           Prevents Dirty Read, but allows Non-Repeatable Read, Phantom Read, and Serialization Anomaly.
+            (Dirty Read prevent hota hai, lekin baaki problems possible hoti hain)
+           Reason : Only committed data can be read, but data may change between multiple reads.
+            (Sirf committed data read hota hai, lekin multiple reads ke beech data change ho sakta hai)
+           Behavior :
+            ↓ Prevents: Dirty Read
+            ↑ Concurrency than higher levels
+            ↑ Consistency than Read Uncommitted
+        3. Repeatable Read :
+           Prevents Dirty Read and Non-Repeatable Read, but Phantom Read and Serialization Anomaly may still occur.
+            (Dirty Read aur Non-Repeatable Read prevent hote hain, lekin Phantom Read aur Serialization Anomaly possible ho sakte hain)
+           Reason : Same rows remain consistent during the transaction, but new rows may still appear.
+            (Transaction ke dauran same rows consistent rehti hain, lekin new rows fir bhi appear ho sakti hain)
+           Behavior :
+            ↓ Prevents: Dirty Read, Non-Repeatable Read
+            ↓ Concurrency
+            ↑ Consistency
+        4. Serializable :
+           Prevents all isolation problems and provides the highest consistency.
+            (Ye saari isolation problems ko prevent karta hai aur highest consistency provide karta hai)
+           Reason : Transactions execute in a fully isolated and sequential manner.
+            (Transactions fully isolated aur sequential manner me execute hote hain)
+           Behavior :
+            ↓ Prevents: All isolation problems
+            ↓ Lowest Concurrency
+            ↑ Highest Consistency
