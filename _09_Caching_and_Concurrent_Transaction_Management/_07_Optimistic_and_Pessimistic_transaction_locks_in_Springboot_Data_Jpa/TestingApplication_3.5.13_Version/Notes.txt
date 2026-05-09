@@ -1,0 +1,151 @@
+Transaction Locks in Spring Data JPA :
+    1. Transaction locks in Spring Data JPA are used to maintain data consistency when multiple transactions try to access or modify the same data concurrently.
+       (Spring Data JPA me transaction locks ka use data consistency maintain karne ke liye hota hai jab multiple transactions same data ko concurrently access ya modify karne ki try karte hain)
+    2. Spring Data JPA provides locking mechanisms to lock a specific entity or set of entities during a transaction.
+       (Spring Data JPA transaction ke time kisi specific entity ya entities ko lock karne ka mechanism provide karta hai)
+    3. When an entity is locked, only the transaction holding the lock can access or modify that entity.
+       (Jab entity lock ho jati hai, tab sirf wahi transaction us entity ko access ya modify kar sakta hai jo lock hold kar raha hai)
+    4. Other transactions must wait until the lock is released.
+       (Dusre transactions ko lock release hone tak wait karna padta hai)
+
+Why use Transaction Locks :
+    1. Isolation levels define the visibility and consistency rules for concurrent transactions.
+        (Isolation levels concurrent transactions ke liye visibility aur consistency rules define karte hain)
+    2. Transaction locks enforce these rules by controlling access to data.
+        (Transaction locks data access control karke in rules ko enforce karte hain)
+    3. Locks help prevent conflicts when multiple transactions try to modify the same data.
+        (Jab multiple transactions same data modify karne ki try karte hain tab locks conflicts prevent karte hain)
+    4. Locks are important for handling complex concurrency scenarios effectively.
+        (Complex concurrency scenarios ko effectively handle karne ke liye locks important hote hain)
+    5. Isolation levels define the rules, while locks implement those rules practically.
+        (Isolation levels rules define karte hain aur locks practically un rules ko implement karte hain)
+
+Optimistic Locking :
+    1. A new column called "version" is added to the database table.
+        (Database table me "version" naam ka ek naya column add kiya jata hai)
+    2. Before updating a row, the application reads the current version number of that row.
+        (Row update karne se pehle application us row ka current version number read karta hai)
+    3. When the row is updated, the version number is increased by 1 and saved back to the database.
+        (Jab row update hoti hai tab version number 1 se increase karke database me save kiya jata hai)
+    4. Before saving, the database checks whether the version is still the same as expected.
+        (Save karne se pehle database check karta hai ki version expected value ke same hai ya nahi)
+    5. If another transaction already updated the row, the version check fails and the transaction is aborted.
+        (Agar kisi dusre transaction ne row pehle hi update kar di ho to version check fail ho jata hai aur transaction abort ho jata hai)
+    6. After failure, the application must retry the operation again.
+        (Failure ke baad application ko operation dubara try karna padta hai)
+    From Code :
+        1. Create a 'version' field in SalaryAccount entity and annotate it with '@Version' so that a version column is created in the database.
+            (SalaryAccount entity me 'version' field create karo aur us par '@Version' annotation lagao taki database me version column create ho)
+        2. Run the application without using any Isolation Level, create an Employee, and run the command:
+           seq 100 | xargs -P 10 -I {} curl --location --request PUT 'http://127.0.0.1:8080/employees/incrementBalance/1'
+            (Application ko bina kisi Isolation Level ke run karo, Employee create karo aur ye command run karo)
+        3. We can observe that a new 'version' column is created in the database table, and the final balance may still become lower because when multiple transactions try to update the same row simultaneously, some transactions fail due to version mismatch.
+            (Hum observe kar sakte hain ki database table me ek naya 'version' column create hota hai, aur final balance fir bhi kam aa sakta hai kyunki jab multiple transactions same row ko same time par update karne ki try karte hain tab kuch transactions version mismatch ki wajah se fail ho jati hain)
+           Because according to Optimistic Locking, if another transaction already updates the same row, then the current transaction fails due to version mismatch instead of overwriting the data.
+            (Optimistic Locking ke according agar kisi dusre transaction ne same row ko pehle hi update kar diya ho, to current transaction data overwrite karne ki jagah version mismatch ki wajah se fail ho jata hai)
+        4. Run the application with SERIALIZABLE Isolation Level, create an Employee, and run the command:
+           seq 100 | xargs -P 10 -I {} curl --location --request PUT 'http://127.0.0.1:8080/employees/incrementBalance/1'
+            (Application ko SERIALIZABLE Isolation Level ke saath run karo, Employee create karo aur ye command run karo)
+        5. We can observe that the final balance may become even lower because SERIALIZABLE isolation strictly controls concurrent transactions, so some transactions fail or get rolled back when multiple transactions try to update the same row simultaneously.
+           (Hum observe kar sakte hain ki final balance aur bhi kam aa sakta hai kyunki SERIALIZABLE isolation concurrent transactions ko strictly control karta hai, isliye jab multiple transactions same row ko same time par update karne ki try karte hain tab kuch transactions fail ya rollback ho jati hain)
+          Because according to SERIALIZABLE isolation, if one transaction is updating the row, other concurrent transactions are not allowed to modify the same row until the current transaction is completed.
+           (SERIALIZABLE isolation ke according agar ek transaction row ko update kar raha ho, to current transaction complete hone tak dusre concurrent transactions ko same row modify karne ki permission nahi hoti)
+        6. If there are 2 transactions modifying the same row at the same time and at that time version is 0, then both of them will read that version number too.
+            (Agar 2 transactions same time par same row ko modify kar rahi ho aur us time version 0 ho, to dono transactions wahi version number read karengi)
+           Then both transactions will read the data at the same time.
+            (Fir dono transactions same time par data read karengi)
+           If the first transaction performs the read and write operation before the second transaction, then it will check whether the version number is still 0 or not.
+            (Agar first transaction second transaction se pehle read aur write operation perform kar de, to wo check karegi ki version number abhi bhi 0 hai ya nahi)
+           If the version is still 0, then that transaction will update the version from 0 to 1.
+            (Agar version abhi bhi 0 ho, to first transaction version ko 0 se 1 update kar degi)
+           Then the second transaction will perform the write operation and check whether the version number is still 0 or not.
+            (Fir second transaction write operation perform karegi aur check karegi ki version number abhi bhi 0 hai ya nahi)
+           But since the version has already become 1, it will not be allowed to commit the write operation from version 1 to 2.
+            (Lekin kyuki version already 1 ho chuka hoga, isliye second transaction ko write operation commit karke version ko 1 se 2 update karne ki permission nahi milegi)
+           Example :
+           If there is a column 'balance' with value 5 and T1 and T2 try to update the same row at the same time by adding 10, then both transactions will first read the balance as 5 and version number as 0.
+            (Agar 'balance' column ki value 5 ho aur T1 aur T2 same time par same row ko 10 add karke update karne ki try kare, to dono transactions pehle balance ko 5 aur version number ko 0 read karengi)
+           Then both T1 and T2 will calculate the new balance as 15.
+            (Fir dono T1 aur T2 new balance ko 15 calculate karengi)
+           Suppose T1 performs the read and write operation before T2, then T1 will successfully update the balance to 15 and change the version number from 0 to 1.
+            (Maan lo T1, T2 se pehle read aur write operation perform kar de, to T1 successfully balance ko 15 update karegi aur version number ko 0 se 1 kar degi)
+           After that, T2 will try to update the row and check whether the version number is still 0 or not.
+            (Uske baad T2 row update karne ki try karegi aur check karegi ki version number abhi bhi 0 hai ya nahi)
+           But since another transaction already changed the version number from 0 to 1, T2 will fail due to version mismatch and will not be allowed to commit the changes.
+            (Lekin kyuki dusri transaction version number ko 0 se 1 change kar chuki hoti hai, isliye T2 version mismatch ki wajah se fail ho jayegi aur changes commit nahi kar payegi)
+
+Pessimistic Locking :
+    1. Pessimistic Locking uses the @Lock annotation in the repository interface to define the lock mode.
+        (Pessimistic Locking me repository interface me @Lock annotation ka use lock mode define karne ke liye hota hai)
+    2. PESSIMISTIC_READ allows reading the data but prevents other transactions from modifying it until the current transaction completes. PESSIMISTIC_READ is also known as a shared lock.
+        (PESSIMISTIC_READ data ko read karne deta hai lekin current transaction complete hone tak dusre transactions ko us data ko modify karne nahi deta. PESSIMISTIC_READ ko shared lock bhi kehte hain)
+    3. PESSIMISTIC_WRITE prevents both reading and writing by other transactions on the locked row. PESSIMISTIC_WRITE is also known as an exclusive lock.
+        (PESSIMISTIC_WRITE locked row par dusre transactions ko read aur write dono karne se rokta hai. PESSIMISTIC_WRITE ko exclusive lock bhi kehte hain)
+    4. Only the transaction holding the PESSIMISTIC_WRITE lock can modify the row.
+        (Sirf wahi transaction row modify kar sakta hai jo PESSIMISTIC_WRITE lock hold kar raha ho)
+    5. PESSIMISTIC_READ : Other transaction can read the data but can't write the data
+       PESSIMISTIC_WRITE : Other transaction can neither read the data nor can write the data
+    From Code :
+        1. In SalaryAccountRepository, override the findById() method because it is already present in JpaRepository and is used in incrementBalance() method.
+            (SalaryAccountRepository me findById() method ko override karo kyunki ye JpaRepository me pehle se present hai aur incrementBalance() method me use ho raha hai)
+        2. Use @Lock(LockModeType.PESSIMISTIC_WRITE) on this overridden method.
+            (Is overridden method par @Lock(LockModeType.PESSIMISTIC_WRITE) use karo)
+        3. Use '(fetch = FetchType.LAZY)' in 'SalaryAccount'.
+            (SalaryAccount me '(fetch = FetchType.LAZY)' use karo)
+        4. Run the application, create an Employee, and run the command:
+           seq 100 | xargs -P 10 -I {} curl --location --request PUT 'http://127.0.0.1:8080/employees/incrementBalance/1'
+            (Application run karo, Employee create karo aur ye command run karo)
+        5. All the 100 requests will be executed successfully because PESSIMISTIC_WRITE lock allows only one transaction at a time to modify the row, so other transactions must wait until the current transaction completes.
+            (Saari 100 requests successfully execute hongi kyunki PESSIMISTIC_WRITE lock ek time par sirf ek hi transaction ko row modify karne deta hai, isliye baaki transactions ko current transaction complete hone tak wait karna padta hai)
+
+Optimistic Locking vs Pessimistic Locking :
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Feature          | Optimistic Locking                                           | Pessimistic Locking                                              |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Concurrency      | Suitable for high-concurrency environments; assumes          | Better suited for low-concurrency environments or when           |
+    |                  | conflicts are rare.                                          | conflicts are likely.                                            |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Performance      | No locking at the database level, so it is more efficient    | Requires database-level locking, which can decrease              |
+    |                  | with less contention.                                        | performance due to lock acquisition and release overhead.        |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Failure Handling | Updates fail only if the version has changed, making         | Other transactions are blocked until the lock is released,       |
+    |                  | it more efficient.                                           | which can lead to longer wait times or deadlocks.                |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Lock Type        | No explicit database lock; relies on a version check.        | Explicitly locks the row or table in the database until          |
+    |                  |                                                              | the transaction completes.                                       |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Lock Scope       | Transaction fails only when a conflicting update occurs.     | Prevents other transactions from modifying or even reading       |
+    |                  |                                                              | the locked data.                                                 |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Use Case         | Best for scenarios where conflicts are rare but possible     | Best for scenarios where conflicts are common and you need       |
+    |                  | (e.g., read-heavy systems).                                  | to prevent data changes (e.g., financial transactions).          |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+    | Drawbacks        | Conflicts are detected late, possibly requiring retries.     | Can lead to deadlocks, slower performance due to locks,          |
+    |                  |                                                              | and longer transaction times.                                    |
+    +------------------+--------------------------------------------------------------+------------------------------------------------------------------+
+
+Transaction Strategies in Real World :
+    1. Read Committed :
+       Used in E-commerce and online transactions where consistent data is needed but performance is also important.
+       Example : Amazon
+        (E-commerce aur online transactions me use hota hai jaha consistent data chahiye hota hai lekin performance bhi important hoti hai)
+    2. Read Uncommitted :
+       Used in data analytics and non-critical reporting systems.
+       Example : Google Analytics
+        (Data analytics aur non-critical reporting systems me use hota hai)
+    3. Serializable :
+       Used in financial transactions, stock trading and critical banking operations.
+       Example : SBI, PNB
+        (Financial transactions, stock trading aur critical banking operations me use hota hai)
+    4. Optimistic Locking :
+       Used in collaborative editing systems where conflicts are rare and locking is avoided.
+       Example : Google Docs
+        (Collaborative editing systems me use hota hai jaha conflicts rare hote hain aur locking avoid ki jati hai)
+    5. Pessimistic Locking :
+       Used in resource booking systems where exclusive access is required to avoid conflicts.
+       Example : Booking.com, Airline Reservation Systems
+        (Resource booking systems me use hota hai jaha conflicts avoid karne ke liye exclusive access chahiye hota hai)
+    6. No Transactions :
+       Used in social media and large-scale distributed systems where eventual consistency is acceptable.
+       Example : Facebook, Twitter
+        (Social media aur large-scale distributed systems me use hota hai jaha eventual consistency acceptable hoti hai)
