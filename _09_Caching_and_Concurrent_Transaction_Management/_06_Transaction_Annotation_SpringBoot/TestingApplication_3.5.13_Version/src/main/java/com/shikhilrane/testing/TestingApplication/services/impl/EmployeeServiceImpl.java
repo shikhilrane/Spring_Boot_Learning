@@ -6,7 +6,6 @@ import com.shikhilrane.testing.TestingApplication.exceptions.ResourceNotFoundExc
 import com.shikhilrane.testing.TestingApplication.repositories.EmployeeRepository;
 import com.shikhilrane.testing.TestingApplication.services.EmployeeService;
 import com.shikhilrane.testing.TestingApplication.services.SalaryAccountService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -14,6 +13,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @CachePut(cacheNames = CACHE_NAME, key = "#result.id")
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public EmployeeDto createNewEmployee(EmployeeDto employeeDto) {
         log.info("Creating new employee with email: {}", employeeDto.getEmail());
         List<Employee> existingEmployees = employeeRepository.findByEmail(employeeDto.getEmail());

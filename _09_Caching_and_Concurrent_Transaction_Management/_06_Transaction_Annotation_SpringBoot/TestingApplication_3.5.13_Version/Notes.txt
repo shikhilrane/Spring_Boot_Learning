@@ -38,7 +38,7 @@ How does @Transactional work?
                 In Spring Boot, the proxy created for @Transactional methods is responsible for starting, managing, committing, and rolling back transactions.
                  (Spring Boot me @Transactional methods ke liye create hua proxy hi transactions ko start, manage, commit aur rollback karta hai)
 
-Transactional Propagation:
+Transactional Propagation Property :
     1. Propagation defines how transactions behave when one transactional method calls another transactional method.
         (Propagation define karta hai ki jab ek transactional method dusre transactional method ko call karta hai tab transaction ka behavior kya hoga)
     2. We can configure propagation using:
@@ -126,3 +126,74 @@ Transactional Propagation:
             (@Transactional ke rules ke according, transaction tabhi commit hota hai jab saare methods successfully execute ho jaye, warna AOP proxy poore transaction ko rollback kar deta hai)
            Here, the method of SalaryAccount threw an exception, so the entire transaction was rolled back.
             (Yaha SalaryAccount ke method ne exception throw kiya, isliye poora transaction rollback ho gaya)
+
+Transactional Isolation Property :
+    1. In Spring, it is possible to set one of the 5 isolation level values : DEFAULT, READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ and SERIALIZABLE.
+       (Spring me hum 5 isolation levels me se koi bhi set kar sakte hain : DEFAULT, READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ aur SERIALIZABLE)
+    2. DEFAULT will set it to, default isolation level defined by database we are using
+        example : postgreSql uses Read committed and MySql uses Repeatable read as their default Isolation Property
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+
+    +-------------------+-------------------------+----------------------+--------------------------+---------------------------+
+    | Isolation Level   | Dirty Read              | Nonrepeatable Read   | Phantom Read             | Serialization Anomaly     |
+    +-------------------+-------------------------+----------------------+--------------------------+---------------------------+
+    | Read uncommitted  | Allowed                 | Possible             | Possible                 | Possible                  |
+    | Read committed    | Not possible            | Possible             | Possible                 | Possible                  |
+    | Repeatable read   | Not possible            | Not possible         | Possible                 | Possible                  |
+    | Serializable      | Not possible            | Not possible         | Not possible             | Not possible              |
+    +-------------------+-------------------------+----------------------+--------------------------+---------------------------+
+
+    From Code:
+        1. Create an API in EmployeeController to increment the balance in SalaryAccount for the given accountId.
+            (Given accountId ke liye SalaryAccount ka balance increment karne ke liye EmployeeController me API create karo)
+        2. Create a method in SalaryAccountService that increases the account balance.
+            (Account balance increase karne wala method SalaryAccountService me create karo)
+        3. Run the application, create an Employee, and hit the API to increase the account balance in SalaryAccount.
+            (Application run karo, Employee create karo aur SalaryAccount ka balance increase karne ke liye API hit karo)
+        4. But what if multiple requests try to update the account balance for the same accountId at the same time?
+            (Lekin kya hoga agar multiple requests same time par same accountId ka balance update karne ki try kare)
+           This may lead to concurrency issues and inconsistent balance updates.
+            (Isse concurrency issues aur inconsistent balance updates ho sakte hain)
+        5. Keep running the application from IntelliJ and run this command directly in terminal :
+            seq 100 | xargs -P 10 -I {} curl --location --request PUT 'http://127.0.0.1:8080/employees/incrementBalance/1'
+                Here,
+                    seq 100
+                        → Generates numbers from 1 to 100.
+                        (1 se 100 tak numbers generate karta hai)
+                    |
+                        → Pipes output of first command to next command.
+                        (Pehle command ka output next command ko bhejta hai)
+                    xargs -P 10 -I {}
+                        → Takes each generated number and runs commands in parallel.
+                        (Generated values ko use karke parallel commands run karta hai)
+                    -P 10
+                        → Runs maximum 10 requests simultaneously.
+                        (Ek time par maximum 10 requests parallel me run karta hai)
+                    -I {}
+                        → Uses {} as placeholder for each input value.
+                        (Har input value ke liye {} placeholder use hota hai)
+                    curl --location --request PUT 'http://127.0.0.1:8080/employees/incrementBalance/1'
+                        → Sends PUT API request to increment balance.
+                        (Balance increment karne ke liye PUT request bhejta hai)
+                    Overall:
+                    → Sends 100 API requests with 10 parallel concurrent requests.
+                        (Total 100 API requests bhejta hai jisme 10 requests ek saath parallel run hoti hain)
+        6. Ideally, the account balance should become 100 because balance is incremented 100 times.
+            (Ideally account balance 100 hona chahiye kyunki balance 100 times increment hua)
+        7. But the final balance may become lower such as 66 due to concurrent updates on the same data.
+            (Lekin same data par concurrent updates ki wajah se final balance 66 jaisa lower value ho sakta hai)
+        8. This problem is called Race Condition or Lost Update Problem.
+            (Is problem ko Race Condition ya Lost Update Problem kehte hain)
+        9. It occurred because multiple transactions read the same old balance value at the same time and overwrote each other’s updates.
+            (Ye isliye hua kyunki multiple transactions ne same old balance value same time par read ki aur ek dusre ke updates overwrite kar diye)
+        10. We are using PostgreSQL, and by default it uses the READ_COMMITTED isolation level.
+             (Hum PostgreSQL use kar rahe hain aur by default ye READ_COMMITTED isolation level use karta hai)
+            In READ_COMMITTED isolation, if one transaction updates the balance from 4 to 5, other concurrent transactions may still read the old committed value and overwrite updates.
+             (READ_COMMITTED isolation me agar ek transaction balance ko 4 se 5 update kar raha ho, to dusre concurrent transactions old committed value read karke updates overwrite kar sakte hain)
+            This can lead to lost update problems during concurrent balance updates.
+             (Isse concurrent balance updates ke time lost update problem ho sakti hai)
+        11. Now if we use @Transactional(isolation = Isolation.SERIALIZABLE), which is the highest isolation level, on the incrementBalance() method and then run the application, we may observe an even lower final balance because some concurrent transactions will fail or get rolled back to maintain strict consistency.
+            (Agar hum incrementBalance() method par highest isolation level @Transactional(isolation = Isolation.SERIALIZABLE) use kare aur application run kare, to final balance aur bhi lower aa sakta hai kyunki strict consistency maintain karne ke liye kuch concurrent transactions fail ya rollback ho jate hain)
+            i.e. if one transaction updates the balance from 4 to 5, other concurrent transactions will not be allowed to update the same data until the current transaction is completed.
+            (Matlab agar ek transaction balance ko 4 se 5 update kar raha hai, to current transaction complete hone tak dusre concurrent transactions ko same data update karne ki permission nahi milegi)
+        12. We can handle this situation using Optimistic and Pessimistic transaction locks that we see in next part
