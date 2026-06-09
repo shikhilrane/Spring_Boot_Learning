@@ -1,0 +1,248 @@
+Service Discovery and Service Registration with Eureka :
+    1. Service Registration in Eureka Server :
+        1. Eureka is a library, and we develop a eureka server so that all of our microservices are register in centralised location
+        2. Why do we need Eureka Server?
+           Without Eureka :
+               Every microservice needs to know the exact IP address and port number of other microservices.
+                (Har microservice ko dusri service ka exact IP aur port number pata hona chahiye.)
+           Example :
+               Order Service wants to call Inventory Service.
+               Order Service → http://localhost:9010/products
+               If Inventory Service port changes from 9010 to 9020, then Order Service will stop working.
+                (Agar Inventory Service ka port change ho gaya to Order Service fail ho jayegi.)
+
+           ------------------------------------------------
+
+           With Eureka Server :
+                All microservices register themselves with Eureka when they start.
+                 (Jab service start hoti hai to wo Eureka me apna naam register kar deti hai.)
+                We implement Service Registry with help of Eureka
+           Example :
+               Inventory Service registers itself in Eureka Server (Central Location called Service Registry in code) as : INVENTORY-SERVICE
+               Order Service registers itself in Eureka Server (Central Location called Service Registry in code) as : ORDER-SERVICE
+               Eureka acts as a central directory for all microservices.
+                 (Eureka sabhi services ki ek central directory ki tarah kaam karta hai.)
+               Now Order Service can call :
+                    http://INVENTORY-SERVICE/products
+                    instead of
+                    http://localhost:9010/products
+               If the location of Inventory Service changes, Eureka automatically provides the updated location.
+                 (Agar Inventory Service ka port ya location change ho jaye, to Eureka updated location provide karta hai.)
+               Basically, if order-service wants to talk to inventory-service then,
+                    order-service -> Eureka Server (Service Registry) -> Get location of inventory-service and communicate
+                        (Basically Order Service pehle Eureka se Inventory Service ka address poochti hai aur phir usse communicate karti hai.)
+
+           ------------------------------------------------
+
+           Benefits of Eureka:
+               • Automatic Service Discovery
+                    (Service khud dusri services ko dhoond leti hai.)
+               • No need to remember IPs and Ports
+                    (IP aur Port yaad rakhne ki zarurat nahi hoti.)
+               • Easy Scaling
+                    (Agar ek service ke multiple instances ho to Eureka unko manage kar leta hai.)
+               • Better Fault Tolerance
+                    (Agar ek instance down ho jaye to dusra instance use ho sakta hai.)
+               One Line Definition:
+                   Eureka Server is a service registry that helps microservices find and communicate with each other without knowing their exact IP addresses and port numbers.
+                        (Eureka ek service directory hai jo microservices ko ek dusre ko locate karne me help karti hai bina IP aur Port yaad rakhe.)
+
+    2. Service Discovery in Eureka Server :
+        1. In a microservices architecture, each service is an independent application.
+            (Microservices architecture me har service ek alag application hoti hai.)
+        2. Each service handles a specific business functionality.
+            (Har service ek specific kaam handle karti hai.)
+        3. To make the complete application work, services need to communicate with each other.
+            (Puri application chalane ke liye services ko ek dusre se baat karni padti hai.)
+        4. For communication, services need to know where other services are running.
+            (Communication ke liye services ko pata hona chahiye ki dusri service kahan chal rahi hai.)
+        5. Service Discovery keeps track of all service locations.
+            (Service Discovery sabhi services ke address/location ki information rakhta hai.)
+        6. It helps services find each other automatically.
+            (Ye services ko automatically ek dusre ko dhoondhne me help karta hai.)
+        7. It enables smooth communication between services.
+            (Ye services ke beech communication ko easy aur smooth banata hai.)
+        8. Example :
+            Order Service wants to talk to Inventory Service.
+            Without Service Discovery:
+                Order Service must know the exact URL of Inventory Service.
+                 (Order Service ko Inventory Service ka exact address pata hona chahiye.)
+            With Service Discovery:
+                Order Service asks Eureka Server for Inventory Service's location.
+                 (Order Service Eureka se Inventory Service ka address poochti hai.)
+            Order Service → Eureka Server → Inventory Service
+            This makes communication easier and more flexible.
+             (Isse communication easy aur flexible ho jata hai.)
+        9. Service Discovery is a mechanism that helps microservices find and communicate with each other automatically.
+            (Service Discovery ek mechanism hai jo microservices ko automatically ek dusre ko dhoondhne aur communicate karne me help karta hai.)
+        10. Service Registry = Service Directory
+            So,
+                Generic Term      → Service Directory
+                Eureka Term       → Service Registry
+
+    3. Spring Cloud Eureka :
+        1. Eureka is a Service Discovery tool used in Microservices Architecture.
+            (Eureka ek Service Discovery tool hai jo Microservices Architecture me use hota hai.)
+        2. It keeps information about all running microservices.
+            (Ye sabhi running services ki information store karke rakhta hai.)
+        3. Eureka Server acts as a central service registry.
+            (Eureka Server ek central registry ki tarah kaam karta hai.)
+        4. Microservices register themselves with Eureka Server when they start.
+            (Jab service start hoti hai to wo Eureka Server me khud ko register kar leti hai.)
+        5. Services registered with Eureka are called Eureka Clients.
+            (Jo services Eureka me register hoti hain unhe Eureka Clients kehte hain.)
+        6. A service can ask Eureka for the location of another service.
+            (Ek service Eureka se dusri service ka address pooch sakti hai.)
+        7. This removes the need to remember IP addresses and port numbers.
+            (Isse IP address aur port number yaad rakhne ki zarurat nahi padti.)
+        8. Eureka helps microservices communicate with each other easily.
+            (Eureka microservices ko easily communicate karne me help karta hai.)
+        9. Example :
+            Service A starts and registers itself in Eureka.
+             (Service A start hoke Eureka me register ho jati hai.)
+            Service B also registers itself in Eureka.
+             (Service B bhi Eureka me register ho jati hai.)
+            Now Service A wants to talk to Service B.
+                Service A
+                   ↓
+                Eureka Server
+                   ↓
+                Service B
+                (Service A pehle Eureka se Service B ka address poochti hai aur phir usse communicate karti hai.)
+        10. Spring Cloud Eureka is a central registry that helps microservices find and communicate with each other.
+            (Spring Cloud Eureka ek central registry hai jo microservices ko ek dusre ko dhoondhne aur communicate karne me help karti hai.)
+        11. Spring Cloud Eureka provides and manages the Eureka Server used for Service Discovery in Microservices.
+             (Hum Spring ecosystem me Eureka Server banane aur use karne ke liye Spring Cloud Eureka use karte hain.)
+        12. Spring Cloud Eureka provides Service Registry and Service Discovery.
+                Service Registry : stores information (name, IP, port) of registered microservices.
+                Service Discovery : helps microservices find and communicate with other registered microservices.
+                (Har service ka address Registry me store hota hai, aur Discovery us address ko dhoondhne ka mechanism hai.)
+
+    4. How Eureka Works :
+        1. Service Registration
+           • When a microservice starts, it registers itself with Eureka Server.
+              (Jab service start hoti hai to wo Eureka Server me khud ko register kar leti hai.)
+        2. Heartbeat
+           • The service periodically sends a heartbeat to Eureka to indicate that it is still running.
+              (Service time-to-time Eureka ko signal bhejti rehti hai ki wo abhi bhi active hai.)
+        3. Service Discovery
+           • Other services ask Eureka for the location (IP and Port) of a required service.
+              (Dusri services Eureka se kisi service ka address poochti hain.)
+        4. Health Check
+           • Eureka checks whether registered services are healthy and available.
+              (Eureka check karta hai ki registered services sahi se chal rahi hain ya nahi.)
+        5. Eviction
+           • If a service stops sending heartbeats, Eureka removes it from the registry.
+              (Agar service heartbeat bhejna band kar de to Eureka use registry se hata deta hai.)
+
+    5. Configuring the Eureka Server in application.properties :
+        1. Give the Eureka Server a name.
+            (Eureka Server ko ek naam do.)
+            • spring.application.name=eureka-server
+        2. Run the Eureka Server on a specific port.
+            (Eureka Server ko ek specific port par run karo.)
+            • server.port=8761
+        3. Do not register the Eureka Server with itself.
+            (Eureka Server khud ko Eureka me register nahi karega.)
+            • eureka.client.register-with-eureka=false
+        4. Do not fetch registry information from itself.
+           (Eureka Server khud se registry data fetch nahi karega.)
+            • eureka.client.fetch-registry=false
+
+    6. Configuring a Eureka Client in application.properties :
+        1. Give the microservice a unique name.
+            (Har microservice ko ek unique naam do.)
+            • spring.application.name=inventory-service
+        2. Tell the microservice where the Eureka Server is running.
+            (Service ko batao Eureka Server kahan chal raha hai.)
+            • eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+        3. Register the microservice with Eureka.
+            (Service ko Eureka me register karo.)
+            • eureka.client.register-with-eureka=true
+        4. Fetch information about other registered services.
+            (Dusri registered services ki information lo.)
+            • eureka.client.fetch-registry=true
+        5. Send heartbeat periodically.
+           (Regular interval par heartbeat bhejo taaki Eureka ko pata rahe ki service alive hai.)
+            • lease-renewal-interval-in-seconds=10 (By Default it is 30)
+        6. Remove service if heartbeat stops.
+            (Agar heartbeat aana band ho jaye to service ko registry se hata diya jayega.)
+            • lease-expiration-duration-in-seconds=30 (By Default it is 90)
+
+Code :
+    Creating Discovery Service for Service Discovery (Service Discovery ke liye Discovery Service banana) :
+        1. Create a new Spring Boot project named discovery-service.
+            (discovery-service naam ka naya Spring Boot project banao.)
+        2. Add only the Eureka Server (Spring Cloud Discovery) dependency.
+            (Sirf Eureka Server dependency add karo.)
+        3. Open the discovery-service project and add @EnableEurekaServer in the main class to enable Eureka Server.
+            (Main class me @EnableEurekaServer lagao taaki Eureka Server enable ho jaye.)
+        4. Configure Eureka Server in application.properties:
+            eureka.client.register-with-eureka=false
+            eureka.client.fetch-registry=false
+             This ensures that the Eureka Server does not register itself as a Eureka Client.
+             (Isse Eureka Server khud ko client ki tarah register nahi karega.)
+
+    Configuring Eureka Clients (Eureka Clients ko configure karna) :
+        5. In inventory-service, add :
+           • Eureka Client dependency
+           • spring-cloud-dependencies in dependencyManagement
+           • spring-cloud.version in properties
+           (Inventory Service me Eureka Client configuration add karo.)
+        6. Configure Eureka Client in application.properties:
+            eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+            This allows the service to register itself with Eureka Server.
+            (Isse service Eureka Server me register ho jayegi.)
+        7. Repeat the same configuration for other services such as order-service.
+            (Yehi configuration order-service aur baaki services me bhi karo.)
+
+    Running the Project
+        8. Start the discovery-service. (Discovery Service start karo.)
+           Open : http://localhost:8761
+           This opens the Eureka Dashboard.
+            (Ye Eureka Dashboard kholega.)
+           Start inventory-service and order-service.
+            (Inventory aur Order Service bhi start karo.)
+           Refresh the dashboard and both services will appear as registered Eureka Clients.
+            (Dashboard refresh karne par dono services registered clients ke roop me dikhengi.)
+
+    Creating Service-to-Service Communication (Ek service ko dusri service se communicate karwana) :
+        9. In order-service, create :
+           @GetMapping("/helloOrders")
+           which returns a simple String response.
+            (Ek API banao jo simple String response return kare.)
+
+        10. In inventory-service, create :
+             private final DiscoveryClient discoveryClient;
+             private final RestClient restClient;
+            Also create a configuration class for RestClient.
+             (DiscoveryClient aur RestClient ka object banao aur RestClient configuration bhi banao.)
+
+        11. Create an API : /fetchOrders
+            which calls the API exposed by order-service.
+             (Ek API banao jo Order Service ki API ko call kare.)
+
+    12. Go to,
+        http://localhost:9010/api/v1/products/fetchOrders
+        and we see result of api that we created in order-service
+
+    13. Request Flow :
+            Inventory Service
+                   ↓
+            Ask Eureka for Order Service Address
+                   ↓
+            Get Order Service URL
+                   ↓
+            Send HTTP Request
+                   ↓
+            Receive Response
+                   ↓
+            Return Response
+
+    NOTE :
+        Currently we are using RestClient for inter-service communication.
+         (Abhi services ke beech communication ke liye RestClient use kar rahe hain.)
+        In the next implementation, we will replace it with FeignClient.
+         (Agle implementation me RestClient ki jagah FeignClient use karenge.)
+        FeignClient provides a cleaner and declarative way of calling other microservices.
+         (FeignClient dusri microservices ko call karne ka aur bhi simple aur clean tareeka provide karta
