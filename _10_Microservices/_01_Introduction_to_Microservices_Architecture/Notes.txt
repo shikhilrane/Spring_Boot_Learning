@@ -1,2 +1,35 @@
 Microservice Architecture :
-    
+
+    Monolithic Architecture :
+        1. In Monolithic Architecture, the whole application is built and deployed as one large service.
+        2. The problem is that if one part of the application has an issue, it can affect the entire system.
+        3. To solve this, we use Microservice Architecture, where the application is divided into multiple smaller services.
+        4. Each service works independently. So, if one service fails, the other services can continue working, and the entire application does not go down.
+
+    Microstructure Architecture :
+        1. Microstructure is an architectural style where applications are developed as a collection of small, loosely coupled, independently deployable services
+        2. Every microservice have their own database
+        3. Even if one microservice fails then whole system will not fail
+        4. Every microservice can be scale separately
+        5. Characteristics of Microservices:
+            1. Small, focused on doing one thing well
+            2. Independently deployable
+            3. Organised around business capabilities
+            4. Decentralised data management
+            5. Communication via lite-weight protocols (typically HTTP/REST)
+        6. Comparison with Monolith :
+            1. Monolith : Tightly coupled, single codebase
+            2. Microservices : Loosely coupled, multiple independent services
+        7. Challenges of Microservices :
+            1. Increased complexity in managing multiple services
+            2. Distributed System Issues like Latency, load balancing, network reliability and consistency
+            3. Managing transactions and consistency across services
+            4. Handling communication protocols (REST, gRPC, Messaging)
+            5. Monitoring and Logging needs centralised monitoring and logging solutions
+        8. Why use Microservices
+            1. Scale services independently based on demand (e.g., scale only payment service during high traffic)
+            2. Services can be written in different programming languages, suited to specific tasks
+            3. Small teams can work on different services simultaneously, reducing time to market
+            4. Failure in one service doesn't bring down the entire system
+            5. Each service can be updated, deployed, and scaled independently
+            6. Teams can work on different services without affecting each other

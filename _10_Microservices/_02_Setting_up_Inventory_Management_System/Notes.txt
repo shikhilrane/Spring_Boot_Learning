@@ -1,0 +1,25 @@
+1. Added two springboot project in one folder
+2. To make these as springboot maven project, open the project and right click on pom.xml file and click on "Add as Maven Project" then it will be added as springboot maven project, repeat same for other project as well
+3. Made both of them as simple CRUD applications.
+    A. Inventory-Service does:
+        • Stores product information in the database. (Products ki details database me save karta hai.)
+        • Maintains details such as product name, price, and available stock. (Product ka naam, price aur kitna stock available hai uski information rakhta hai.)
+        • Provides an API to fetch all products. (Saare products ki list laane ka API deta hai.)
+        • Provides an API to fetch a specific product using its ID. (Kisi ek product ko uski ID se fetch kar sakte hain.)
+        • Allows other services to check product details and stock availability. (Dusri services product details aur stock check kar sakti hain.)
+        • Converts database entities into DTOs before sending the response. (Database data ko response-friendly format me convert karta hai.)
+        • Uses JPA to interact with the database. (Database operations ke liye JPA use karta hai.)
+        • Uses ModelMapper to convert entities into response objects. (Entity objects ko DTO me convert karta hai.)
+        • Acts as an independent microservice responsible only for inventory management. (Sirf inventory/product management ka kaam handle karta hai.)
+
+    B. Order-Service does:
+        • Stores customer orders in the database. (Customer ke orders database me save karta hai.)
+        • Each order contains multiple order items. (Ek order me multiple products ho sakte hain.)
+        • Every order item stores the product ID and quantity. (Har item me product ki ID aur quantity store hoti hai.)
+        • Provides an API to fetch all orders. (Saare orders ki list laane ka API deta hai.)
+        • Provides an API to fetch a specific order by its ID. (Kisi specific order ko ID se fetch kar sakte hain.)
+        • Converts database entities into DTOs before sending the response. (Database data ko response-friendly format me convert karta hai.)
+        • Returns order details such as order ID, items, and total price. (Order ID, items aur total price ki details return karta hai.)
+        • Uses JPA to interact with the database. (Database operations ke liye JPA use karta hai.)
+        • Uses ModelMapper to convert entities into response objects. (Entity objects ko DTO me convert karta hai.)
+        • Acts as an independent microservice responsible only for order management. (Sirf order management ka kaam handle karta hai.)
