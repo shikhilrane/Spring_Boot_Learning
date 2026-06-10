@@ -1,0 +1,288 @@
+API Gateways :
+    1. In a microservices architecture, there can be many microservices.
+        (Microservices architecture me bahut saari services hoti hain.)
+    2. Without API Gateway, the client must know the address of every microservice.
+        (API Gateway ke bina client ko har service ka address pata hona chahiye.)
+    3. This makes communication more complex.
+        (Isse communication thoda complicated ho jata hai.)
+    4. To solve this problem, we place API Gateway between the client and microservices.
+        (Is problem ko solve karne ke liye client aur microservices ke beech API Gateway lagate hain.)
+    5. The client sends all requests to API Gateway.
+        (Client apni saari requests API Gateway ko bhejta hai.)
+    6. API Gateway forwards the request to the correct microservice.
+        (API Gateway request ko sahi microservice tak pahunchata hai.)
+    7. Example :
+                     Client
+                       ↓
+                   API Gateway
+                       ↓
+        Inventory Service or Order Service
+        (Client sirf API Gateway se baat karta hai, Gateway aage request route karta hai.)
+    8. Additional Features of API Gateway :
+        • Security – Authentication and Authorization
+           (User ko verify karna aur permissions check karna.)
+        • Routing – Route requests to correct microservice
+           (Request ko sahi service tak bhejna.)
+        • Request/Response Manipulation
+           (Request ya response ko modify kar sakta hai.)
+        • Circuit Breaker
+           (Agar koi service down ho jaye to system ko fail hone se bachata hai.)
+        • Observability – Logging, Tracing, Metrics
+           (Logs, tracking aur monitoring provide karta hai.)
+    One line :
+        API Gateway is a single entry point for all client requests in a microservices architecture.
+         (API Gateway microservices system ka main gate hota hai jahan se client ki saari requests pass hoti hain.)
+
+Spring Cloud API Gateway :
+    1. Spring Cloud API Gateway is the implementation of API Gateway provided by Spring Cloud.
+        (Spring Cloud API Gateway, Spring Cloud ka API Gateway implementation hai.)
+    2. It acts as a single entry point for all client requests.
+        (Ye client ki saari requests ke liye ek hi entry point ka kaam karta hai.)
+    3. Spring Cloud API Gateway is a powerful and flexible gateway for microservices.
+        (Ye microservices ke liye powerful aur flexible gateway hai.)
+    4. It receives requests from clients and forwards them to downstream services (Sending one request from Microservice1 to Microservice2).
+        (Ye client ki requests receive karke microservices ko forward karta hai.)
+    5. It works as a proxy between clients and microservices.
+        (Ye client aur microservices ke beech middleman/proxy ki tarah kaam karta hai.)
+    6. It handles routing of requests.
+        (Ye request ko sahi microservice tak route karta hai.)
+    7. It supports filtering of requests and responses.
+        (Ye request aur response par filters apply kar sakta hai.)
+    8. It can perform authentication and authorization.
+        (Ye user ko verify aur authorize kar sakta hai.)
+    9. It supports load balancing.
+        (Ye multiple service instances ke beech traffic distribute kar sakta hai.)
+    10. Diagram Flow :
+            Customer
+                ↓
+            Spring Cloud Gateway
+                ↓
+            Id and URI
+                ↓
+            Routing / Gateway Handler
+                ↓
+            Predicates + Filters
+                ↓
+            Netty Server
+                ↓
+            Microservice 1
+            Microservice 2
+            Microservice 3
+        Predicates :
+            • Decide whether a request matches a route.
+              (Ye decide karte hain ki request kis route par jayegi.)
+        Filters :
+            • Modify requests and responses.
+              (Ye request aur response ko modify kar sakte hain.)
+        Netty Server :
+            • Handles incoming and outgoing network requests.
+              (Ye network requests ko handle karta hai.)
+    11. Example :
+            Request (Client Request)            : http://localhost:8080/api/v1/orders/1
+            Predicate (Check Condition)         : Path=/api/v1/orders/**
+            Route (Choose Service)              : ORDER-SERVICE
+            Filter (Modify Request/Response)    : AddRequestHeader=X-Custom-Header
+            Result : Request is forwarded to ORDER-SERVICE with the custom header.
+    In short :
+    Client → Spring Cloud API Gateway → Correct Microservice
+     (Client request Gateway ko deta hai aur Gateway us request ko sahi microservice tak pahunchata hai.)
+
+Components of Gateway Handler :
+    ROUTE
+            Definition :
+                Route is a rule in Spring Cloud Gateway that decides
+                which microservice should handle a particular request.
+            Simple Meaning :
+                Route tells Gateway : "Ye request kis service ko bhejni hai."
+            Route = URI + Predicate + Filters
+
+            --------------------------------------------------
+
+            URI
+                Definition : Destination service where request will be forwarded.
+                Example : uri: lb://ORDER-SERVICE
+                Meaning : Request ORDER-SERVICE ko bhejo.
+
+    1. ID
+           Definition : ID is a unique name given to a route.
+           Simple Meaning : ID tells Gateway : "Is route ka naam kya hai?"
+           Example :
+               id: order-service
+               Meaning :
+               This route is identified by the name "order-service".
+           Purpose : Used to uniquely identify a route.
+           Helpful for :
+               - Logging
+               - Monitoring
+               - Debugging
+               - Route Management
+           ID  = Route ka naam
+
+    2. URI
+           Definition : URI is the destination where Gateway forwards the request after route matching.
+           Simple Meaning : URI tells Gateway: "Request ko kahan bhejna hai?"
+           Example :
+               uri: lb://ORDER-SERVICE
+               Meaning : Request ORDER-SERVICE ko bhejo aur lb matlab load-balancers ka use karke.
+                   lb:// = lb means Load Balancer.
+           URI = Route ki destination
+
+    3. PREDICATE
+           Definition : Predicate is a condition that determines whether a request should match a particular route or not.
+           Simple Meaning : Predicate tells Gateway: "Ye request is route ke liye eligible hai ya nahi."
+           Predicate = IF Condition
+           Purpose :
+                Used to check request details before selecting a route.
+                   If condition is true
+                       → Route Match
+                   Else
+                       → Route Skip
+           1. Path Predicate
+               Example : Path=/api/v1/orders/**
+               Meaning :
+                   Agar request ka path
+                   /api/v1/orders/**
+                   hai tabhi route match hoga.
+           2. Method Predicate
+               Example : Method=GET
+               Meaning : Sirf GET requests hi route match karengi.
+                         POST, PUT, DELETE requests route match nahi karengi.
+           3. Header Predicate
+               Example : Header=User-Agent,Mozilla/*
+               Meaning :
+                   Agar request header me User-Agent Mozilla se start hota hai tabhi route match hoga.
+           Real Example
+               predicates:
+                 - Path=/api/v1/orders/**
+                 - Method=GET
+               Meaning :
+                   IF Path = /api/v1/orders/**
+                   AND Method = GET
+               THEN
+                   Route Match
+               ELSE
+                   Route Skip
+
+    4. Filter
+            Definition : Filter is used to modify the incoming request or outgoing response before it reaches the microservice or before it is returned to the client.
+            Simple Meaning : Filter acts like a checkpoint where we can add, remove, modify, redirect, or transform request/response data.
+            Common Filters:
+            1. AddRequestHeader
+               - Adds a header to the incoming request.
+               Example : AddRequestHeader=X-Request-Id,12345
+               Meaning : Before sending request to microservice, add header:
+                         X-Request-Id = 12345
+            2. AddResponseHeader
+               - Adds a header to the outgoing response.
+               Example : AddResponseHeader=X-Response-Id,abcd
+               Meaning : Before returning response to client, add header:
+                         X-Response-Id = abcd
+            3. RedirectTo
+               - Redirects request to another URL.
+               Example : RedirectTo=302,https://youtube.com
+               Meaning : Instead of processing request, redirect user to YouTube.
+            4. StripPrefix
+               - Removes path segments from request URL.
+               Example : StripPrefix=1
+                         Request : /inventory/products
+                         After Filter : /products
+            5. RemoveRequestHeader
+               - Removes a specific header from request.
+               Example : RemoveRequestHeader=Cookie
+               Meaning : Cookie header will be removed before forwarding request.
+
+    Flow :
+        Request
+           ↓
+        Predicate Match
+           ↓
+        Filter Executes
+           ↓
+        Request Modified (if needed)
+           ↓
+        Microservice
+           ↓
+        Response Modified (if needed)
+           ↓
+        Client
+
+    Summary :
+        Route     → Where request should go.
+        Id        → Name of route
+        Uri       → Destination of rote
+        Predicate → When request should go.
+        Filter    → What changes should be applied to request/response.
+
+Code  :
+    1. Create a new Spring Boot project and add the following dependencies:
+       - Eureka Discovery Client (Spring Cloud Discovery)  // Used to communicate with Eureka Server and discover services. (Eureka Server se connect karke services ko find karta hai)
+       - Spring Cloud Gateway                            // Used to route requests to the correct microservice. (Requests ko sahi service tak bhejta hai)
+    2. Add this project to the existing microservices architecture.
+        (Is project ko existing microservices project me add karo)
+    3. Open pom.xml of api-gateway and remove spring-boot-starter-webmvc.
+        (Gateway WebFlux use karta hai, isliye WebMVC ki zarurat nahi hoti)
+    4. Convert application.properties to application.yml.
+        (Gateway configuration YAML format me likhna easy hota hai)
+    5. Remove /api/v1 context-path configuration from order-service and inventory-service.
+        (Ab API Gateway URL prefix handle karega, services ko alag se nahi karna padega)
+
+    Testing Without API Gateway :
+    6. Hit : http://localhost:9010/inventory/products/fetchOrders
+           This request directly reaches Inventory Service.
+            (Request seedha Inventory Service tak jata hai)
+           Inventory Service then uses Eureka Discovery to find and call Order Service.
+            (Inventory Service Eureka se Order Service ka address lekar call karta hai)
+
+    Testing With API Gateway :
+    7. Hit : http://localhost:8080/inventory/products/fetchOrders
+           This request first reaches API Gateway running on port 8080.
+            (Request pehle API Gateway tak jata hai)
+           API Gateway forwards the request to the appropriate microservice.
+            (Gateway request ko correct service tak bhej deta hai)
+            Route Configuration :
+                predicates : - Path=/api/v1/orders/**
+                filters : - StripPrefix=2
+
+    8. After adding the above configuration :
+           Predicate checks whether the incoming URL matches /api/v1/orders/**.
+            (Check karta hai ki request ka path match ho raha hai ya nahi)
+           StripPrefix=2 removes /api/v1 before forwarding the request.
+            (URL ke pehle 2 path segments hata deta hai)
+           Request is then forwarded to the Order Service.
+            (Request Order Service ko bhej di jati hai)
+           API Gateway now handles the /api/v1 prefix.
+            (Ab /api/v1 ko Gateway manage karega)
+           No need to configure /api/v1 inside individual microservices.
+            (Har service me alag se context-path set karne ki zarurat nahi hai)
+           Eureka and Load Balancer automatically find the correct service instance.
+            (Eureka aur Load Balancer khud service ka address find kar lete hain)
+
+    9. Breakdown of application.yml file :
+        spring:                                      # Root Spring Boot configuration
+          application:
+            name: api-gateway                        # Name of this microservice
+
+          cloud:
+            gateway:
+              routes:                                # List of gateway routes
+
+                - id: order-service                  # Unique name of this route
+                  uri: lb://ORDER-SERVICE            # Forward request to ORDER-SERVICE using load balancing
+                  predicates:
+                    - Path=/api/v1/orders/**         # Match requests starting with /api/v1/orders/
+                  filters:
+                    - StripPrefix=2                  # Remove first 2 path segments before forwarding (i.e. /api/v1)
+                    - RedirectTo=302, http://codingshuttle.com   # Redirect request to Coding Shuttle website
+
+                - id: inventory-service              # Unique name of this route
+                  uri: lb://INVENTORY-SERVICE        # Forward request to INVENTORY-SERVICE using load balancing
+                  predicates:
+                    - Path=/api/v1/inventory/**      # Match requests starting with /api/v1/inventory/
+                  filters:
+                    - StripPrefix=2                  # Remove first 2 path segments before forwarding
+                    - AddRequestHeader=X-Custom-Header, Shikhil   # Add custom header to the request
+
+        eureka:
+          client:
+            service-url:
+              defaultZone: http://localhost:8761/eureka   # URL of Eureka Server for service discovery
