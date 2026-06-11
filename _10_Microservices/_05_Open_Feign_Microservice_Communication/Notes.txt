@@ -1,0 +1,260 @@
+Need of Open Feign :
+    1. We have already see we can talk between microservices through RestClient
+    2. But to configure and use RestClient we have to do a lot of stuff
+    3. But Feign Client is easier to configure and use, so we will replace RestClient with FeignClient
+
+Spring Cloud OpenFeign :
+    Definition :
+        OpenFeign is a declarative HTTP client used for communication between microservices.
+        (Microservices ke beech HTTP calls karne ka easy aur declarative way provide karta hai)
+
+    Why OpenFeign ?
+        - Reduces boilerplate code required for REST API calls.
+          (HTTP request bhejne ke liye extra code likhne ki zarurat kam ho jati hai)
+        - Uses interfaces instead of RestClient or RestTemplate code.
+          (Sirf interface define karni hoti hai, implementation automatically ban jati hai)
+        - Integrates seamlessly with Spring Cloud and Eureka.
+          (Spring Cloud aur Eureka ke saath easily kaam karta hai)
+        - Makes code cleaner and easier to maintain.
+          (Code zyada clean aur maintainable ho jata hai)
+
+    Dependency :
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+    How it works :
+        Without OpenFeign :
+            Inventory Service
+                   ↓
+            Create RestClient
+                   ↓
+            Build URL
+                   ↓
+            Send HTTP Request
+                   ↓
+            Receive Response
+
+            (Manual code likhna padta hai)
+        With OpenFeign :
+            Inventory Service
+                   ↓
+            Call Interface Method
+                   ↓
+            Feign Client generates HTTP Request
+                   ↓
+            Order Service
+                   ↓
+            Receive Response
+
+            (Sirf method call karni hoti hai)
+
+    Advantages :
+        - Less code
+          (Kam code likhna padta hai)
+        - Better readability
+          (Code samajhna easy hota hai)
+        - Eureka integration support
+          (Service name se service ko find kar leta hai)
+        - Automatic load balancing support
+          (Available service instances me request distribute kar sakta hai)
+        - Easy microservice communication
+          (Services ke beech communication simple ho jata hai)
+
+    Example :
+        @FeignClient(name = "ORDER-SERVICE")
+        public interface OrderFeignClient {
+
+            @GetMapping("/orders/helloOrders")
+            String getOrders();
+        }
+
+    Meaning :
+        Feign automatically finds ORDER-SERVICE from Eureka and calls its API.
+        (Eureka se service ka address find karke API call khud kar leta hai)
+
+    Note :
+        OpenFeign is commonly used instead of RestClient or RestTemplate in Microservices.
+        (Microservices me generally RestClient ya RestTemplate ki jagah OpenFeign use kiya jata hai)
+
+Code :
+
+    1. Add Spring Cloud OpenFeign dependency in all microservices that need to communicate with other services.
+        (Jin services ko dusri services se baat karni hai unme OpenFeign add karte hain)
+
+    2. Create a clients package in inventory-service and create an interface named OrdersFeignClient.
+        (External service calls ko separate package me organize karte hain)
+       Note :
+       One Feign Client is generally created for one target service.
+        (Har target service ke liye alag client banana common practice hai)
+
+    3. Add @FeignClient(name = "order-service", path = "/orders") on OrdersFeignClient.
+        (Feign ko batata hai kis service aur kis base path par request bhejni hai)
+       name  -> Service name registered in Eureka.
+        (Eureka me registered service name)
+       path  -> Common base URL of target service.
+        (Target service ka common URL prefix)
+
+    4. Create mapping methods inside OrdersFeignClient.
+        (Jin APIs ko access karna hai unke methods interface me define karte hain)
+
+    5. Replace RestClient and DiscoveryClient code with OrdersFeignClient in ProductController.
+        (Manual HTTP request code ko Feign se replace karte hain)
+       Before :
+           DiscoveryClient
+                ↓
+           Get Service Instance
+                ↓
+           Build URL
+                ↓
+           RestClient Call
+       After :
+           Feign Client Method Call
+                ↓
+           Eureka Discovery
+                ↓
+           HTTP Request
+                ↓
+           Response
+
+    6. Add @EnableFeignClients in the main class of inventory-service.
+        (Spring ko Feign Client interfaces ke beans create karne ke liye enable karta hai)
+
+    7. Test API :
+       http://localhost:8080/api/v1/inventory/products/fetchOrders
+           API Gateway
+                ↓
+           Inventory Service
+                ↓
+           Feign Client
+                ↓
+           Order Service
+                ↓
+           Response Returned
+
+    8. Create a real business use case.
+       Goal : When an order is placed, product stock should automatically decrease.
+               (Order create hone par inventory ka stock kam hona chahiye)
+
+    9. Create a new API in inventory-service :
+           PUT /products/reduce-stocks
+           Purpose :
+               - Validate product availability.
+               - Reduce stock quantity.
+               - Calculate total order price.
+               - Return total order price.
+            (Stock check karta hai, stock reduce karta hai aur total price calculate karta hai)
+
+    10. Create required DTOs.
+            OrderRequestDto
+             (Complete order request ko represent karta hai)
+            OrderRequestItemDto
+             (Single product aur quantity ko represent karta hai)
+
+    11. Create service method reduceStocks().
+        Flow :
+            Receive Order Request
+                    ↓
+            Iterate Through Ordered Products
+                    ↓
+            Fetch Product From Database
+                    ↓
+            Validate Available Stock
+                    ↓
+            Reduce Stock
+                    ↓
+            Save Updated Product
+                    ↓
+            Calculate Total Price
+                    ↓
+            Return Total Price
+
+    12. Add @Transactional on reduceStocks().
+        Reason : If any product fails validation, all stock updates will be rolled back.
+                  (Agar kisi bhi product par error aata hai to saare updates cancel ho jayenge)
+
+    13. Create InventoryOpenFeignClient in order-service.
+        Purpose : Allows order-service to communicate with inventory-service.
+                   (Order service ko inventory service call karne deta hai)
+
+    14. Configure Feign Client :
+        @FeignClient(
+            name = "inventory-service",
+            path = "/inventory"
+        )
+        name : Service name present in Eureka.
+                (Eureka me registered service name)
+        path : Common base URL of Inventory Service.
+                (Inventory service ka base path)
+
+    15. Add method :
+        @PutMapping("/products/reduce-stocks")
+        Purpose : Calls inventory-service to reduce stocks and get total price.
+                   (Stock reduce karne aur total price lene ke liye call karta hai)
+
+    16. Create createOrder() API in order-service.
+        Purpose : Creates and stores a customer order.
+                   (Customer order create aur save karta hai)
+
+    17. Order Creation Flow :
+            Client
+                ↓
+            Order Service
+                ↓
+            Feign Client Call
+                ↓
+            Inventory Service
+                ↓
+            Validate Stock
+                ↓
+            Reduce Stock
+                ↓
+            Calculate Total Price
+                ↓
+            Return Total Price
+                ↓
+            Order Service
+                ↓
+            Create Order Entity
+                ↓
+            Set Order Status = CONFIRMED
+                ↓
+            Save Order
+                ↓
+            Return Created Order
+
+    18. Inside createOrder() :
+            Call Inventory Service
+             (Stock reduce karwane ke liye)
+            Map DTO to Entity
+             (Request ko entity me convert karne ke liye)
+            Set Parent Order Reference
+             (Order aur OrderItems ke relation ko maintain karne ke liye)
+            Set Total Price
+             (Inventory service se aaye hue price ko set karne ke liye)
+            Set Order Status
+             (Order state ko define karne ke liye)
+            Save Order
+             (Database me persist karne ke liye)
+            Return Response DTO
+             (Client ko response bhejne ke liye)
+
+    Final Flow :
+        Client
+           ↓
+        API Gateway
+           ↓
+        Order Service
+           ↓
+        Inventory Feign Client
+           ↓
+        Inventory Service
+           ↓
+        Stock Reduced
+           ↓
+        Total Price Returned
+           ↓
+        Order Saved
+           ↓
+        Response Returned
