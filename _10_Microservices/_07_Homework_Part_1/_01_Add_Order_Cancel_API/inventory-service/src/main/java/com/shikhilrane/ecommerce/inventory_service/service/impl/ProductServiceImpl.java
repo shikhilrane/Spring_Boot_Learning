@@ -64,4 +64,18 @@ public class ProductServiceImpl implements ProductService {
         }
         return totalPrice;                                                                      // Returns final order price.
     }
+
+    @Override
+    @Transactional
+    public void restoreStocks(OrderRequestDto orderRequestDto) {
+        log.info("Restoring stocks");
+        for(OrderRequestItemDto orderRequestItemDto : orderRequestDto.getItems()) { // Loops through each ordered product.
+            Long productId = orderRequestItemDto.getProductId();                    // Gets product id from request.
+            Integer quantity = orderRequestItemDto.getQuantity();                   // Gets quantity from request.
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));    // Fetches product from database.
+            product.setStock(product.getStock() + quantity);                        // Restores stock quantity.
+            productRepository.save(product);                                        // Saves updated stock in database.
+        }
+    }
 }

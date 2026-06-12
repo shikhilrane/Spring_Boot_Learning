@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -50,6 +51,22 @@ public class OrdersServiceImpl implements OrdersService {
     public OrderRequestDto createOrderFallback(OrderRequestDto orderRequestDto, Throwable throwable) {
         log.error("Fallback occurred due to : {}", throwable.getMessage());
         return new OrderRequestDto();
+    }
+
+    @Override
+    @Transactional
+    public OrderRequestDto cancelOrder(Long orderId) {
+        log.info("Calling cancelOrder method");
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));    // Fetches order from database.
+        if(order.getOrderStatus() == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Order is already cancelled");                               // Checks whether order is already cancelled.
+        }
+        OrderRequestDto orderRequestDto = modelMapper.map(order, OrderRequestDto.class);            // Converts order entity into DTO.
+        inventoryOpenFeignClient.restoreStocks(orderRequestDto);                                    // Calls Inventory Service to restore product stocks.
+        order.setOrderStatus(OrderStatus.CANCELLED);                                                // Marks order as cancelled.
+        Orders cancelledOrder = orderRepository.save(order);                                        // Saves updated order in database.
+        return modelMapper.map(cancelledOrder, OrderRequestDto.class);                              // Converts saved entity back to DTO and returns it.
     }
 
     @Override

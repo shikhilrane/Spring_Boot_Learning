@@ -49,4 +49,11 @@ public class ProductController {
         Double totalPrice = productService.reduceStocks(orderRequestDto);   // Calls service layer to reduce stock and calculate total price.
         return ResponseEntity.ok(totalPrice);                               // Returns total price of all ordered products.
     }
+
+    // API to restore stock quantity when an order is cancelled.
+    @PutMapping("restore-stocks")
+    public ResponseEntity<Void> restoreStocks(@RequestBody OrderRequestDto orderRequestDto) {
+        productService.restoreStocks(orderRequestDto); // Calls service layer to restore stocks.
+        return ResponseEntity.ok().build();            // Returns success response.
+    }
 }

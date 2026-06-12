@@ -30,6 +30,13 @@ public class OrdersController {
         return ResponseEntity.ok(orderRequestDto1);                                     // Returns the created order in response.
     }
 
+    // API to cancel an existing order.
+    @PutMapping("/cancel-order/{orderId}")
+    public ResponseEntity<OrderRequestDto> cancelOrder(@PathVariable Long orderId) {
+        OrderRequestDto orderRequestDto = orderService.cancelOrder(orderId); // Calls service layer to cancel the order.
+        return ResponseEntity.ok(orderRequestDto);                           // Returns cancelled order details.
+    }
+
     @GetMapping
     public ResponseEntity<List<OrderRequestDto>> getAllOrders(HttpServletRequest httpServletRequest) {
         log.info("Fetching all orders via controller");

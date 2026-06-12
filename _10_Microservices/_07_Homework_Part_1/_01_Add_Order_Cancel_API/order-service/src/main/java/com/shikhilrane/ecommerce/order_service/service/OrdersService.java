@@ -9,4 +9,6 @@ public interface OrdersService {
     OrderRequestDto getOrderById(Long id);
 
     OrderRequestDto createOrder(OrderRequestDto orderRequestDto);
+
+    OrderRequestDto cancelOrder(Long orderId);
 }
