@@ -1,260 +1,367 @@
-Need of Open Feign :
-    1. We have already see we can talk between microservices through RestClient
-    2. But to configure and use RestClient we have to do a lot of stuff
-    3. But Feign Client is easier to configure and use, so we will replace RestClient with FeignClient
-
-Spring Cloud OpenFeign :
+Resilience4j :
     Definition :
-        OpenFeign is a declarative HTTP client used for communication between microservices.
-        (Microservices ke beech HTTP calls karne ka easy aur declarative way provide karta hai)
+        Resilience4j is a lightweight fault-tolerance library used in microservices to handle service failures gracefully.
+         (Service failures ko handle karke application ko stable banata hai)
+    Purpose :
+        Helps services remain available and responsive even when dependent services fail.
+         (Dependency service fail hone par bhi application ko chalne deta hai)
 
-    Why OpenFeign ?
-        - Reduces boilerplate code required for REST API calls.
-          (HTTP request bhejne ke liye extra code likhne ki zarurat kam ho jati hai)
-        - Uses interfaces instead of RestClient or RestTemplate code.
-          (Sirf interface define karni hoti hai, implementation automatically ban jati hai)
-        - Integrates seamlessly with Spring Cloud and Eureka.
-          (Spring Cloud aur Eureka ke saath easily kaam karta hai)
-        - Makes code cleaner and easier to maintain.
-          (Code zyada clean aur maintainable ho jata hai)
+    Why Resilience4j ?
+        - Prevents cascading failures.
+           (Ek service fail hone par baaki services ko fail hone se bachata hai)
+        - Improves system reliability.
+           (Application ko zyada reliable banata hai)
+        - Improves fault tolerance.
+           (Failures ko handle karne ki capability badhata hai)
+        - Integrates easily with Spring Boot.
+           (Spring Boot ke saath easily kaam karta hai)
 
-    Dependency :
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
+    Key Features :
+        Spring Boot Integration :
+           Provides annotations and configuration support.
+            (Annotations aur configuration ke through easily use kar sakte hain)
+           Common Annotations :
+               @Retry
+                (Automatic retry)
+               @RateLimiter
+                (Request limit control)
+               @CircuitBreaker
+                (Failure protection)
 
-    How it works :
-        Without OpenFeign :
-            Inventory Service
-                   ↓
-            Create RestClient
-                   ↓
-            Build URL
-                   ↓
-            Send HTTP Request
-                   ↓
-            Receive Response
+        1. Retry
+           Automatically retries a failed operation.
+            (Fail hui request ko dobara try karta hai)
+           Example :
+               Inventory Service
+                     ↓
+                  Failed
+                     ↓
+                  Retry
+                     ↓
+                  Success
+           Use Case :
+               Temporary network issue.
+                (Temporary connection issue)
 
-            (Manual code likhna padta hai)
-        With OpenFeign :
-            Inventory Service
-                   ↓
-            Call Interface Method
-                   ↓
-            Feign Client generates HTTP Request
-                   ↓
-            Order Service
-                   ↓
-            Receive Response
+        2. Rate Limiter
+           Limits the number of requests allowed in a given time period.
+            (Fixed time me limited requests allow karta hai)
+           Example :
+               Limit = 100 Requests / Minute
+               Request 101
+                    ↓
+                 Blocked
+           Use Case :
+               Protecting services from excessive traffic.
+                (Bahut zyada traffic se service ko bachata hai)
 
-            (Sirf method call karni hoti hai)
+        3. Circuit Breaker
+           Stops calling a failing service after a threshold is reached.
+            (Service baar baar fail ho rahi ho to usko call karna temporarily band kar deta hai)
+           Example :
+               Order Service
+                    ↓
+               Inventory Service
+                    ↓
+                  Fail
+                    ↓
+                  Fail
+                    ↓
+                  Fail
+                    ↓
+               Circuit Opens
+                    ↓
+               Further Calls Blocked
+           Benefit :
+               Prevents wasting resources on continuously failing services.
+                (Fail ho rahi service par resources waste nahi karta)
 
-    Advantages :
-        - Less code
-          (Kam code likhna padta hai)
-        - Better readability
-          (Code samajhna easy hota hai)
-        - Eureka integration support
-          (Service name se service ko find kar leta hai)
-        - Automatic load balancing support
-          (Available service instances me request distribute kar sakta hai)
-        - Easy microservice communication
-          (Services ke beech communication simple ho jata hai)
+    Typical Microservice Flow :
+        Order Service
+              ↓
+        Inventory Service
+              ↓
+        Service Failure
+              ↓
+        Resilience4j
+              ↓
+        Retry / Circuit Breaker / Rate Limiter
+              ↓
+        Controlled Response
 
-    Example :
-        @FeignClient(name = "ORDER-SERVICE")
-        public interface OrderFeignClient {
+    Summary :
+        Resilience4j
+            → Makes microservices more reliable and fault tolerant.
+              (Microservices ko zyada stable aur reliable banata hai)
+        1. Retry
+            → Re-attempt failed requests.
+              (Failed request ko dobara try karta hai)
+        2. Rate Limiter
+            → Controls request rate.
+              (Request count control karta hai)
+        3. Circuit Breaker
+            → Stops repeated calls to failing services.
+              (Failing service ko repeatedly call karne se rokta hai)
 
-            @GetMapping("/orders/helloOrders")
-            String getOrders();
-        }
+1. Retry :
+    Retry is a Resilience4j feature that automatically retries a failed service call a fixed number of times before giving up.
+     (Failed service call ko fixed number of times automatically dobara try karta hai)
+    Used when failures are temporary and the service may become available after a short delay.
+     (Temporary failures ko recover karne ke liye use hota hai)
+    Annotation :
+        @Retry(
+            name = "inventoryRetry",
+            fallbackMethod = "fallBackMethodReduceOrder"
+        )
+        here,
+            name = "inventoryRetry"
+                    → Name of the retry configuration.
+                      (Retry configuration ko identify karne ke liye)
+            fallbackMethod = "fallBackMethodReduceOrder"
+                             → Method executed if all retry attempts fail.
+                               (Saare retries fail hone ke baad execute hone wala method)
+    Configuration :
+        resilience4j:
+          retry:
+            configs:
+              default:
+                maxRetryAttempts: 3
+                waitDuration: 5s
+        here,
+            maxRetryAttempts : 3
+                               → Maximum number of retry attempts.
+                               (Maximum 3 baar retry karega)
+            waitDuration : 5s
+                           → Time gap between retry attempts.
+                           (Har retry ke beech 5 second wait karega)
+    Flow :
+        Service Call
+             ↓
+        Request Failed
+             ↓
+        Retry Attempt 1
+             ↓
+        Retry Attempt 2
+             ↓
+        Retry Attempt 3
+             ↓
+        Success
+             OR
+        Fallback Method
+            (Success mil jaye to request complete ho jayegi, warna fallback method execute hoga)
 
-    Meaning :
-        Feign automatically finds ORDER-SERVICE from Eureka and calls its API.
-        (Eureka se service ka address find karke API call khud kar leta hai)
+2. Rate Limiter :
+    Rate Limiter is a Resilience4j feature that controls the rate of requests by limiting the number of calls allowed during a specific time period.
+     (Defined time period ke andar limited requests hi allow karta hai)
+    Used to protect services from excessive traffic and prevent system overload.
+     (Zyada traffic aur overload se service ko bachane ke liye use hota hai)
+    Annotation :
+        @RateLimiter(
+            name = "inventoryRateLimiter",
+            fallbackMethod = "fallBackMethodReduceOrder"
+        )
+        here,
+            name = "inventoryRateLimiter"
+                    → Name of the rate limiter configuration.
+                      (Rate limiter configuration ko identify karne ke liye)
+            fallbackMethod = "fallBackMethodReduceOrder"
+                             → Method executed when request limit is exceeded.
+                               (Request limit cross hone par execute hone wala method)
+    Configuration :
+        resilience4j:
+          ratelimiter:
+            configs:
+              default:
+                limitForPeriod: 1
+                limitRefreshPeriod: 5s
+                timeoutDuration: 1s
+        here,
+            limitForPeriod : 1
+                             → Maximum requests allowed in one refresh period.
+                               (Ek refresh period me sirf 1 request allow hogi)
+            limitRefreshPeriod : 5s
+                                 → Time after which request count is reset.
+                                   (Har 5 second baad request count reset hoga)
+            timeoutDuration : 1s
+                              → Time to wait for permission before request fails.
+                                (Request fail hone se pehle 1 second wait karega)
+    Flow :
+        Request 1
+             ↓
+          Allowed
+             ↓
+        Request 2
+             ↓
+        Limit Exceeded
+             ↓
+        Wait for Permission
+             ↓
+        Timeout Reached
+             ↓
+        Fallback Method
 
-    Note :
-        OpenFeign is commonly used instead of RestClient or RestTemplate in Microservices.
-        (Microservices me generally RestClient ya RestTemplate ki jagah OpenFeign use kiya jata hai)
+            (Limit ke andar request allow hogi, warna fallback method execute hoga)
+
+3. Circuit Breaker :
+    Circuit Breaker is a Resilience4j pattern that prevents an application from repeatedly calling a service that is already failing.
+     (Jo service lagatar fail ho rahi ho usko bar bar call karna temporarily stop kar deta hai)
+    Used to avoid wasting resources and improve system stability when a dependent service is unavailable.
+     (Resources bachane aur system ko stable rakhne ke liye use hota hai)
+
+    Annotation :
+        @CircuitBreaker(
+            name = "inventoryFeignClient",
+            fallbackMethod = "fallBackMethodReduceOrder"
+        )
+
+        here,
+
+            name = "inventoryFeignClient"
+                    → Name of the circuit breaker configuration.
+                      (Circuit breaker configuration ko identify karne ke liye)
+
+            fallbackMethod = "fallBackMethodReduceOrder"
+                             → Method executed when service fails or circuit is open.
+                               (Service fail hone ya circuit open hone par execute hone wala method)
+
+    Configuration :
+        Circuit Breaker Health Monitoring :
+            management:
+              health:
+                circuitbreakers:
+                  enabled: true
+              endpoints:
+                web:
+                  exposure:
+                    include: "*"
+              endpoint:
+                health:
+                  show-details: always
+            here,
+                management
+                              → Root configuration for Spring Boot Actuator.
+                                (Actuator related configurations yaha likhte hain)
+                    health:
+                        circuitbreakers:
+                            enabled: true
+                            → Enables Circuit Breaker health monitoring.
+                              (Circuit Breaker ka health status enable karta hai)
+                    endpoints:
+                        web:
+                            exposure:
+                                include: "*"
+                                → Exposes all Actuator endpoints over HTTP.
+                                  (Saare Actuator endpoints access karne deta hai)
+                    endpoint:
+                        health:
+                            show-details: always
+                            → Always shows detailed health information.
+                              (Health endpoint par complete details dikhata hai)
+                Use Case :
+                    URL :
+                        http://localhost:9020/orders/actuator OR http://localhost:8080/api/v1/orders/actuator
+                    Response :
+                        {
+                          "status": "UP",
+                          "components": {
+                            "circuitBreakers": {
+                              "status": "UP"
+                            }
+                          }
+                        }
+                        → Used to monitor Circuit Breaker state and application health.
+                          (Application aur Circuit Breaker ki health check karne ke liye)
+        Circuit Breaker Configuration :
+            resilience4j:
+              circuitbreaker:
+                instances:
+                    registerHealthIndicator: true
+                    slidingWindowSize: 10
+                    slidingWindowType: COUNT_BASED
+                    minimumNumberOfCalls: 10
+                    failureRateThreshold: 50
+                    waitDurationInOpenState: 1s
+                    permittedNumberOfCallsInHalfOpenState: 3
+                    eventConsumerBufferSize: 10
+                    automaticTransitionFromOpenToHalfOpenEnabled: true
+            here,
+                registerHealthIndicator : true
+                                          → Exposes Circuit Breaker health information through Actuator.
+                                            (Circuit Breaker ka health status monitor karne ke liye)
+                slidingWindowSize : 10
+                                    → Uses last 10 requests to calculate failure rate.
+                                      (Aakhri 10 requests ke basis par failure rate calculate hota hai)
+                slidingWindowType : COUNT_BASED
+                                    → Uses request count instead of time duration.
+                                      (Time nahi, request count ke basis par calculation hoti hai)
+                minimumNumberOfCalls : 10
+                                       → At least 10 requests are required before evaluating failure rate.
+                                         (Failure rate calculate karne se pehle minimum 10 requests chahiye)
+                failureRateThreshold : 50
+                                       → Circuit opens if 50% or more requests fail.
+                                         (Agar 10 me se 5 ya usse zyada requests fail ho jaye to circuit OPEN ho jata hai)
+                waitDurationInOpenState : 1s
+                                          → Circuit remains OPEN for 1 second before moving to HALF_OPEN.
+                                            (OPEN state me 1 second tak rahega)
+                permittedNumberOfCallsInHalfOpenState : 3
+                                                         → Allows 3 test requests in HALF_OPEN state.
+                                                           (Recovery check karne ke liye 3 requests allow hoti hain)
+                eventConsumerBufferSize : 10
+                                          → Stores last 10 circuit breaker events.
+                                            (Last 10 events memory me store karta hai)
+                automaticTransitionFromOpenToHalfOpenEnabled : true
+                                                                → Automatically moves from OPEN to HALF_OPEN state.
+                                                                  (Manual intervention ke bina recovery testing start hoti hai)
+
+    States :
+        CLOSED
+            → Requests are allowed normally.
+              (Service healthy hai)
+        OPEN
+            → Requests are blocked and fallback method is called.
+              (Service unhealthy hai)
+        HALF-OPEN
+            → Limited requests are allowed for testing recovery.
+              (Service recover hui hai ya nahi check karta hai)
+
+    Flow :
+            Service Running
+                  ↓
+                CLOSED
+                  ↓
+            Too Many Failures
+                  ↓
+                 OPEN
+                  ↓
+             Wait 10 Seconds
+                  ↓
+              HALF-OPEN
+                  ↓
+        Success      Failure
+           ↓            ↓
+        CLOSED       OPEN
+
+            (Service recover ho jaye to CLOSED, warna fir se OPEN state me chala jata hai)
 
 Code :
-
-    1. Add Spring Cloud OpenFeign dependency in all microservices that need to communicate with other services.
-        (Jin services ko dusri services se baat karni hai unme OpenFeign add karte hain)
-
-    2. Create a clients package in inventory-service and create an interface named OrdersFeignClient.
-        (External service calls ko separate package me organize karte hain)
-       Note :
-       One Feign Client is generally created for one target service.
-        (Har target service ke liye alag client banana common practice hai)
-
-    3. Add @FeignClient(name = "order-service", path = "/orders") on OrdersFeignClient.
-        (Feign ko batata hai kis service aur kis base path par request bhejni hai)
-       name  -> Service name registered in Eureka.
-        (Eureka me registered service name)
-       path  -> Common base URL of target service.
-        (Target service ka common URL prefix)
-
-    4. Create mapping methods inside OrdersFeignClient.
-        (Jin APIs ko access karna hai unke methods interface me define karte hain)
-
-    5. Replace RestClient and DiscoveryClient code with OrdersFeignClient in ProductController.
-        (Manual HTTP request code ko Feign se replace karte hain)
-       Before :
-           DiscoveryClient
-                ↓
-           Get Service Instance
-                ↓
-           Build URL
-                ↓
-           RestClient Call
-       After :
-           Feign Client Method Call
-                ↓
-           Eureka Discovery
-                ↓
-           HTTP Request
-                ↓
-           Response
-
-    6. Add @EnableFeignClients in the main class of inventory-service.
-        (Spring ko Feign Client interfaces ke beans create karne ke liye enable karta hai)
-
-    7. Test API :
-       http://localhost:8080/api/v1/inventory/products/fetchOrders
-           API Gateway
-                ↓
-           Inventory Service
-                ↓
-           Feign Client
-                ↓
-           Order Service
-                ↓
-           Response Returned
-
-    8. Create a real business use case.
-       Goal : When an order is placed, product stock should automatically decrease.
-               (Order create hone par inventory ka stock kam hona chahiye)
-
-    9. Create a new API in inventory-service :
-           PUT /products/reduce-stocks
-           Purpose :
-               - Validate product availability.
-               - Reduce stock quantity.
-               - Calculate total order price.
-               - Return total order price.
-            (Stock check karta hai, stock reduce karta hai aur total price calculate karta hai)
-
-    10. Create required DTOs.
-            OrderRequestDto
-             (Complete order request ko represent karta hai)
-            OrderRequestItemDto
-             (Single product aur quantity ko represent karta hai)
-
-    11. Create service method reduceStocks().
-        Flow :
-            Receive Order Request
-                    ↓
-            Iterate Through Ordered Products
-                    ↓
-            Fetch Product From Database
-                    ↓
-            Validate Available Stock
-                    ↓
-            Reduce Stock
-                    ↓
-            Save Updated Product
-                    ↓
-            Calculate Total Price
-                    ↓
-            Return Total Price
-
-    12. Add @Transactional on reduceStocks().
-        Reason : If any product fails validation, all stock updates will be rolled back.
-                  (Agar kisi bhi product par error aata hai to saare updates cancel ho jayenge)
-
-    13. Create InventoryOpenFeignClient in order-service.
-        Purpose : Allows order-service to communicate with inventory-service.
-                   (Order service ko inventory service call karne deta hai)
-
-    14. Configure Feign Client :
-        @FeignClient(
-            name = "inventory-service",
-            path = "/inventory"
-        )
-        name : Service name present in Eureka.
-                (Eureka me registered service name)
-        path : Common base URL of Inventory Service.
-                (Inventory service ka base path)
-
-    15. Add method :
-        @PutMapping("/products/reduce-stocks")
-        Purpose : Calls inventory-service to reduce stocks and get total price.
-                   (Stock reduce karne aur total price lene ke liye call karta hai)
-
-    16. Create createOrder() API in order-service.
-        Purpose : Creates and stores a customer order.
-                   (Customer order create aur save karta hai)
-
-    17. Order Creation Flow :
-            Client
-                ↓
-            Order Service
-                ↓
-            Feign Client Call
-                ↓
-            Inventory Service
-                ↓
-            Validate Stock
-                ↓
-            Reduce Stock
-                ↓
-            Calculate Total Price
-                ↓
-            Return Total Price
-                ↓
-            Order Service
-                ↓
-            Create Order Entity
-                ↓
-            Set Order Status = CONFIRMED
-                ↓
-            Save Order
-                ↓
-            Return Created Order
-
-    18. Inside createOrder() :
-            Call Inventory Service
-             (Stock reduce karwane ke liye)
-            Map DTO to Entity
-             (Request ko entity me convert karne ke liye)
-            Set Parent Order Reference
-             (Order aur OrderItems ke relation ko maintain karne ke liye)
-            Set Total Price
-             (Inventory service se aaye hue price ko set karne ke liye)
-            Set Order Status
-             (Order state ko define karne ke liye)
-            Save Order
-             (Database me persist karne ke liye)
-            Return Response DTO
-             (Client ko response bhejne ke liye)
-
-    Final Flow :
-        Client
-           ↓
-        API Gateway
-           ↓
-        Order Service
-           ↓
-        Inventory Feign Client
-           ↓
-        Inventory Service
-           ↓
-        Stock Reduced
-           ↓
-        Total Price Returned
-           ↓
-        Order Saved
-           ↓
-        Response Returned
+    Add Resilience4J Dependency
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+            </dependency>
+    1. Retry :
+           In order-service, make createOrder() resilient because it calls reduceStocks() through OpenFeignClient.
+           Create configuration in application.yml file for @Retry
+           So, Apply @Retry(name = "inventoryRetry", fallbackMethod = "createOrderFallback") annotation to it
+           name = name of retry configuration and fallbackMethod = if it fails to connect then this method will execute
+    2. Rate Limiter :
+           In order-service, make createOrder() resilient against excessive requests as this method is calling reduceStocks from OpenFeignClient
+           Create configuration in application.yml file for @RateLimiter
+           So, Apply @RateLimiter(name = "inventoryRateLimiter", fallbackMethod = "createOrderFallback")
+           name = name of rate limiter configuration and fallbackMethod = if it fails to connect then this method will execute
+    3. Circuit Breaker :
+           In order-service, make createOrder() resilient against repeated service failures.
+           Create configuration in application.yml file for @CircuitBreaker
+           NOTE : Remove @Retry and @RateLimiter as @CircuitBreaker does not work along with it @Retry
+           So, Apply @CircuitBreaker(name = "inventoryCircuitBreaker", fallbackMethod = "createOrderFallback")
+           name = name of circuit breaker configuration and fallbackMethod = if it fails to connect then this method will execute
