@@ -1,0 +1,39 @@
+management:                                  # Configuration for monitoring and management features
+  health:
+    circuitbreakers:
+      enabled: true                          # Enable Circuit Breaker health monitoring
+  endpoints:
+    web:
+      exposure:
+        include: "*"                         # Make all Actuator endpoints accessible
+  endpoint:
+    health:
+      show-details: always                   # Always show complete health information
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        maxRetryAttempts: 3                  # Retry failed request up to 3 times
+        waitDuration: 100ms                  # Wait 100ms between retries
+    instances:
+      inventoryRetry:
+        baseConfig: default                  # Use settings from default retry configuration
+        waitDuration: 200ms                  # Override wait time to 200ms for this retry
+  ratelimiter:
+    instances:
+      inventoryRateLimiter:
+        limitRefreshPeriod: 1s               # Reset request limit every 1 second
+        limitForPeriod: 100                  # Allow maximum 100 requests per second
+        timeoutDuration: 10ms                # Wait 10ms for permission before rejecting request
+  circuitbreaker:
+    instances:
+      inventoryCircuitBreaker:
+        registerHealthIndicator: true        # Show Circuit Breaker status in health endpoint
+        slidingWindowSize: 10                # Monitor last 10 requests
+        slidingWindowType: COUNT_BASED       # Use request count instead of time for calculations
+        minimumNumberOfCalls: 10             # Start evaluation only after 10 requests
+        failureRateThreshold: 50             # Open circuit if 50% requests fail
+        waitDurationInOpenState: 1s          # Keep circuit OPEN for 1 second
+        permittedNumberOfCallsInHalfOpenState: 3 # Allow 3 test requests in HALF-OPEN state
+        eventConsumerBufferSize: 10          # Store last 10 Circuit Breaker events

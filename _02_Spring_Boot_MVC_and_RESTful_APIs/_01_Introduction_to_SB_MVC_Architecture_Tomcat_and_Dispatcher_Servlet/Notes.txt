@@ -273,9 +273,14 @@ How does Web Server works :
                                                                        |
                                                                        V
                                                                DispatcherServlet
+                                           (HttpServletRequest and HttpServletResponse these both are created)
                                                                        |
                                                                        V
                                                         HandlerMapping -> Which Controller?
+                                                                       |
+                                                                       v
+                                                             HttpMessageConverter
+                                                 (Serialization = Java Object → JSON using Jackson)
                                                                        |
                                                                        v
                                                       HandlerAdapter -> Call Controller method
@@ -284,10 +289,11 @@ How does Web Server works :
                                                         Controller Method returns POJO/DTO
                                                                        |
                                                                        v
-                                                  HttpMessageConverter (e.g., Jackson -> JSON)
+                                                             HttpMessageConverter
+                                                 (Deserialization = JSON → Java Object using Jackson)
                                                                        |
                                                                        v
-                                                 DispatcherServlet writes to HttpServletResponse
+                                      DispatcherServlet overwrites HttpServletResponse with proper JSON based response
                                                                        |
                                                                        v
                                                               Client gets JSON

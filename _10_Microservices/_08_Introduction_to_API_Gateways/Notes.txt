@@ -1,0 +1,33 @@
+Order Cancel Flow :
+    Client
+        ↓
+    Cancel Order API Called
+        ↓
+    Fetch Order From Database
+        ↓
+    Convert Order To DTO
+        ↓
+    Call Inventory Service
+        ↓
+    Restore Product Stocks
+        ↓
+    Update Order Status To CANCELLED
+        ↓
+    Save Order
+        ↓
+    Return Cancelled Order
+
+Stock Restore Flow :
+    Inventory Service
+           ↓
+    Receive Order Details
+           ↓
+    Loop Through Order Items
+           ↓
+    Fetch Product
+           ↓
+    Increase Stock Quantity
+           ↓
+    Save Updated Product
+           ↓
+    Return Success
