@@ -175,3 +175,7 @@ Spring Boot Deployment Flow :
 
     Code → mvnw clean package → jar file → deploy to server
     (code ko jar me convert karke server par deploy karte hain)
+
+Use of Maven commands
+    1. mvn spring-boot:run -> if we use this command then system's installed maven version will be used to run the project, but if we use
+    2. ./mvnw spring-boot:run -> then it will use the maven version that is in our project folder. (Maven version compatible with our project) So it is better to use ./mvnw spring-boot:run command to run the project.
