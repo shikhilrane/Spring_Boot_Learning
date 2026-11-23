@@ -28,6 +28,7 @@ Creating a Spring Boot Project
             5.4 Description - Description explains the project
             5.5 Package Name - Package Name sets the base Java namespace
             5.6 Packaging - JAR (JAR is used to package backend applications as standalone units) and WAR (WAR packages web applications and includes backend code along with web resources like HTML, CSS, JavaScript, and JSP files for deployment on a web server)
+            (JAR contains Tomcat server and WAR doesn't contain Tomcat server, so if we want to deploy our application on any other server then we can use WAR)
             5.7 Java - Specifies the Java version used in the project (21 for modern language features and improvements)
         6. Dependencies - Dependencies are pre-built modules (like Spring Web, Spring Data JPA, MySQL Driver, etc.) that you add to your project to enable specific features or integrations.
         7. Generate the project
